@@ -2,14 +2,40 @@
   "name": "@formswizard/designer-renderer",
   "version": "0.0.2",
   "description": "JsonForms renderers required by forms-designer.",
-  "keywords": ["renderer", "material", "jsonforms", "form", "forms", "wizard", "json", "schema", "jsonschema", "uischema", "frontend", "generator", "input", "renderengine"],
+  "keywords": [
+    "renderer",
+    "material",
+    "jsonforms",
+    "form",
+    "forms",
+    "wizard",
+    "json",
+    "schema",
+    "jsonschema",
+    "uischema",
+    "frontend",
+    "generator",
+    "input",
+    "renderengine"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/FormsWizard",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/FormsWizard/forms-designer.git"
+    "type": "git",
+    "url": "https://github.com/FormsWizard/forms-designer.git"
   },
-  "contributors": [{"name": "Johannes Lötzsch"}, {"name": "Jakob Steege"}, {"name": "winzlieb", "email": "winzlieb@c3d2.de"}],
+  "contributors": [
+    {
+      "name": "Johannes Lötzsch"
+    },
+    {
+      "name": "Jakob Steege"
+    },
+    {
+      "name": "winzlieb",
+      "email": "winzlieb@c3d2.de"
+    }
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -18,8 +44,12 @@
     "dev": "tsup index.tsx --format esm,cjs --watch --dts --external react",
     "lint": "eslint \"**/*.ts*\"",
     "lint-fix": "eslint --fix \"**/*.ts*\"",
-    "generate:component": "turbo gen react-component"
+    "generate:component": "turbo gen react-component",
+    "push": "npm publish --access public"
   },
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@formswizard/types": "workspace:*",
     "@types/lodash": "^4.14.197",

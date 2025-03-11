@@ -28,8 +28,12 @@
     "dev": "tsup index.tsx --format esm,cjs --watch --dts --external react",
     "lint": "eslint \"**/*.ts*\"",
     "lint-fix": "eslint --fix \"**/*.ts*\"",
-    "generate:component": "turbo gen react-component"
+    "generate:component": "turbo gen react-component",
+    "push": "npm publish --access public"
   },
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@formswizard/designer-tsconfig": "workspace:*",
     "@formswizard/types": "workspace:*",

@@ -2,14 +2,40 @@
   "name": "json-forms-designer",
   "version": "0.0.2",
   "description": "Drag&Drop based UI for generating JSONSchema based forms",
-  "keywords": ["jsonforms", "form", "forms", "wizard", "json", "schema", "jsonschema", "uischema", "frontend", "generator", "input", "designer", "editor", "generator"],
+  "keywords": [
+    "jsonforms",
+    "form",
+    "forms",
+    "wizard",
+    "json",
+    "schema",
+    "jsonschema",
+    "uischema",
+    "frontend",
+    "generator",
+    "input",
+    "designer",
+    "editor",
+    "generator"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/FormsWizard",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/FormsWizard/forms-designer.git"
+    "type": "git",
+    "url": "https://github.com/FormsWizard/forms-designer.git"
   },
-  "contributors": [{"name": "Johannes Lötzsch"}, {"name": "Jakob Steege"}, {"name": "winzlieb", "email": "winzlieb@c3d2.de"}],
+  "contributors": [
+    {
+      "name": "Johannes Lötzsch"
+    },
+    {
+      "name": "Jakob Steege"
+    },
+    {
+      "name": "winzlieb",
+      "email": "winzlieb@c3d2.de"
+    }
+  ],
   "private": true,
   "scripts": {
     "build": "turbo run build --filter=!@formswizard/wizard-vite --concurrency 20",
@@ -17,7 +43,8 @@
     "lint": "turbo run lint",
     "lint-fix": "turbo run lint-fix --concurrency 20",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "build:pages": "./makeSite.sh"
+    "build:pages": "./makeSite.sh",
+    "push": "turbo run push --filter=./packages/*"
   },
   "devDependencies": {
     "@turbo/gen": "^1.10.7",

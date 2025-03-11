@@ -11,6 +11,10 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "push": {
+      "cache": false,
+      "dependsOn": ["^build"]
     }
   }
 }

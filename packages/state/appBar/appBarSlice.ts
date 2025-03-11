@@ -3,7 +3,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { RootState } from '../store'
 
-import { ScopableUISchemaElement } from '@formswizard/types'
 
 export type AppBarState = {
   previewModus: boolean
@@ -37,3 +36,5 @@ export const appBarSlice = createSlice({
 export const { togglePreviewModus, changeSelectedLanguage, toggleColorMode } = appBarSlice.actions
 
 export const appBarReducer = appBarSlice.reducer
+
+

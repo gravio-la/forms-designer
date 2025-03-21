@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { materialCells, materialRenderers } from '@jsonforms/material-renderers'
 import { JsonForms } from '@jsonforms/react'
-import { selectJsonSchema, selectUiSchema, useAppSelector, selectPreviewModus } from '@formswizard/state'
+import { useJsonSchema } from '@formswizard/state'
+import { selectUiSchema, useAppSelector, selectPreviewModus } from '@formswizard/state'
 import { extendUiSchemaWithPath } from '@formswizard/utils'
 import { basicRenderer } from '@formswizard/designer-basic-renderer'
 import {
@@ -12,7 +13,7 @@ import {
 } from '@formswizard/designer-renderer'
 import { JsonFormsRendererRegistryEntry } from '@jsonforms/core'
 import { useDragScrolling } from '@formswizard/react-hooks'
-import { Box } from '@mui/material'
+import { Box, BoxProps } from '@mui/material'
 
 const additionalRenderers = [
   {
@@ -26,13 +27,14 @@ const additionalRenderers = [
 ]
 
 export type WizardProps = {
-  renderers?: JsonFormsRendererRegistryEntry[]
+  renderers?: JsonFormsRendererRegistryEntry[],
 }
-export function Wizard({ renderers = [] }: WizardProps) {
+export function Wizard({ renderers = [], ...props }: WizardProps & BoxProps) {
   const [data, setData] = useState({})
 
   const handleFormChange = useCallback(({ data }: { data: any }) => setData(data), [setData])
-  const jsonSchema = useAppSelector(selectJsonSchema)
+  const schema = useJsonSchema()
+
   const uiSchema = useAppSelector(selectUiSchema)
   const uiSchemaWithPath = useMemo(() => extendUiSchemaWithPath(uiSchema), [uiSchema])
   const previewModus = useAppSelector(selectPreviewModus)
@@ -46,13 +48,13 @@ export function Wizard({ renderers = [] }: WizardProps) {
   )
   useDragScrolling()
   return (
-    <Box>
+    <Box {...props}>
       <JsonForms
         data={data}
         renderers={previewModus ? previewRenderers : finalRenderers}
         cells={materialCells}
         onChange={handleFormChange}
-        schema={jsonSchema}
+        schema={schema}
         uischema={uiSchemaWithPath}
         readonly={!previewModus}
       />

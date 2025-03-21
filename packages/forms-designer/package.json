@@ -48,6 +48,7 @@
     "@formswizard/state": "workspace:*",
     "@formswizard/toolbox": "workspace:*",
     "@formswizard/utils": "workspace:*",
-    "@formswizard/fieldsettings": "workspace:*"
+    "@formswizard/fieldsettings": "workspace:*",
+    "@formswizard/graviola-renderers": "workspace:*"
   }
 }

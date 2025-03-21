@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useRef } from 'react'
 import { Box, Button, Container, Drawer, Paper, Tab, Tabs, Toolbar } from '@mui/material'
 import { Wizard, WizardProps } from './Wizard'
-import { Toolbox } from '@formswizard/toolbox'
+import { Toolbox, ToolboxProps } from '@formswizard/toolbox'
 import { FieldSettingsView, useToolSettings } from '@formswizard/fieldsettings'
 import { MainAppBar } from './layout/MainAppBar'
 import { TrashFAB } from './components'
@@ -13,6 +13,7 @@ import { ToolSetting } from '@formswizard/types'
 interface OwnProps {
   appBar?: React.ReactNode
   additionalToolSettings?: ToolSetting[]
+  toolboxProps?: ToolboxProps
 }
 
 type Props = OwnProps & Partial<WizardProps>
@@ -26,7 +27,7 @@ const a11yProps = (index: number) => {
 }
 
 const drawerWidth = 240
-export const MainLayout: FunctionComponent<Props> = ({ appBar, additionalToolSettings, ...wizardProps }) => {
+export const MainLayout: FunctionComponent<Props> = ({ appBar, additionalToolSettings, toolboxProps, ...wizardProps }) => {
   const wizardPaperRef = useRef<null | HTMLDivElement>(null)
   const dispatch = useAppDispatch()
   const previewModus = useAppSelector(selectPreviewModus)
@@ -70,7 +71,7 @@ export const MainLayout: FunctionComponent<Props> = ({ appBar, additionalToolSet
           }}
         >
           <Toolbar />
-          <Toolbox />
+          <Toolbox {...toolboxProps} />
         </Drawer>
         <Container maxWidth={false} ref={wizardPaperRef}>
           <Toolbar />

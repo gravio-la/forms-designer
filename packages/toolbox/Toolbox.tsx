@@ -6,8 +6,13 @@ import { Tab, Box } from '@mui/material'
 import { useCallback } from 'react'
 import { basicDraggableComponents } from './basicDraggableComponents'
 import BuildingBlocks from './BuildingBlocks'
+import { DraggableComponent } from '@formswizard/types'
 
-export function Toolbox() {
+export type ToolboxProps = {
+  draggableComponents?: DraggableComponent[]
+}
+
+export function Toolbox({ draggableComponents }: ToolboxProps) {
   const [activeTab, setActiveTab] = React.useState('1')
   const handleChange = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
@@ -32,7 +37,7 @@ export function Toolbox() {
             },
           }}
         >
-          {basicDraggableComponents.map((component, index) => {
+          {(draggableComponents || basicDraggableComponents).map((component, index) => {
             return (
               <DragBox
                 name={component.name}

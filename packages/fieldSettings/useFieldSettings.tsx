@@ -55,10 +55,10 @@ export function useToolSettings({
   const toolSettings = useMemo(() => {
     if (!UIElementFromSelection) return null
     const tool = maxBy([...ToolSettingsDefinitions, ...additionalToolSettings], (d) => {
-      const num = d.tester && d.tester(UIElementFromSelection, selectedElementJsonSchema, context)
+      const num = d.tester && d.tester(UIElementFromSelection, selectedElementJsonSchema ?? {}, context)
       return num || null
     })
-    return tool && tool.tester && tool.tester(UIElementFromSelection, selectedElementJsonSchema, context) > 0
+    return tool && tool.tester && tool.tester(UIElementFromSelection, selectedElementJsonSchema ?? {}, context) > 0
       ? tool
       : null
   }, [selectedElementJsonSchema, UIElementFromSelection, context])

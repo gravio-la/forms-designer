@@ -103,7 +103,10 @@ export const useDropTarget = ({ child, isPlaceholder = false }: UseDropTargetPro
             name: componentMeta?.name ? componentMeta.name.split('.').pop() : 'layout',
             uiSchema: rest,
           }
-          setDraggedMeta(draggableMeta)
+          console.log('draggableMeta', draggableMeta)
+          if (!draggableMeta.jsonSchemaElement['$ref']) {
+            setDraggedMeta(draggableMeta)
+          }
           return
         }
         setDraggedMeta(componentMeta)
@@ -137,10 +140,15 @@ export const useDropTarget = ({ child, isPlaceholder = false }: UseDropTargetPro
             name: componentMeta?.name ? componentMeta.name.split('.').pop() : 'layout',
             uiSchema: rest,
           }
-          setDraggedMeta(draggableMeta)
+          console.log('draggableMeta', draggableMeta)
+          if (!draggableMeta.jsonSchemaElement['$ref']) {
+            setDraggedMeta(draggableMeta)
+          }
           return
         }
-        setDraggedMeta(componentMeta)
+        if (!componentMeta.jsonSchemaElement['$ref']) {
+          setDraggedMeta(componentMeta)
+        }
       },
       collect: (monitor: any) => ({
         isOver: monitor.isOver(),

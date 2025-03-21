@@ -15,6 +15,7 @@ import {
   deeplyRemoveNestedProperty,
   deeplyRenameNestedProperty,
   collectSchemaGarbage,
+  deeplyUpdateReference,
 } from '@formswizard/utils'
 
 import {
@@ -344,12 +345,36 @@ export const jsonFormsEditSlice = createSlice({
       }
       //state.uiSchema = updateScopeOfUISchemaElement()
     },
+    renameSchemaDefinition: (state: JsonFormsEditState, action: PayloadAction<{ oldName: string; newName: string }>) => {
+      const { oldName, newName } = action.payload
+      if(!state.definitions[oldName]){
+        throw new Error(`Definition ${oldName} not found`)
+      }
+      if(state.definitions[newName]){
+        throw new Error(`Definition ${newName} already exists`)
+      }
+      state.definitions[newName] = state.definitions[oldName]
+      delete state.definitions[oldName]
+      state.jsonSchema = deeplyUpdateReference(state.jsonSchema, `#/${state.definitionsKey}/${oldName}`, `#/${state.definitionsKey}/${newName}`)
+    },
     updateUISchemaByScope: (
       state: JsonFormsEditState,
       action: PayloadAction<{ scope: string; uiSchema: UISchemaElement }>
     ) => {
       const { scope, uiSchema } = action.payload
       state.uiSchema = updateUISchemaElement(scope, uiSchema, state.uiSchema)
+    },
+
+    switchDefinition: (state: JsonFormsEditState, action: PayloadAction<{ definition: string }>) => {
+      const { definition } = action.payload
+      const currentDefinitionKey = state.selectedDefinition
+
+      state.uiSchemas[currentDefinitionKey] = state.uiSchema
+      state.definitions[currentDefinitionKey] = state.jsonSchema
+
+      state.selectedDefinition = definition
+      state.uiSchema = state.uiSchemas[definition] || { type: 'VerticalLayout', elements: [] }
+      state.jsonSchema = state.definitions[definition] || { type: 'object', properties: {} }
     },
     /**
      *
@@ -407,6 +432,27 @@ export const jsonFormsEditSlice = createSlice({
         uiSchema = getUiSchemaWithScope(draggableMeta, deepestGroupPath, newKey)
 
         if (draggableMeta.jsonSchemaElement && Object.keys(draggableMeta.jsonSchemaElement).length > 0)
+          if(draggableMeta.jsonSchemaElement['$ref']){
+            const ref = draggableMeta.jsonSchemaElement['$ref'].replace(/^#/, '')
+            const refSchema = jsonpointer.get(state.jsonSchema, ref)
+            //get last part of ref
+            const refDefinitionKey = ref.split('/').pop() as string
+            if(!refSchema){
+              //create a new definition
+              const definition = {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+              //jsonpointer.set(state.jsonSchema, ref, definition)
+              state.definitions[refDefinitionKey] = definition
+            } else {
+              state.definitions[refDefinitionKey] = refSchema
+            }
+          }
           state.jsonSchema = deeplySetNestedProperty(
             state.jsonSchema,
             deepestGroupPath,
@@ -483,11 +529,12 @@ export const {
   renameField,
   removeFieldOrLayout,
   removeField,
-
+  switchDefinition,
   updateUISchemaByScope,
   updateJsonSchemaByPath,
   loadTemplate,
   moveControl,
+  renameSchemaDefinition,
 } = jsonFormsEditSlice.actions
 
 export const jsonFormsEditReducer = jsonFormsEditSlice.reducer
@@ -527,6 +574,16 @@ export const selectSelectedElementJsonSchema: (state: RootState) => JsonSchema |
     return resolveSchema(jsonSchema, selectedUiSchema.scope, jsonSchema)
   }
 )
+
+export const selectJsonSchemaDefinitions: (state: RootState) => Record<string, JsonSchema> | null = 
+  (state: RootState) => {
+    return state.jsonFormsEdit.definitions
+  }
+
+export const selectCurrentDefinition: (state: RootState) => string = (state: RootState) => {
+  return state.jsonFormsEdit.selectedDefinition
+}
+
 export const selectSelectionDisplayName: (state: RootState) => string | null = createSelector(
   selectSelectedElementJsonSchema,
   selectUIElementFromSelection,

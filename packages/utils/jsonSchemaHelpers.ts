@@ -133,3 +133,21 @@ export const deeplyRenameNestedProperty: (schema: JsonSchema, path: string[], ne
     },
   } as JsonSchema
 }
+
+
+/**
+ * recursively go through the jsonschema and replace all `$ref` from oldPath to newPath
+ * will use a simple deep object tree traversal
+ */
+export const deeplyUpdateReference = <T>(jsonschemaPart: T, oldPath: string, newPath: string): T => {
+  if(Array.isArray(jsonschemaPart)){
+    return jsonschemaPart.map(item => deeplyUpdateReference<any>(item, oldPath, newPath)) as T
+  }
+  if(typeof jsonschemaPart === 'object'){
+    if((jsonschemaPart as any).$ref === oldPath){
+      (jsonschemaPart as any).$ref = newPath
+    }
+    return Object.fromEntries(Object.entries(jsonschemaPart as Record<string, any>).map(([key, value]) => [key, deeplyUpdateReference(value, oldPath, newPath)])) as T
+  }
+  return jsonschemaPart
+}

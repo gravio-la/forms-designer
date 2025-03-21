@@ -1,24 +1,32 @@
 import React, { FunctionComponent, useRef } from 'react'
-import { Box, Button, Container, Drawer, Paper, Toolbar, Typography } from '@mui/material'
+import { Box, Button, Container, Drawer, Paper, Tab, Tabs, Toolbar } from '@mui/material'
 import { Wizard, WizardProps } from './Wizard'
 import { Toolbox } from '@formswizard/toolbox'
 import { FieldSettingsView, useToolSettings } from '@formswizard/fieldsettings'
 import { MainAppBar } from './layout/MainAppBar'
 import { TrashFAB } from './components'
-import { selectPreviewModus, togglePreviewModus, useAppDispatch, useAppSelector } from '@formswizard/state'
+import { EditableTab } from './components/EditableTab'
+import { selectCurrentDefinition, selectJsonSchemaDefinitions, selectPreviewModus, switchDefinition, togglePreviewModus, useAppDispatch, useAppSelector, renameSchemaDefinition } from '@formswizard/state'
 import useAutoDeselectOnOutsideClick from './useAutoDeselectOnOutsideClick'
 import { ToolSetting } from '@formswizard/types'
 
 interface OwnProps {
   appBar?: React.ReactNode
-  children?: React.ReactNode
   additionalToolSettings?: ToolSetting[]
 }
 
 type Props = OwnProps & Partial<WizardProps>
 
+
+const a11yProps = (index: number) => {
+  return {
+    id: `full-width-tab-${index}`,
+    'aria-controls': `full-width-tabpanel-${index}`,
+  };
+}
+
 const drawerWidth = 240
-export const MainLayout: FunctionComponent<Props> = ({ appBar, children, additionalToolSettings, ...wizardProps }) => {
+export const MainLayout: FunctionComponent<Props> = ({ appBar, additionalToolSettings, ...wizardProps }) => {
   const wizardPaperRef = useRef<null | HTMLDivElement>(null)
   const dispatch = useAppDispatch()
   const previewModus = useAppSelector(selectPreviewModus)
@@ -27,6 +35,18 @@ export const MainLayout: FunctionComponent<Props> = ({ appBar, children, additio
     dispatch(togglePreviewModus())
   }
   const { handleClickOutside } = useAutoDeselectOnOutsideClick(wizardPaperRef)
+  const definitions = useAppSelector(selectJsonSchemaDefinitions)
+  const currentDefinition = useAppSelector(selectCurrentDefinition)
+  const handleChange = (_: React.SyntheticEvent, newValue: string) => {
+    dispatch(switchDefinition({ definition: newValue }))
+  }
+
+  const handleRenameDefinition = (oldName: string, newName: string) => {
+    if (oldName !== newName) {
+      dispatch(renameSchemaDefinition({ oldName, newName }));
+    }
+  };
+
   return (
     <>
       <Box component={'main'} sx={{ display: 'flex', flexGrow: 1, minHeight: '100vh' }} onClick={handleClickOutside}>
@@ -52,17 +72,31 @@ export const MainLayout: FunctionComponent<Props> = ({ appBar, children, additio
           <Toolbar />
           <Toolbox />
         </Drawer>
-        <Container maxWidth="md">
+        <Container maxWidth={false} ref={wizardPaperRef}>
           <Toolbar />
-          <Paper sx={{ p: 2, m: 4 }} elevation={12} square ref={wizardPaperRef}>
-            {children ? (
-              children
-            ) : (
-              <>
-                <Wizard {...wizardProps} />
-              </>
-            )}
-          </Paper>
+          <Tabs
+            value={currentDefinition}
+            onChange={handleChange}
+            indicatorColor="secondary"
+            textColor="inherit"
+            variant="fullWidth"
+            aria-label="form definitions tabs"
+          >
+            <Tab key="Root" value={"Root"} label="Root" {...a11yProps(0)} />
+            {Object.keys(definitions || {}).filter(def => def !== "Root").map((def, index) => (
+              <EditableTab
+                key={def}
+                label={def}
+                value={def}
+                tabProps={a11yProps(index + 1)}
+                onRename={handleRenameDefinition}
+                readonly={previewModus}
+              />
+            ))}
+          </Tabs>
+            <Paper elevation={12} square  sx={{  p: 2, m: 4 }}>
+              <Wizard {...wizardProps} />
+            </Paper>
         </Container>
         <Drawer
           variant="persistent"

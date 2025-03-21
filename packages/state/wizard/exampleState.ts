@@ -1,9 +1,13 @@
 import { JsonSchema, Scopable, UISchemaElement } from '@jsonforms/core'
 export type JsonFormsEditState = {
   jsonSchema: JsonSchema
+  definitions: Record<string, JsonSchema>
   uiSchema?: any
   // selectedElementKey?: string | null
   selectedPath?: string
+  uiSchemas: Record<string, UISchemaElement>
+  selectedDefinition: string,
+  definitionsKey: "definitions" | "$defs"
 }
 
 // export const exampleInitialState1: JsonFormsEditState = {
@@ -204,7 +208,53 @@ export type JsonFormsEditState = {
 export const exampleInitialState: JsonFormsEditState = {
   jsonSchema: {
     type: 'object',
-    properties: {},
+    properties: {
+      mainCharacter: {
+        $ref: "#/definitions/Person"
+      }
+    },
   },
-  uiSchema: { type: 'VerticalLayout', elements: [] },
+  uiSchema: { type: 'VerticalLayout', elements: [
+    {
+      type: "Control",
+      scope: "#/properties/mainCharacter",
+      options: {
+        inline: true,
+        context: {
+          typeIRI: "http://schema.org/Person"
+        }
+      }
+    
+    }
+  ] },
+  definitions: {
+    Person: {
+      type: 'object',
+      properties: {
+        "givenName": {
+          type: "string"
+        },
+        "jobTitle": {
+          type: "string"
+        }
+      }
+    }
+  },
+  uiSchemas: {
+    "Person": {
+      type: "VerticalLayout",
+      elements: [
+        {
+          type: "Control",
+          scope: "#/properties/givenName"
+        },
+        {
+          type: "Control",
+          scope: "#/properties/jobTitle"
+        }
+      ]
+    } 
+  },
+  selectedDefinition: 'Root',
+  definitionsKey: "definitions"
 }

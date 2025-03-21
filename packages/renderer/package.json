@@ -72,7 +72,7 @@
     "@types/react-dom": "^18.2.7"
   },
   "dependencies": {
-    "@formswizard/designer-basic-renderer": "workspace",
+    "@formswizard/designer-basic-renderer": "workspace:*",
     "@formswizard/react-hooks": "workspace:*",
     "@formswizard/state": "workspace:*",
     "@formswizard/utils": "workspace:*",

@@ -151,3 +151,12 @@ export const deeplyUpdateReference = <T>(jsonschemaPart: T, oldPath: string, new
   }
   return jsonschemaPart
 }
+
+
+/**
+ * Returns the key used for definitions in the given JSON schema.
+ * If no definitions key is found, the default key "definitions" is returned.
+ * @param schema
+ */
+export const getDefintitionKey = (schema: JsonSchema) =>
+  "$defs" in schema ? "$defs" : "definitions";

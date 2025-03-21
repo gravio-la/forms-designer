@@ -38,21 +38,21 @@
   ],
   "private": true,
   "scripts": {
-    "build": "turbo run build --filter=!@formswizard/wizard-vite --concurrency 20",
-    "dev": "turbo run dev --concurrency 20",
+    "build": "turbo run build --filter=!@formswizard/wizard-vite --concurrency 21",
+    "dev": "turbo run dev --concurrency 21",
     "lint": "turbo run lint",
-    "lint-fix": "turbo run lint-fix --concurrency 20",
+    "lint-fix": "turbo run lint-fix --concurrency 21",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "build:pages": "./makeSite.sh",
     "push": "turbo run push --filter=./packages/*"
   },
   "devDependencies": {
-    "@turbo/gen": "^1.10.7",
-    "eslint": "^8.44.0",
+    "@turbo/gen": "^1.13.4",
+    "eslint": "^8.57.1",
     "eslint-config-formsdesigner": "workspace:*",
-    "prettier": "^3.0.0",
+    "prettier": "^3.5.3",
     "tsup": "^7.2.0",
-    "turbo": "^1.10.7"
+    "turbo": "^1.13.4"
   },
   "packageManager": "pnpm@7.15.0"
 }

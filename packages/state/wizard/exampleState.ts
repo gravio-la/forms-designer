@@ -5,7 +5,7 @@ export type JsonFormsEditState = {
   uiSchema?: any
   // selectedElementKey?: string | null
   selectedPath?: string
-  uiSchemas: Record<string, UISchemaElement>
+  uiSchemas: Record<string, any>
   selectedDefinition: string,
   definitionsKey: "definitions" | "$defs"
 }

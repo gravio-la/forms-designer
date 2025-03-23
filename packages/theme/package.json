@@ -20,7 +20,8 @@
     "eslint-config-formsdesigner": "workspace:*",
     "@formswizard/designer-tsconfig": "workspace:*",
     "typescript": "^4.5.2",
-    "react": ">=18"
+    "react": ">=18",
+    "@formswizard/tsup-config": "workspace:*"
   },
   "peerDependencies": {
     "@mui/base": "5.0.0-beta.8",

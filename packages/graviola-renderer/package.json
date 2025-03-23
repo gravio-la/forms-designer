@@ -15,8 +15,7 @@
     }
   ],
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.tsx",
   "scripts": {
     "build": "tsup src/index.tsx --format esm,cjs --dts --external react",
     "dev": "tsup src/index.tsx --format esm,cjs --watch --dts --external react",
@@ -35,20 +34,23 @@
     "@graviola/edb-core-types": "^1.1.0",
     "@graviola/edb-global-types": "^1.1.0",
     "@graviola/semantic-jsonform-types": "^1.1.0",
-    "@jsonforms/core": "^3.5.1",
-    "@jsonforms/react": "^3.5.1",
+    "@jsonforms/core": "^3",
+    "@jsonforms/react": "^3",
+    "@jsonforms/material-renderers": "^3",
     "@mui/material": "^5.17.1",
     "@types/lodash": "^4.17.16",
     "json-schema": "^0.4.0",
     "eslint": "^7.32.0",
     "eslint-config-formsdesigner": "workspace:*",
     "react": "^19.0.0",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "@formswizard/tsup-config": "workspace:*"
   },
   "peerDependencies": {
     "@ebay/nice-modal-react": "^1.2.13",
-    "@jsonforms/core": "^3.1.0",
-    "@jsonforms/react": "^3.1.0",
+    "@jsonforms/core": "^3",
+    "@jsonforms/react": "^3",
+    "@jsonforms/material-renderers": "^3",
     "@mui/material": "^5.14.2",
     "react": "^16.9.0 || ^17.0.0 || ^18"
   },
@@ -58,10 +60,13 @@
     "@formswizard/state": "workspace:*",
     "@formswizard/utils": "workspace:*",
     "@graviola/edb-advanced-components": "^1.1.1",
-    "@graviola/edb-linked-data-renderer": "^1.1.0",
+    "@graviola/edb-linked-data-renderer": "^1.1.1",
     "@graviola/edb-state-hooks": "^1.2.0",
     "@graviola/entity-finder": "^1.1.0",
     "@graviola/sparql-store-provider": "^1.1.0",
+    "@graviola/jsonld-utils": "^1.1.0",
+    "@graviola/edb-basic-components": "^1.1.0",
+    "@graviola/edb-data-mapping": "^0.2.0",
     "lodash-es": "^4.17.21"
   }
 }

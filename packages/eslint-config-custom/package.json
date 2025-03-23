@@ -11,5 +11,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@formswizard/tsup-config": "workspace:*"
   }
 }

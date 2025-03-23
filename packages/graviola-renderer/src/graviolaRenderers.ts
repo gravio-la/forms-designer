@@ -14,6 +14,6 @@ export const graviolaRenderers: JsonFormsRendererRegistryEntry[] = [
   },
   {
     tester: inlineSemanticFormsRendererTester,
-    renderer:  InlineCondensedSemanticFormsRenderer,
+    renderer: InlineCondensedSemanticFormsRenderer,
   },
 ]

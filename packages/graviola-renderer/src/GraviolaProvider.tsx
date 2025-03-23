@@ -6,6 +6,9 @@ import { SparqlStoreProvider } from '@graviola/sparql-store-provider';
 import { SimilarityFinder } from './SimilarityFinder';
 import { GlobalSemanticConfig, ModRouter } from '@graviola/semantic-jsonform-types';
 import type { JSONSchema7 } from 'json-schema';
+import { EditEntityModal } from './EditEntityModal';
+import { SemanticJsonFormNoOps } from '@graviola/edb-linked-data-renderer';
+import { JsonFormsRendererRegistryEntry } from '@jsonforms/core';
 
 const BASE_IRI = 'http://schema.org/';
 
@@ -19,7 +22,8 @@ const queryClient = new QueryClient();
 
 type GraviolaProviderProps = {
   children: React.ReactNode,
-  schema: JSONSchema7
+  schema: JSONSchema7,
+  renderers: JsonFormsRendererRegistryEntry[]
 }
 const endpoint: SparqlEndpoint = {
   endpoint: "http://localhost:7878/query",
@@ -34,10 +38,6 @@ const semanticConfig = createSemanticConfig({
 
 const realSemanticConfig: GlobalSemanticConfig = {
   ...semanticConfig,
-  typeIRIToTypeName: (iri: string) => iri && semanticConfig.typeIRIToTypeName(iri),
-  propertyNameToIRI: (name: string) => name && semanticConfig.propertyNameToIRI(name),
-  typeNameToTypeIRI: (name: string) => name && semanticConfig.typeNameToTypeIRI(name),
-  propertyIRIToPropertyName: (iri: string) => iri && semanticConfig.propertyIRIToPropertyName(iri),
   queryBuildOptions: {
     ...semanticConfig.queryBuildOptions,
     primaryFields: {
@@ -63,33 +63,34 @@ export const useRouterMock = () => {
   } as ModRouter;
 };
 
-export const GraviolaProvider: React.FC<GraviolaProviderProps> = ({ children, schema }: GraviolaProviderProps) => {
+export const GraviolaProvider: React.FC<GraviolaProviderProps> = ({ children, schema, renderers }: GraviolaProviderProps) => {
   // @ts-ignore
   return <AdbProvider
-    {...realSemanticConfig}
-    env={{
-      publicBasePath: '',
-      baseIRI: BASE_IRI,
-    }}
-    lockedSPARQLEndpoint={endpoint}
-    normDataMapping={{}}
-    components={{
-      EditEntityModal: () => null,
-      EntityDetailModal: () => null,
-      SemanticJsonForm: () => null,
-      SimilarityFinder: SimilarityFinder,
-    }}
-    useRouterHook={useRouterMock}
-    schema={schema}
-  >
-    <QueryClientProvider client={queryClient}>
-      <NiceModal.Provider>
+      {...realSemanticConfig}
+      env={{
+        publicBasePath: '',
+        baseIRI: BASE_IRI,
+      }}
+      lockedSPARQLEndpoint={endpoint}
+      normDataMapping={{}}
+      components={{
+        EditEntityModal: EditEntityModal(renderers),
+        EntityDetailModal: () => null,
+        SemanticJsonForm: SemanticJsonFormNoOps,
+        SimilarityFinder: SimilarityFinder,
+      }}
+      useRouterHook={useRouterMock}
+      schema={schema}
+    >
+      <QueryClientProvider client={queryClient}>
         <SparqlStoreProvider
           endpoint={endpoint}
-          defaultLimit={10}
-          children={children}
-        />
-      </NiceModal.Provider>
-    </QueryClientProvider>
-  </AdbProvider>
+          defaultLimit={20}
+        >
+          <NiceModal.Provider>
+            {children}
+          </NiceModal.Provider>
+        </SparqlStoreProvider>
+      </QueryClientProvider>
+    </AdbProvider>
 }

@@ -1,10 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { materialCells, materialRenderers } from '@jsonforms/material-renderers'
+import { materialCells } from '@jsonforms/material-renderers'
 import { JsonForms } from '@jsonforms/react'
 import { useJsonSchema } from '@formswizard/state'
 import { selectUiSchema, useAppSelector, selectPreviewModus } from '@formswizard/state'
 import { extendUiSchemaWithPath } from '@formswizard/utils'
-import { basicRenderer } from '@formswizard/designer-basic-renderer'
 import {
   horizontalLayoutTester,
   HorizontalLayoutWithDropZoneRenderer,
@@ -14,6 +13,7 @@ import {
 import { JsonFormsRendererRegistryEntry } from '@jsonforms/core'
 import { useDragScrolling } from '@formswizard/react-hooks'
 import { Box, BoxProps } from '@mui/material'
+import { renderers } from './renderers'
 
 const additionalRenderers = [
   {
@@ -29,7 +29,7 @@ const additionalRenderers = [
 export type WizardProps = {
   renderers?: JsonFormsRendererRegistryEntry[],
 }
-export function Wizard({ renderers = [], ...props }: WizardProps & BoxProps) {
+export function Wizard({ renderers: ownRenderers , ...props }: WizardProps & BoxProps) {
   const [data, setData] = useState({})
 
   const handleFormChange = useCallback(({ data }: { data: any }) => setData(data), [setData])
@@ -39,12 +39,12 @@ export function Wizard({ renderers = [], ...props }: WizardProps & BoxProps) {
   const uiSchemaWithPath = useMemo(() => extendUiSchemaWithPath(uiSchema), [uiSchema])
   const previewModus = useAppSelector(selectPreviewModus)
   const finalRenderers: JsonFormsRendererRegistryEntry[] = useMemo(
-    () => [...materialRenderers, ...additionalRenderers, ...basicRenderer, ...renderers],
-    [renderers]
+    () => [...(ownRenderers || []), ...additionalRenderers, ...renderers],
+    [ownRenderers]
   )
   const previewRenderers: JsonFormsRendererRegistryEntry[] = useMemo(
-    () => [...materialRenderers, ...basicRenderer, ...renderers],
-    [renderers]
+    () => [...(ownRenderers || []), ...renderers],
+    [ownRenderers]
   )
   useDragScrolling()
   return (

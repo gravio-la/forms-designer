@@ -13,15 +13,16 @@
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
-    "@jsonforms/material-renderers": "^3.1.0",
-    "@jsonforms/react": "^3.1.0",
+    "@jsonforms/material-renderers": "^3",
+    "@jsonforms/react": "^3",
     "@mui/icons-material": "~5.11.16",
     "@mui/material": "~5.14.0",
     "@mui/x-date-pickers": "^6.10.0",
     "@reduxjs/toolkit": "^2.6.1",
     "ajv": "^8.12.0",
     "dayjs": "^1.11.9",
-    "@formswizard/forms-designer": "workspace:*",
+    "@formswizard/graviola-forms-designer": "workspace:*",
+    "@ebay/nice-modal-react": "^1.2.13",
     "next": "^13.4.12",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",
@@ -35,9 +36,14 @@
     "eslint-config-formsdesigner": "workspace:*",
     "@formswizard/designer-tsconfig": "workspace:*",
     "typescript": "^4.9.4",
-    "vite": "^4.4.9",
+    "vite": "^7.1.6",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "@vitejs/plugin-react": "^4.0.4"
+    "@vitejs/plugin-react": "^5.0.3",
+    "rollup-plugin-visualizer": "^6.0.3"
+  },
+  "resolutions": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   }
 }

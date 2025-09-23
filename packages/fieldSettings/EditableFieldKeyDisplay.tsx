@@ -1,12 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { materialCells, materialRenderers } from '@jsonforms/material-renderers'
-import { JsonForms } from '@jsonforms/react'
-import { useToolSettings } from './useFieldSettings'
-import { Box, Button, Grid, IconButton, TextField, ToggleButton, Toolbar, Typography } from '@mui/material'
+import { useCallback, useEffect, useState } from 'react'
+import { Button, Grid, IconButton, TextField, Typography } from '@mui/material'
 import * as Icons from '@mui/icons-material'
 import { renameField, useAppDispatch } from '@formswizard/state'
-import { pathToPathSegments, splitLastPath, filterNullOrUndef } from '@formswizard/utils'
-import { ToolSetting } from './ToolSettingType'
 import { useWizardSelection } from './useWizardSelection'
 
 function EditableFieldKeyDisplay() {
@@ -34,7 +29,6 @@ function EditableFieldKeyDisplay() {
   return (
     <>
       <Typography variant="h6" component="div">
-        Settings for
         {!showKeyEditor && (
           <>
             <span> {selectionDisplayName}</span>

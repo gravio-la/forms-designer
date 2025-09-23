@@ -1,4 +1,7 @@
-import React, { FunctionComponent, useRef } from 'react'
+'use client'
+
+import type { FunctionComponent, ReactNode } from 'react'
+import { useRef } from 'react'
 import { Box, Button, Container, Drawer, Paper, Tab, Tabs, Toolbar } from '@mui/material'
 import { Wizard, WizardProps } from './Wizard'
 import { Toolbox, ToolboxProps } from '@formswizard/toolbox'
@@ -6,14 +9,17 @@ import { FieldSettingsView, useToolSettings } from '@formswizard/fieldsettings'
 import { MainAppBar } from './layout/MainAppBar'
 import { TrashFAB } from './components'
 import { EditableTab } from './components/EditableTab'
+import { AddDefinitionButton } from './components/AddDefinitionButton'
 import { selectCurrentDefinition, selectJsonSchemaDefinitions, selectPreviewModus, switchDefinition, togglePreviewModus, useAppDispatch, useAppSelector, renameSchemaDefinition } from '@formswizard/state'
 import useAutoDeselectOnOutsideClick from './useAutoDeselectOnOutsideClick'
-import { ToolSetting } from '@formswizard/types'
+import { JsonSchema, ToolSettings } from '@formswizard/types'
 
 interface OwnProps {
-  appBar?: React.ReactNode
-  additionalToolSettings?: ToolSetting[]
+  appBar?: ReactNode
+  additionalToolSettings?: ToolSettings
   toolboxProps?: ToolboxProps
+  multipleDefinitions?: boolean
+  createNewDefinition?: (name: string) => { name: string, definition: JsonSchema }
 }
 
 type Props = OwnProps & Partial<WizardProps>
@@ -27,7 +33,7 @@ const a11yProps = (index: number) => {
 }
 
 const drawerWidth = 240
-export const MainLayout: FunctionComponent<Props> = ({ appBar, additionalToolSettings, toolboxProps, ...wizardProps }) => {
+export const MainLayout: FunctionComponent<Props> = ({ appBar, additionalToolSettings, toolboxProps, multipleDefinitions, createNewDefinition, ...wizardProps }) => {
   const wizardPaperRef = useRef<null | HTMLDivElement>(null)
   const dispatch = useAppDispatch()
   const previewModus = useAppSelector(selectPreviewModus)
@@ -75,29 +81,34 @@ export const MainLayout: FunctionComponent<Props> = ({ appBar, additionalToolSet
         </Drawer>
         <Container maxWidth={false} ref={wizardPaperRef}>
           <Toolbar />
-          <Tabs
-            value={currentDefinition}
-            onChange={handleChange}
-            indicatorColor="secondary"
-            textColor="inherit"
-            variant="fullWidth"
-            aria-label="form definitions tabs"
-          >
-            <Tab key="Root" value={"Root"} label="Root" {...a11yProps(0)} />
-            {Object.keys(definitions || {}).filter(def => def !== "Root").map((def, index) => (
-              <EditableTab
-                key={def}
-                label={def}
-                value={def}
-                tabProps={a11yProps(index + 1)}
-                onRename={handleRenameDefinition}
-                readonly={previewModus}
-              />
-            ))}
-          </Tabs>
-            <Paper elevation={12} square  sx={{  p: 2, m: 4 }}>
-              <Wizard {...wizardProps} />
-            </Paper>
+          <Box display="flex" flexDirection="row" alignItems='center'>
+            {multipleDefinitions && <>
+              <Tabs
+                value={currentDefinition}
+                onChange={handleChange}
+                indicatorColor="secondary"
+                textColor="inherit"
+                variant="fullWidth"
+                aria-label="form definitions tabs"
+              >
+                <Tab key="Root" value={"Root"} label="Root" {...a11yProps(0)} />
+                {Object.keys(definitions || {}).filter(def => def !== "Root").map((def, index) => (
+                  <EditableTab
+                    definitionName={def}
+                    key={def}
+                    value={def}
+                    {...a11yProps(index + 1)}
+                    onRename={handleRenameDefinition}
+                    readonly={previewModus}
+                  />
+                ))}
+              </Tabs>
+              <AddDefinitionButton createNewDefinition={createNewDefinition} />
+            </>}
+          </Box>
+          <Paper elevation={12} square sx={{ p: 2, m: 4 }}>
+            <Wizard {...wizardProps} />
+          </Paper>
         </Container>
         <Drawer
           variant="persistent"

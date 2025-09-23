@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { materialCells } from '@jsonforms/material-renderers'
 import { JsonForms } from '@jsonforms/react'
 import { useJsonSchema } from '@formswizard/state'
@@ -10,7 +10,7 @@ import {
   verticalLayoutTester,
   VerticalLayoutWithDropZoneRenderer,
 } from '@formswizard/designer-renderer'
-import { JsonFormsRendererRegistryEntry } from '@jsonforms/core'
+import { JsonFormsRendererRegistryEntry, JsonSchema as JsonFormsJsonSchema } from '@jsonforms/core'
 import { useDragScrolling } from '@formswizard/react-hooks'
 import { Box, BoxProps } from '@mui/material'
 import { renderers } from './renderers'
@@ -54,7 +54,7 @@ export function Wizard({ renderers: ownRenderers , ...props }: WizardProps & Box
         renderers={previewModus ? previewRenderers : finalRenderers}
         cells={materialCells}
         onChange={handleFormChange}
-        schema={schema}
+        schema={schema as JsonFormsJsonSchema}
         uischema={uiSchemaWithPath}
         readonly={!previewModus}
       />

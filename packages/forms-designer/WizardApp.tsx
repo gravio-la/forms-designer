@@ -1,23 +1,22 @@
 'use client'
 
-import React from 'react'
 import { MainLayout } from './MainLayout'
 import { WizardProvider } from './WizardProvider'
-import { GraviolaProvider, graviolaToolSetting, graviolaDraggableComponents } from '@formswizard/graviola-renderers'
-import { useJsonSchema } from '@formswizard/state'
 import { basicDraggableComponents } from '@formswizard/toolbox'
-import { renderers } from './renderers'
-const GraviolaProviderWithSchema = ({ children }: { children: React.ReactNode }) => {
-  const schema = useJsonSchema()
-  return <GraviolaProvider schema={schema} renderers={renderers}>{children}</GraviolaProvider>
+import { DraggableElement } from '@formswizard/types'
+
+const WizardAppBasic = () => {
+  return (
+    <MainLayout
+      multipleDefinitions={false}
+      toolboxProps={{ draggableComponents: [...basicDraggableComponents] as DraggableElement[] }} />
+  )
 }
 
 export function WizardApp() {
   return (
     <WizardProvider>
-      <GraviolaProviderWithSchema>
-        <MainLayout additionalToolSettings={[graviolaToolSetting]} toolboxProps={{ draggableComponents: [...basicDraggableComponents, ...graviolaDraggableComponents] }} />
-      </GraviolaProviderWithSchema>
+      <WizardAppBasic />
     </WizardProvider>
   )
 }

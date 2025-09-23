@@ -103,7 +103,6 @@ export const useDropTarget = ({ child, isPlaceholder = false }: UseDropTargetPro
             name: componentMeta?.name ? componentMeta.name.split('.').pop() : 'layout',
             uiSchema: rest,
           }
-          console.log('draggableMeta', draggableMeta)
           if (!draggableMeta.jsonSchemaElement['$ref']) {
             setDraggedMeta(draggableMeta)
           }
@@ -140,7 +139,6 @@ export const useDropTarget = ({ child, isPlaceholder = false }: UseDropTargetPro
             name: componentMeta?.name ? componentMeta.name.split('.').pop() : 'layout',
             uiSchema: rest,
           }
-          console.log('draggableMeta', draggableMeta)
           if (!draggableMeta.jsonSchemaElement['$ref']) {
             setDraggedMeta(draggableMeta)
           }

@@ -1,7 +1,7 @@
 import { defineConfig } from "tsup";
 
 const config = defineConfig({
-  entry: ["src/index.ts", "src/index.tsx"],
+  entry: [ "src/index.ts", "src/index.tsx", "index.tsx"],
   format: ["cjs", "esm"],
   external: [
     // Always exclude node_modules and core packages

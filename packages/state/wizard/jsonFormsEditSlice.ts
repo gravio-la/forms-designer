@@ -1,5 +1,5 @@
-import { createSelector, createSlice, current, PayloadAction } from '@reduxjs/toolkit'
-import { JsonSchema, resolveSchema, Scopable, UISchemaElement } from '@jsonforms/core'
+import { createSelector, createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit'
+import { generateDefaultUISchema, Scopable, UISchemaElement, Paths } from '@jsonforms/core'
 import { RootState } from '../store'
 import {
   deeplySetNestedProperty,
@@ -8,21 +8,20 @@ import {
   pathSegmentsToScope,
   pathToPathSegments,
   recursivelyMapSchema,
-  removeUISchemaElement,
   scopeToPathSegments,
   updateScopeOfUISchemaElement,
   updateUISchemaElement,
   deeplyRemoveNestedProperty,
   deeplyRenameNestedProperty,
-  collectSchemaGarbage,
   deeplyUpdateReference,
+  resolveScopeWithoutRef
 } from '@formswizard/utils'
 
 import {
   DraggableComponent,
   DraggableUISchemaElement,
   ScopableUISchemaElement,
-  DraggableElement,
+  JsonSchema,
 } from '@formswizard/types'
 import { exampleInitialState, JsonFormsEditState } from './exampleState'
 import jsonpointer from 'jsonpointer'
@@ -37,6 +36,8 @@ export const selectJsonSchema = (state: RootState) => state.jsonFormsEdit.jsonSc
 
 export const selectUiSchema = (state: RootState) => state.jsonFormsEdit.uiSchema
 
+export const selectUiSchemas = (state: RootState) => state.jsonFormsEdit.uiSchemas
+
 // export const selectSelectedElementKey = (state: RootState) => state.jsonFormsEdit.selectedElementKey
 export const selectSelectedPath = (state: RootState) => state.jsonFormsEdit.selectedPath
 
@@ -47,8 +48,8 @@ export const selectUIElementByScope: (uiSchema: UISchemaElement, scope: string) 
 ) => {
   //TODO: make this code cleaner by using a functional recursive findestate.jsonSchema.propertiesr
   let uiElement: UISchemaElement | undefined = undefined
-  recursivelyMapSchema(uiSchema, (uischema: ScopableUISchemaElement) => {
-    if (uischema.scope === scope) {
+  recursivelyMapSchema(uiSchema, (uischema: UISchemaElement) => {
+    if (isScopableUISchemaElement(uischema) && uischema.scope === scope) {
       uiElement = uischema
       return uischema as UISchemaElement
     }
@@ -249,6 +250,10 @@ export const jsonFormsEditSlice = createSlice({
     //   state.selectedElementKey = action.payload
     // },
     selectPath: (state: JsonFormsEditState, action: PayloadAction<string | undefined>) => {
+      if(state.selectedPath === action.payload) {
+        state.selectedPath = undefined
+        return
+      }
       state.selectedPath = action.payload
     },
     loadTemplate: (state: JsonFormsEditState, action: any) => {
@@ -277,7 +282,14 @@ export const jsonFormsEditSlice = createSlice({
       jsonpointer.set(state.uiSchema, pathSegmentsToJSONPointer(pathToPathSegments(path)), updatedUIschema)
       // only update json schema if ui schema has a scope
       if (uiSchema?.scope) {
-        const schema = resolveSchema(state.jsonSchema, uiSchema.scope, state.jsonSchema)
+        const rootSchema = {
+          ...state.jsonSchema,
+          [state.definitionsKey]: {
+            Root: state.jsonSchema,
+            ...state.definitions,
+          },
+        } as JsonSchema
+        const schema = resolveScopeWithoutRef(rootSchema, uiSchema.scope)
         if (schema) {
           Object.assign(schema, updatedSchema)
         }
@@ -289,7 +301,7 @@ export const jsonFormsEditSlice = createSlice({
       const { uiSchema } = action.payload.componentMeta
       const { path, scope } = uiSchema as any
       if (!path) {
-        console.log('only elements with path are removeable ')
+        console.warn('only elements with path are removeable ')
         return
       }
       const pathSegments = pathToPathSegments(path)
@@ -332,9 +344,7 @@ export const jsonFormsEditSlice = createSlice({
       if (newFieldName.includes('.')) {
         throw new Error('Field name cannot contain a dot')
       }
-      console.log(path)
       const uiSchema = jsonpointer.get(state.uiSchema, pathSegmentsToJSONPointer(pathToPathSegments(path)))
-      resolveSchema(state.jsonSchema, uiSchema.scope, state.jsonSchema)
       state.jsonSchema = deeplyRenameNestedProperty(state.jsonSchema, scopeToPathSegments(uiSchema.scope), newFieldName)
       if (state.uiSchema?.elements) {
         const segments = scopeToPathSegments(uiSchema.scope)
@@ -347,15 +357,26 @@ export const jsonFormsEditSlice = createSlice({
     },
     renameSchemaDefinition: (state: JsonFormsEditState, action: PayloadAction<{ oldName: string; newName: string }>) => {
       const { oldName, newName } = action.payload
-      if(!state.definitions[oldName]){
+      if (!state.definitions[oldName]) {
         throw new Error(`Definition ${oldName} not found`)
       }
-      if(state.definitions[newName]){
+      if (state.definitions[newName]) {
         throw new Error(`Definition ${newName} already exists`)
       }
       state.definitions[newName] = state.definitions[oldName]
       delete state.definitions[oldName]
       state.jsonSchema = deeplyUpdateReference(state.jsonSchema, `#/${state.definitionsKey}/${oldName}`, `#/${state.definitionsKey}/${newName}`)
+      if (state.selectedDefinition === oldName) {
+        state.selectedDefinition = newName
+      }
+    },
+    addSchemaDefinition: (state: JsonFormsEditState, action: PayloadAction<{ name: string; definition: JsonSchema, uiSchema?: UISchemaElement }>) => {
+      const { name, definition, uiSchema } = action.payload
+      if (state.definitions[name]) {
+        throw new Error(`Definition ${name} already exists`)
+      }
+      state.definitions[name] = definition
+      state.uiSchemas[name] = uiSchema || generateDefaultUISchema(definition as any)
     },
     updateUISchemaByScope: (
       state: JsonFormsEditState,
@@ -368,9 +389,13 @@ export const jsonFormsEditSlice = createSlice({
     switchDefinition: (state: JsonFormsEditState, action: PayloadAction<{ definition: string }>) => {
       const { definition } = action.payload
       const currentDefinitionKey = state.selectedDefinition
+      if(currentDefinitionKey === definition) {
+        return
+      }
 
       state.uiSchemas[currentDefinitionKey] = state.uiSchema
       state.definitions[currentDefinitionKey] = state.jsonSchema
+      state.selectedPath = undefined
 
       state.selectedDefinition = definition
       state.uiSchema = state.uiSchemas[definition] || { type: 'VerticalLayout', elements: [] }
@@ -432,12 +457,12 @@ export const jsonFormsEditSlice = createSlice({
         uiSchema = getUiSchemaWithScope(draggableMeta, deepestGroupPath, newKey)
 
         if (draggableMeta.jsonSchemaElement && Object.keys(draggableMeta.jsonSchemaElement).length > 0)
-          if(draggableMeta.jsonSchemaElement['$ref']){
+          if (draggableMeta.jsonSchemaElement['$ref']) {
             const ref = draggableMeta.jsonSchemaElement['$ref'].replace(/^#/, '')
             const refSchema = jsonpointer.get(state.jsonSchema, ref)
             //get last part of ref
             const refDefinitionKey = ref.split('/').pop() as string
-            if(!refSchema){
+            if (!refSchema) {
               //create a new definition
               const definition = {
                 "type": "object",
@@ -453,13 +478,13 @@ export const jsonFormsEditSlice = createSlice({
               state.definitions[refDefinitionKey] = refSchema
             }
           }
-          state.jsonSchema = deeplySetNestedProperty(
-            state.jsonSchema,
-            deepestGroupPath,
-            newKey,
-            draggableMeta.jsonSchemaElement,
-            true
-          )
+        state.jsonSchema = deeplySetNestedProperty(
+          state.jsonSchema,
+          deepestGroupPath,
+          newKey,
+          draggableMeta.jsonSchemaElement,
+          true
+        )
       }
       if (oldUISchemaElements && uiSchema) {
         oldUISchemaElements.splice(targetIndex, 0, uiSchema)
@@ -535,9 +560,10 @@ export const {
   loadTemplate,
   moveControl,
   renameSchemaDefinition,
+  addSchemaDefinition,
 } = jsonFormsEditSlice.actions
 
-export const jsonFormsEditReducer = jsonFormsEditSlice.reducer
+export const jsonFormsEditReducer: Reducer<JsonFormsEditState> = jsonFormsEditSlice.reducer
 
 function getJsonSchemaByPath(jsonSchema: JsonSchema, path: any) {
   const pathArray = path.split('.')
@@ -563,7 +589,7 @@ export const selectUIElementFromSelection: (state: RootState) => UISchemaElement
       | ScopableUISchemaElement
   })
 
-export const selectSelectedElementJsonSchema: (state: RootState) => JsonSchema | null = createSelector(
+export const selectSelectedElementJsonSchema: (state: RootState) => JsonSchema | null | undefined = createSelector(
   selectJsonSchema,
   selectUIElementFromSelection,
   (jsonSchema, selectedUiSchema) => {
@@ -571,11 +597,11 @@ export const selectSelectedElementJsonSchema: (state: RootState) => JsonSchema |
       return null
     }
 
-    return resolveSchema(jsonSchema, selectedUiSchema.scope, jsonSchema)
+    return resolveScopeWithoutRef(jsonSchema, selectedUiSchema.scope)
   }
 )
 
-export const selectJsonSchemaDefinitions: (state: RootState) => Record<string, JsonSchema> | null = 
+export const selectJsonSchemaDefinitions: (state: RootState) => Record<string, JsonSchema> | null =
   (state: RootState) => {
     return state.jsonFormsEdit.definitions
   }
@@ -602,10 +628,27 @@ export const selectSelectedKeyName: (state: RootState) => string | null = create
     if (!selectedJsonSchema) {
       return null
     }
-    // @ts-ignore
-    console.log(selectedUiSchema?.scope)
-    // @ts-ignore
-    return selectedUiSchema?.scope?.split('/').pop() ?? null
+    if(isScopableUISchemaElement(selectedUiSchema)) {
+      return selectedUiSchema?.scope?.split('/').pop() ?? null
+    }
+    return null
+  }
+)
+
+export const selectRootJsonSchema: (state: RootState) => JsonSchema = createSelector(
+  [
+    selectJsonSchema,
+    selectJsonSchemaDefinitions,
+    (state: RootState) => state.jsonFormsEdit.definitionsKey,
+  ],
+  (jsonSchema, definitions, definitionsKey) => {
+    return {
+      ...jsonSchema,
+      [definitionsKey]: {
+        Root: jsonSchema,
+        ...definitions,
+      },
+    } as JsonSchema
   }
 )
 

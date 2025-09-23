@@ -1,5 +1,5 @@
 import { resolveSchema } from '@jsonforms/core'
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit'
 import { cloneDeep, last } from 'lodash'
 import { advancedDraggableComponents } from './advancedDraggableComponents'
 import { getAllScopesInSchema, scopeToPathSegments } from '@formswizard/utils'
@@ -56,7 +56,6 @@ export const buildingBlocksSlice = createSlice({
         jsonSchemaElement: blockSchema,
         ToolIconName,
       }
-      console.log('adding building block', blockItem)
       state.blocks.push(blockItem)
     },
     removeBuildingBlock: (state: buildingBlocksSlice, action: PayloadAction<number>) => {
@@ -67,4 +66,4 @@ export const buildingBlocksSlice = createSlice({
 
 export const { addBuildingBlock, removeBuildingBlock } = buildingBlocksSlice.actions
 
-export default buildingBlocksSlice.reducer
+export const buildingBlocksReducer: Reducer<buildingBlocksSlice> = buildingBlocksSlice.reducer

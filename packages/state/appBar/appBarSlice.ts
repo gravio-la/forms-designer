@@ -1,5 +1,5 @@
 import { PaletteMode } from '@mui/material'
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit'
 
 import { RootState } from '../store'
 
@@ -12,6 +12,7 @@ export type AppBarState = {
 
 export const selectPreviewModus = (state: RootState) => state.AppBar.previewModus
 export const selectSelectedLanguage = (state: RootState) => state.AppBar.selectedLanguage
+export const selectThemeMode = (state: RootState) => state.AppBar.themeMode
 let defaultThemeMode = 'light'
 /*if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
   defaultThemeMode = 'dark'
@@ -35,6 +36,6 @@ export const appBarSlice = createSlice({
 
 export const { togglePreviewModus, changeSelectedLanguage, toggleColorMode } = appBarSlice.actions
 
-export const appBarReducer = appBarSlice.reducer
+export const appBarReducer: Reducer<AppBarState> = appBarSlice.reducer
 
 

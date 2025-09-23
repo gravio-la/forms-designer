@@ -38,21 +38,32 @@
   ],
   "private": true,
   "scripts": {
-    "build": "turbo run build --filter=!@formswizard/wizard-vite --concurrency 21",
+    "build": "turbo run build --filter=!@formswizard/wizard-vite --continue --concurrency 21",
     "dev": "turbo run dev --concurrency 21",
     "lint": "turbo run lint",
     "lint-fix": "turbo run lint-fix --concurrency 21",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "build:pages": "./makeSite.sh",
-    "push": "turbo run push --filter=./packages/*"
+    "push": "turbo run push --filter=./packages/*",
+    "clean-reinstall": "rm -rf node_modules apps/*/node_modules packages/*/node_modules && bun install"
   },
   "devDependencies": {
-    "@turbo/gen": "^1.13.4",
-    "eslint": "^8.57.1",
+    "@turbo/gen": "^2.5.6",
+    "eslint": "^9.36.0",
     "eslint-config-formsdesigner": "workspace:*",
-    "prettier": "^3.5.3",
-    "tsup": "^7.2.0",
-    "turbo": "^1.13.4"
+    "prettier": "^3.6.2",
+    "tsup": "^8.5.0",
+    "turbo": "^2.5.6"
   },
-  "packageManager": "pnpm@7.15.0"
+  "packageManager": "bun@1.1.31",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "resolutions": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "@types/react": "18.2.0",
+    "@types/react-dom": "18.2.0"
+  }
 }

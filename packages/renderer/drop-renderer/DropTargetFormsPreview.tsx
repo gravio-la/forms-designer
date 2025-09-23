@@ -1,11 +1,13 @@
 import { DraggableComponent } from '@formswizard/types'
 import { JsonForms } from '@jsonforms/react'
 import { materialCells, materialRenderers } from '@jsonforms/material-renderers'
-import { JsonSchema7, UISchemaElement } from '@jsonforms/core'
+import { UISchemaElement, JsonSchema as JsonFormsJsonSchema } from '@jsonforms/core'
 import { basicRenderer } from '@formswizard/designer-basic-renderer'
+import { selectJsonSchemaDefinitions, useAppSelector } from '@formswizard/state'
 
 export const DropTargetFormsPreview: React.FC<{ metadata: DraggableComponent }> = ({ metadata }) => {
   const name = metadata.name
+  const definitions = useAppSelector(selectJsonSchemaDefinitions)
   return !name ? null : (
     <>
       {metadata.jsonSchemaElement && (
@@ -27,11 +29,12 @@ export const DropTargetFormsPreview: React.FC<{ metadata: DraggableComponent }> 
           }
           schema={
             {
+              definitions: definitions,
               type: 'object',
               properties: {
                 [name]: metadata.jsonSchemaElement,
               },
-            } as JsonSchema7
+            } as JsonFormsJsonSchema
           }
         />
       )}

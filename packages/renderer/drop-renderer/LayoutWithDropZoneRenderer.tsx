@@ -108,9 +108,6 @@ const MaterialLayoutRendererComponent = (props: MaterialLayoutRendererProps) => 
             spacing={0}
             sx={{
               alignItems: 'stretch',
-              '&:hover': {
-                outline: (theme) => `1px dashed ${theme.palette.primary.main}`,
-              },
             }}
           >
             {elements.length === 0 ? (

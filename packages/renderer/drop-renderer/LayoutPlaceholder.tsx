@@ -1,7 +1,6 @@
 import type { OwnPropsOfRenderer, UISchemaElement } from '@jsonforms/core'
 
 import { Box, Grid } from '@mui/material'
-import React from 'react'
 import { DropTargetFormsPreview } from './DropTargetFormsPreview'
 import { useDNDHooksContext, useDropTarget } from '@formswizard/react-hooks'
 

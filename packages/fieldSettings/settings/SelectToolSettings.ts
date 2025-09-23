@@ -1,7 +1,6 @@
-import { JsonSchema } from '@jsonforms/core'
-import ToolsettingParts from '../mixins/ToolSettingParts'
+import { ToolsettingParts } from '../mixins'
 
-import { ToolSetting } from '@formswizard/types'
+import { ToolSetting, JsonSchema } from '@formswizard/types'
 
 const jsonSchema = {
   type: 'object',

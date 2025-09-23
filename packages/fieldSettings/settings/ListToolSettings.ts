@@ -1,6 +1,5 @@
-import { JsonSchema, JsonSchema7 } from '@jsonforms/core'
-import ToolsettingParts from '../mixins/ToolSettingParts'
-import { ToolSetting } from '@formswizard/types'
+import { ToolsettingParts } from '../mixins'
+import { ToolSetting, JsonSchema } from '@formswizard/types'
 
 const jsonSchema = {
   type: 'object',
@@ -60,7 +59,7 @@ const ListToolSettings: ToolSetting = {
   mapToolDataToWizardUischema,
   jsonSchema,
   tester: (uiSchema, jsonSchema) =>
-    jsonSchema && jsonSchema.type === 'array' && (jsonSchema?.items as JsonSchema7 | undefined)?.type === 'object'
+    jsonSchema && jsonSchema.type === 'array' && (jsonSchema?.items as JsonSchema | undefined)?.type === 'object'
       ? 1
       : 0,
   toolSettingsMixins: [ToolsettingParts.Title],

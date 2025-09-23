@@ -1,5 +1,4 @@
-import { JsonSchema } from '@jsonforms/core'
-import { ToolSetting } from '@formswizard/types'
+import { ToolSetting, JsonSchema } from '@formswizard/types'
 
 const jsonSchema = {
   type: 'object',

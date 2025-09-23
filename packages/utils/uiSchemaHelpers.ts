@@ -1,6 +1,6 @@
 import { isLayout, Layout, UISchemaElement } from '@jsonforms/core'
 import { last, isEmpty } from 'lodash'
-import { ScopableUISchemaElement } from '../types'
+import { isScopableUISchemaElement } from '../types'
 
 const insertIntoArray = <T>(arr: T[], index: number, element: T) => {
   return [...arr.slice(0, index), element, ...arr.slice(index)]
@@ -22,9 +22,10 @@ export const recursivelyMapSchema = (
     return undefined
   }
   if (isLayout(uischema)) {
+    const layout = uischema as Layout;
     return toApply({
       ...uischema,
-      elements: uischema.elements.map((child) => recursivelyMapSchema(child, toApply)),
+      elements: layout.elements.map((child) => recursivelyMapSchema(child, toApply)).filter((child): child is UISchemaElement => child !== undefined),
     } as UISchemaElement)
   }
   return toApply(uischema)
@@ -36,61 +37,76 @@ export const insertUISchemaAfterScope = (
   position?: number
 ) => {
   return recursivelyMapSchema(uiSchema, (uischema) => {
-    if (isLayout(uischema) && uischema.elements.find((el: ScopableUISchemaElement) => el.scope === scope)) {
-      // insert newElement after the element with scope
-      const newElements =
-        position === undefined
-          ? uischema.elements.reduce<ScopableUISchemaElement[]>(
-              (acc, el: ScopableUISchemaElement) => (el.scope === scope ? [...acc, el, newSchema] : [...acc, el]),
+    if (isLayout(uischema)) {
+      const layout = uischema as Layout;
+      if (layout.elements.find((el: UISchemaElement) => isScopableUISchemaElement(el) && el.scope === scope)) {
+        // insert newElement after the element with scope
+        const newElements =
+          position === undefined
+            ? layout.elements.reduce<UISchemaElement[]>(
+              (acc, el: UISchemaElement) => {
+                if (isScopableUISchemaElement(el) && el.scope === scope) {
+                  return [...acc, el, newSchema];
+                }
+                return [...acc, el];
+              },
               []
             )
-          : insertAtPosOrEnd(uischema.elements, position, newSchema)
-      return {
-        ...uischema,
-        elements: newElements,
-      } as UISchemaElement
+            : insertAtPosOrEnd(layout.elements, position, newSchema)
+        return {
+          ...uischema,
+          elements: newElements,
+        } as UISchemaElement
+      }
     }
     return uischema
   })
 }
 export const getAllScopesInSchema = (uiSchema: UISchemaElement) => {
   let scopes: string[] = []
-  recursivelyMapSchema(uiSchema, (ui: ScopableUISchemaElement) => {
-    ui.scope && scopes.push(ui.scope)
+  recursivelyMapSchema(uiSchema, (ui: UISchemaElement) => {
+    isScopableUISchemaElement(ui) && ui.scope && scopes.push(ui.scope)
     return ui
   })
   return scopes
 }
 export const removeUISchemaElement = (scope: string, uiSchema: UISchemaElement) => {
   return recursivelyMapSchema(uiSchema, (uischema) => {
-    if (isLayout(uischema) && uischema.elements.find((el: ScopableUISchemaElement) => el.scope === scope)) {
-      // insert newElement after the element with scope
-      const newElements = uischema.elements.filter((el: ScopableUISchemaElement) => el.scope !== scope)
-      return {
-        ...uischema,
-        elements: newElements,
-      } as UISchemaElement
+    if (isLayout(uischema)) {
+      const layout = uischema as Layout;
+      if (layout.elements.find((el: UISchemaElement) => isScopableUISchemaElement(el) && el.scope === scope)) {
+        // remove element with scope
+        const newElements = layout.elements.filter((el: UISchemaElement) => !(isScopableUISchemaElement(el) && el.scope === scope))
+        return {
+          ...uischema,
+          elements: newElements,
+        } as UISchemaElement
+      }
     }
     return uischema
   })
 }
 
 export const updateScopeOfUISchemaElement = (scope: string, newScope: string, uiSchema: UISchemaElement) => {
-  return recursivelyMapSchema(uiSchema, (uischema: ScopableUISchemaElement) => {
-    if (uischema.scope?.startsWith(scope)) {
-      return {
-        ...uischema,
-        scope: newScope + uischema.scope.slice(scope.length),
-      } as UISchemaElement
+  return recursivelyMapSchema(uiSchema, (uischema: UISchemaElement) => {
+    if (isScopableUISchemaElement(uischema)) {
+      if (uischema.scope?.startsWith(scope)) {
+        return {
+          ...uischema,
+          scope: newScope + uischema.scope.slice(scope.length),
+        } as UISchemaElement
+      }
     }
     return uischema
   })
 }
 
 export const updateUISchemaElement = (scope: string, newSchema: UISchemaElement, uiSchema: UISchemaElement) => {
-  return recursivelyMapSchema(uiSchema, (uischema: ScopableUISchemaElement) => {
+  return recursivelyMapSchema(uiSchema, (uischema: UISchemaElement) => {
+    if (isScopableUISchemaElement(uischema)) {
     if (uischema.scope === scope) {
       return newSchema
+    }
     }
     return uischema
   })

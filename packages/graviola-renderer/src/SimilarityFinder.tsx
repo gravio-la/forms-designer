@@ -1,6 +1,6 @@
 import { FunctionComponent, useMemo } from "react";
 import { EntityFinder } from "@graviola/entity-finder";
-import { FinderKnowledgeBaseDescription, SimilarityFinderProps } from "@graviola/semantic-jsonform-types";
+import { EntityFinderProps, FinderKnowledgeBaseDescription } from "@graviola/semantic-jsonform-types";
 import { useAdbContext, useDataStore } from "@graviola/edb-state-hooks";
 import { KBMainDatabase } from "@graviola/edb-advanced-components";
 
@@ -16,7 +16,7 @@ const useKnowledgeBases = () => {
   return kbs;
 }
 
-export const SimilarityFinder: FunctionComponent<SimilarityFinderProps> = (
+export const SimilarityFinder: FunctionComponent<EntityFinderProps> = (
   props,
 ) => {
   const allKnowledgeBases = useKnowledgeBases();

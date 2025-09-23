@@ -1,60 +1,87 @@
-import React from 'react'
-import { AdbProvider, createSemanticConfig, QueryClient, QueryClientProvider } from '@graviola/edb-state-hooks'
-import { SparqlEndpoint } from '@graviola/edb-core-types';
-import NiceModal from '@ebay/nice-modal-react';
-import { SparqlStoreProvider } from '@graviola/sparql-store-provider';
-import { SimilarityFinder } from './SimilarityFinder';
-import { GlobalSemanticConfig, ModRouter } from '@graviola/semantic-jsonform-types';
-import type { JSONSchema7 } from 'json-schema';
-import { EditEntityModal } from './EditEntityModal';
-import { SemanticJsonFormNoOps } from '@graviola/edb-linked-data-renderer';
-import { JsonFormsRendererRegistryEntry } from '@jsonforms/core';
+"use client";
 
-const BASE_IRI = 'http://schema.org/';
-
-/*const someNameToTypeIRI = (name: string) => `${BASE_IRI}${name}`;
-const someIRIToTypeName = (iri: string) =>
-  iri?.substring(BASE_IRI.length, iri.length);
-export const createNewIRI = () => `${BASE_IRI}${Math.random().toString(36).substring(2, 15)}`;
-*/
-
-const queryClient = new QueryClient();
+import { useCallback, useMemo } from "react";
+import {
+  AdbProvider,
+  useAdbContext,
+  useDataStore,
+} from "@graviola/edb-state-hooks";
+import {
+  PrimaryFieldDeclaration,
+  SparqlEndpoint,
+} from "@graviola/edb-core-types";
+import NiceModal from "@ebay/nice-modal-react";
+import { SparqlStoreProvider } from "@graviola/sparql-store-provider";
+import {
+  EditEntityModal,
+  EntityDetailModal,
+  KBMainDatabase,
+} from "@graviola/edb-advanced-components";
+import { EntityFinder } from "@graviola/entity-finder";
+import {
+  createSemanticConfig,
+  SemanticJsonFormNoOps,
+  createUISchemata,
+  createStubSchema,
+} from "@graviola/semantic-json-form";
+import {
+  EntityFinderProps,
+  FinderKnowledgeBaseDescription,
+  GlobalSemanticConfig,
+  ModRouter,
+} from "@graviola/semantic-jsonform-types";
+import {
+  JsonFormsCellRendererRegistryEntry,
+  JsonFormsRendererRegistryEntry,
+  UISchemaElement,
+} from "@jsonforms/core";
+import { JSONSchema7 } from "json-schema";
 
 type GraviolaProviderProps = {
-  children: React.ReactNode,
-  schema: JSONSchema7,
-  renderers: JsonFormsRendererRegistryEntry[]
-}
-const endpoint: SparqlEndpoint = {
-  endpoint: "http://localhost:7878/query",
-  label: "Local",
-  provider: "oxigraph",
-  active: true,
-}
+  apiBaseUrl: string;
+  baseIRI: string;
+  entityBaseIRI: string;
+  children: React.ReactNode;
+  schema: JSONSchema7;
+  renderers?: JsonFormsRendererRegistryEntry[];
+  cellRendererRegistry?: JsonFormsCellRendererRegistryEntry[];
+  authBearerToken?: string;
+  typeNameLabelMap: Record<string, string>;
+  typeNameUiSchemaOptionsMap: Record<string, any>;
+  primaryFields: PrimaryFieldDeclaration;
+  uischemata?: Record<string, UISchemaElement>;
+};
 
-const semanticConfig = createSemanticConfig({
-  baseIRI: BASE_IRI
-})
-
-const realSemanticConfig: GlobalSemanticConfig = {
-  ...semanticConfig,
-  queryBuildOptions: {
-    ...semanticConfig.queryBuildOptions,
-    primaryFields: {
-      "Person": {
-        "label": "givenName",
-      },
-    }
-  }
-}
+const SimilarityFinder = (props: EntityFinderProps) => {
+  const { queryBuildOptions } = useAdbContext();
+  const { dataStore } = useDataStore();
+  const allKnowledgeBases = useMemo<FinderKnowledgeBaseDescription<any>[]>(
+    () =>
+      dataStore
+        ? [
+            KBMainDatabase(
+              dataStore,
+              queryBuildOptions.primaryFields,
+              queryBuildOptions.typeIRItoTypeName,
+            ),
+          ]
+        : [],
+    [
+      dataStore,
+      queryBuildOptions.primaryFields,
+      queryBuildOptions.typeIRItoTypeName,
+    ],
+  );
+  return <EntityFinder {...props} allKnowledgeBases={allKnowledgeBases} />;
+};
 
 export const useRouterMock = () => {
   return {
     push: async (url) => {
-      console.log("push", url);
+      console.debug("push", url);
     },
     replace: async (url) => {
-      console.log("replace", url);
+      console.debug("replace", url);
     },
     asPath: "",
     pathname: "",
@@ -63,34 +90,98 @@ export const useRouterMock = () => {
   } as ModRouter;
 };
 
-export const GraviolaProvider: React.FC<GraviolaProviderProps> = ({ children, schema, renderers }: GraviolaProviderProps) => {
+export const GraviolaProvider: React.FC<GraviolaProviderProps> = ({
+  children,
+  baseIRI,
+  entityBaseIRI,
+  schema,
+  uischemata,
+  primaryFields,
+  renderers,
+  cellRendererRegistry,
+  apiBaseUrl,
+  typeNameLabelMap,
+  typeNameUiSchemaOptionsMap,
+}: GraviolaProviderProps) => {
+
+  const endpoint: SparqlEndpoint = useMemo(() => {
+    return {
+      endpoint: `${apiBaseUrl}`,
+      label: "SPARQL service",
+      provider: "oxigraph",
+      active: true,
+    };
+  }, [apiBaseUrl]);
+
+  const definitionToTypeIRI = (definitionName: string) =>
+    `${baseIRI}${definitionName}`;
+
+  const { registry } = useMemo(
+    () =>
+      createUISchemata(schema as JSONSchema7, {
+        typeNameLabelMap,
+        typeNameUiSchemaOptionsMap,
+        definitionToTypeIRI,
+      }),
+    [schema, typeNameLabelMap, typeNameUiSchemaOptionsMap, definitionToTypeIRI],
+  );
+
+
+  const config = useMemo<GlobalSemanticConfig>(() => {
+    const c = createSemanticConfig({ baseIRI });
+    return {
+      ...c,
+      queryBuildOptions: {
+        ...c.queryBuildOptions,
+        primaryFields,
+      },
+    };
+  }, [baseIRI, entityBaseIRI, primaryFields]);
+
+  const makeStubSchema = useCallback(
+    (schema: JSONSchema7) => {
+      const stubSchema = createStubSchema(schema, {
+        entityBaseIRI,
+        definitionToTypeIRI,
+      });
+
+      return stubSchema;
+    },
+    [definitionToTypeIRI, entityBaseIRI],
+  );
+
   // @ts-ignore
-  return <AdbProvider
-      {...realSemanticConfig}
-      env={{
-        publicBasePath: '',
-        baseIRI: BASE_IRI,
-      }}
-      lockedSPARQLEndpoint={endpoint}
-      normDataMapping={{}}
-      components={{
-        EditEntityModal: EditEntityModal(renderers),
-        EntityDetailModal: () => null,
-        SemanticJsonForm: SemanticJsonFormNoOps,
-        SimilarityFinder: SimilarityFinder,
-      }}
-      useRouterHook={useRouterMock}
-      schema={schema}
-    >
-      <QueryClientProvider client={queryClient}>
+  return (
+      <AdbProvider
+        {...config}
+        env={{
+          publicBasePath: "",
+          baseIRI,
+        }}
+        components={{
+          EditEntityModal: EditEntityModal,
+          EntityDetailModal: EntityDetailModal,
+          SemanticJsonForm: SemanticJsonFormNoOps,
+          SimilarityFinder: SimilarityFinder,
+        }}
+        useRouterHook={useRouterMock}
+        schema={schema}
+        makeStubSchema={makeStubSchema}
+        uiSchemaDefaultRegistry={registry}
+        rendererRegistry={renderers}
+        cellRendererRegistry={cellRendererRegistry}
+        uischemata={uischemata}
+      >
         <SparqlStoreProvider
-          endpoint={endpoint}
-          defaultLimit={20}
+         endpoint={endpoint} 
+         defaultLimit={20}
+          walkerOptions={{
+            maxRecursion: 2,
+          }}
+          enableInversePropertiesFeature={true}
         >
-          <NiceModal.Provider>
-            {children}
-          </NiceModal.Provider>
+          <NiceModal.Provider>{children}</NiceModal.Provider>
         </SparqlStoreProvider>
-      </QueryClientProvider>
-    </AdbProvider>
-}
+      </AdbProvider>
+  );
+};

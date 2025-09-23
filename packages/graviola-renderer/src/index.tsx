@@ -1,5 +1,5 @@
 export * from './GraviolaProvider'
-export * from './graviolaRenderers'
-export * from './graviolaToolSetting'
+export { graviolaRenderers } from '@graviola/semantic-json-form'
+export * from './graviolaToolSettings'
 export * from './graviolaDraggableComponents'
-export * from './EditEntityModal'
+export * from './selectPrimaryFields'

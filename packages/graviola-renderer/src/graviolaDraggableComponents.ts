@@ -6,19 +6,39 @@ export const graviolaDraggableComponents: DraggableComponent[] = [
     name: 'one-to-many',
     ToolIconName: 'DeviceHub',
     jsonSchemaElement: {
-    '$ref': '#/definitions/NewDefinition',
-  },
-  uiSchema: updateScopeOfUISchemaElement('#', '#/properties/oneToMany', {
-    type: 'Control',
-    //@ts-ignore
-    scope: '#/properties/oneToMany',
-    options: {
-      inline: true,
-      context: {
-        '$ref': '#/definitions/NewDefinition',
-        typeIRI: 'http://schema.org/Person',
-      }
+      '$ref': '#/definitions/Root',
     },
+    uiSchema: updateScopeOfUISchemaElement('#', '#/properties/oneToMany', {
+      type: 'Control',
+      //@ts-ignore
+      scope: '#/properties/oneToMany',
+      options: {
+        inline: true,
+        context: {
+          typeIRI: 'http://schema.org/Person',
+        }
+      },
     }),
   },
+  {
+    name: 'many-to-many',
+    ToolIconName: 'Group',
+    jsonSchemaElement: {
+      type: 'array',
+      items: {
+        '$ref': '#/definitions/Root',
+      },
+    },
+    uiSchema: updateScopeOfUISchemaElement('#', '#/properties/manyToMany', {
+      type: 'Control',
+      //@ts-ignore
+      scope: '#/properties/manyToMany',
+      options: {
+        inline: true,
+        context: {
+          typeIRI: 'http://schema.org/Person',
+        }
+      },
+    }),
+  }
 ]

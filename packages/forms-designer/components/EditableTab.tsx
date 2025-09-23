@@ -1,15 +1,121 @@
+'use client'
+
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Box, IconButton, Popover, Tab, TabProps, TextField } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
+import { Edit as EditIcon, Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
+
+interface TabComponentProps {
+  children: React.ReactNode;
+  isEditing: boolean;
+  editedName: string;
+  error: string | null;
+  readonly: boolean;
+  onEditClick: (e: React.MouseEvent) => void;
+  onSaveEdit: (e: React.MouseEvent) => void;
+  onCancelEdit: (e: React.MouseEvent) => void;
+  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown: (e: React.KeyboardEvent) => void;
+  [key: string]: any; // For spreading other props
+}
+
+const CustomTabComponent = React.forwardRef<HTMLDivElement, TabComponentProps>(
+  ({ 
+    children, 
+    isEditing, 
+    editedName, 
+    error, 
+    readonly, 
+    onEditClick, 
+    onSaveEdit, 
+    onCancelEdit, 
+    onInputChange, 
+    onKeyDown,
+    component: _, 
+    ...props 
+  }, ref) => {
+    const inputRef = useRef<HTMLInputElement>(null);
+    const editButtonRef = useRef<HTMLButtonElement>(null);
+
+    // Focus the input when entering edit mode
+    useEffect(() => {
+      if (isEditing && inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, [isEditing]);
+
+    return (
+      <Box ref={ref} display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
+        <Box {...props} sx={{ display: 'flex', alignItems: 'center', ...props.sx }}>
+          {children}
+        </Box>
+        <Popover
+          open={isEditing}
+          anchorEl={editButtonRef.current}
+          onClose={onCancelEdit}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          sx={{ zIndex: 1300 }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              p: 2,
+              minWidth: '200px'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <TextField
+              inputRef={inputRef}
+              value={editedName}
+              onChange={onInputChange}
+              onKeyDown={onKeyDown}
+              error={!!error}
+              helperText={error}
+              size="small"
+              autoFocus
+              sx={{ mb: error ? 2 : 0 }}
+              label="Definition Name"
+              fullWidth />
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <IconButton size="small" onClick={onSaveEdit} color="primary">
+                <CheckIcon fontSize="small" />
+              </IconButton>
+              <IconButton size="small" onClick={onCancelEdit} color="error">
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          </Box>
+        </Popover>
+        {!readonly && (
+          <IconButton
+            ref={editButtonRef}
+            size="small"
+            onClick={onEditClick}
+            sx={{ ml: -2 }}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+        )}
+      </Box>
+    );
+  }
+);
 
 interface EditableTabProps {
+  definitionName: string;
   onRename: (oldName: string, newName: string) => void;
   readonly?: boolean;
 }
 
 export const EditableTab: React.FC<EditableTabProps & TabProps> = ({
+  definitionName,
   label,
   value,
   onRename,
@@ -17,20 +123,13 @@ export const EditableTab: React.FC<EditableTabProps & TabProps> = ({
   ...props
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedName, setEditedName] = useState(label);
+  const [editedName, setEditedName] = useState(definitionName);
   const [error, setError] = useState<string | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  // Focus the input when entering edit mode
-  useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isEditing]);
+  const tabRef = useRef<HTMLDivElement>(null);
 
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setEditedName(label);
+    setEditedName(definitionName);
     setIsEditing(true);
   };
 
@@ -83,69 +182,24 @@ export const EditableTab: React.FC<EditableTabProps & TabProps> = ({
   };
 
   // Display the label with spaces instead of underscores for better readability
-  const displayLabel = useMemo(() => label.replace(/_/g, ' '), [label]);
-  const tabRef = useRef<HTMLDivElement>(null);
+  const displayLabel = useMemo(() => definitionName.replace(/_/g, ' '), [definitionName]);
 
   return (
-    <>
-      <Tab label={displayLabel} value={value} ref={tabRef} {...props} />
-        {isEditing ? (
-          <Popover
-            open={isEditing}
-            anchorEl={tabRef.current}
-            onClose={handleCancelEdit}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'center',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'center',
-            }}
-            sx={{ zIndex: 1300 }}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                p: 2,
-                minWidth: '200px'
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <TextField
-                inputRef={inputRef}
-                value={editedName}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                error={!!error}
-                helperText={error}
-                size="small"
-                autoFocus
-                sx={{ mb: error ? 2 : 0 }}
-                label="Tab Name"
-                fullWidth
-              />
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                <IconButton size="small" onClick={handleSaveEdit} color="primary">
-                  <CheckIcon fontSize="small" />
-                </IconButton>
-                <IconButton size="small" onClick={handleCancelEdit} color="error">
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              </Box>
-            </Box>
-          </Popover>
-        ) : null}
-        {!readonly && (
-          <IconButton
-            size="small"
-            onClick={handleEditClick}
-            sx={{ ml: -2 }}
-          >
-            <EditIcon fontSize="small" />
-          </IconButton>
-        )}
-      </>
+    <Tab 
+      label={displayLabel} 
+      value={value} 
+      {...props} 
+      ref={tabRef}
+      component={CustomTabComponent}
+      isEditing={isEditing}
+      editedName={editedName}
+      error={error}
+      readonly={readonly}
+      onEditClick={handleEditClick}
+      onSaveEdit={handleSaveEdit}
+      onCancelEdit={handleCancelEdit}
+      onInputChange={handleInputChange}
+      onKeyDown={handleKeyDown}
+    />
   );
 }; 

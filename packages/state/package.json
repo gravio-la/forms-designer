@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@formswizard/utils": "workspace:*",
-    "@reduxjs/toolkit": "^1.9.5",
+    "@reduxjs/toolkit": "^2.6.1",
     "jsonpointer": "^5.0.1",
     "lodash": "^4.17.21",
     "reselect": "^4.1.8"
@@ -45,6 +45,6 @@
   "peerDependencies": {
     "@jsonforms/core": "^3",
     "react": "^16.9.0 || ^17.0.0 || ^18",
-    "react-redux": "^8.1.1"
+    "react-redux": "^9.2.0"
   }
 }

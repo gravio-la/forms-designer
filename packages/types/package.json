@@ -15,7 +15,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "type-check": "tsc",
+    "dev": "tsup index.ts --format esm,cjs --watch --dts",
     "build": "tsup index.ts --format esm,cjs --dts",
     "lint-fix": "eslint --fix \"**/*.ts*\"",
     "push": "npm publish --access public"
@@ -25,6 +25,7 @@
   ],
   "devDependencies": {
     "@jsonforms/core": "^3",
+    "json-schema": "^0.4.0",
     "eslint": "^7.32.0",
     "eslint-config-formsdesigner": "workspace:*",
     "@formswizard/designer-tsconfig": "workspace:*",

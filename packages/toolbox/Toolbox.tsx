@@ -6,10 +6,9 @@ import { Tab, Box } from '@mui/material'
 import { useCallback } from 'react'
 import { basicDraggableComponents } from './basicDraggableComponents'
 import BuildingBlocks from './BuildingBlocks'
-import { DraggableComponent } from '@formswizard/types'
-
+import { DraggableElement } from '@formswizard/types'
 export type ToolboxProps = {
-  draggableComponents?: DraggableComponent[]
+  draggableComponents?: DraggableElement[]
 }
 
 export function Toolbox({ draggableComponents }: ToolboxProps) {

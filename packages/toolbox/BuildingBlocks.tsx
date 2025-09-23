@@ -16,7 +16,6 @@ function BuildingBlocks() {
     () => ({
       accept: 'MOVEBOX',
       drop: (item, monitor) => {
-        console.log(item)
         //@ts-ignore
         if (item.componentMeta.uiSchema.type !== 'Group') {
           return

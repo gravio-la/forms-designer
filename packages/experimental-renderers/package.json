@@ -55,14 +55,14 @@
     "@formswizard/tsup-config": "workspace:*"
   },
   "peerDependencies": {
-    "@mui/base": "5.0.0-beta.8",
+    "@mui/base": "5",
     "@jsonforms/core": "^3",
     "@jsonforms/material-renderers": "^3",
     "@jsonforms/react": "^3",
-    "@mui/icons-material": "^5.14.1",
-    "@mui/material": "^5.14.2",
-    "@types/react": "^18.2.20",
-    "@types/react-dom": "^18.2.7",
+    "@mui/icons-material": "^5",
+    "@mui/material": "^5",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "react": "^16.9.0 || ^17.0.0 || ^18",
     "react-dnd": "^16.0.1",
     "react-redux": "^9.2.0"

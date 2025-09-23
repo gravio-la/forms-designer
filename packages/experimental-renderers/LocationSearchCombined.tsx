@@ -14,7 +14,7 @@ import { LocationSearchMap } from './LocationSearchMap'
 import { LocationSearchMapProps } from './types'
 
 export function LocationSearchCombined(props: LocationSearchMapProps) {
-  const { markerPosition, onChangeMarkerPosition, readonly, label } = props
+  const { markerPosition, onChangeMarkerPosition, readonly, label, addressdetails } = props
 
   const showMarker = true
   const [showMap, setShowMap] = useState(false)
@@ -32,6 +32,7 @@ export function LocationSearchCombined(props: LocationSearchMapProps) {
         <LocationSearchField
           readOnly={readonly}
           onLocationFound={updateLocation}
+          addressdetails={addressdetails}
           renderInput={(params) => (
             <TextField
               {...params}

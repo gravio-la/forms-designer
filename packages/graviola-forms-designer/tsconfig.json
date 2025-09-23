@@ -1,0 +1,9 @@
+{
+  "extends": "@formswizard/designer-tsconfig/react-library.json",
+  "include": ["."],
+  "exclude": ["dist", "build", "node_modules"],
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "noImplicitAny": false
+  }
+}

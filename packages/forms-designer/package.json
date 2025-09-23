@@ -19,8 +19,8 @@
     "lint-fix": "eslint --fix \"**/*.ts*\"",
     "generate:component": "turbo gen react-component",
     "clean": "rm -rf dist",
-    "build": "tsup index.tsx --format esm,cjs --dts --external react",
-    "dev": "tsup index.tsx --format esm,cjs --watch --dts --external react",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "push": "npm publish --access public"
   },
   "files": [
@@ -52,15 +52,13 @@
     "@reduxjs/toolkit": "^2.6.1"
   },
   "dependencies": {
-    "@formswizard/theme": "workspace:*",
-    "@formswizard/react-hooks": "workspace:*",
     "@formswizard/designer-basic-renderer": "workspace:*",
     "@formswizard/designer-renderer": "workspace:*",
-    "@formswizard/state": "workspace:*",
-    "@formswizard/toolbox": "workspace:*",
-    "@formswizard/utils": "workspace:*",
     "@formswizard/fieldsettings": "workspace:*",
-    "@formswizard/graviola-renderers": "workspace:*",
-    "@graviola/edb-state-hooks": "^1.2.0"
+    "@formswizard/react-hooks": "workspace:*",
+    "@formswizard/state": "workspace:*",
+    "@formswizard/theme": "workspace:*",
+    "@formswizard/toolbox": "workspace:*",
+    "@formswizard/utils": "workspace:*"
   }
 }

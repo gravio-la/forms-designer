@@ -41,7 +41,7 @@
     "@mui/material": "^5.14.2",
     "react": "^16.9.0 || ^17.0.0 || ^18",
     "react-dnd": "^16.0.1",
-    "react-redux": "^8.1.1"
+    "react-redux": "^9.2.0"
   },
   "dependencies": {
     "@formswizard/react-hooks": "workspace:*",

@@ -22,7 +22,7 @@
     "@mui/icons-material": "^5.14.1",
     "@mui/material": "~5.14.2",
     "@mui/x-date-pickers": "^6.10.0",
-    "@reduxjs/toolkit": "^1.9.5",
+    "@reduxjs/toolkit": "^2.6.1",
     "ajv": "^8.12.0",
     "dayjs": "^1.11.9",
     "lodash": "^4.17.21",
@@ -31,8 +31,9 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dnd-touch-backend": "^16.0.1",
     "react-dom": "^18.2.0",
-    "react-redux": "^8.1.1",
-    "react-scripts": "5.0.0",
+    "react-redux": "^9.2.0",
+    "react-refresh": "^0.17.0",
+    "react-scripts": "5.0.1",
     "web-vitals": "^2.1.2"
   },
   "devDependencies": {

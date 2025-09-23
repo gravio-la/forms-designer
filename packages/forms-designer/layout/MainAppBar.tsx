@@ -1,5 +1,3 @@
-import * as React from 'react'
-
 import { IconButton, Typography, useTheme, AppBar, Toolbar, Box, Grid, Switch } from '@mui/material'
 import {
   useAppDispatch,
@@ -41,7 +39,7 @@ export function MainAppBar() {
               },
             }}
           >
-            {/* <DarkModeSwitch></DarkModeSwitch> */}
+            <DarkModeSwitch></DarkModeSwitch>
             {/* <TemplateModalButton>Templates</TemplateModalButton> */}
             {/* <LanguageSelector></LanguageSelector> */}
           </Grid>
@@ -58,6 +56,8 @@ function DarkModeSwitch() {
   const handleClicked = () => {
     dispatch(toggleColorMode())
   }
+
+
   return (
     <Box
       sx={{

@@ -42,6 +42,12 @@ export const exampleInitialState: JsonFormsEditState = {
   },
   uiSchema: { type: 'VerticalLayout', elements: [
     {
+      type: "Group",
+      label: "Characters",
+      elements: [
+      ]
+    },
+    {
       type: "Control",
       scope: "#/properties/mainCharacter",
       options: {

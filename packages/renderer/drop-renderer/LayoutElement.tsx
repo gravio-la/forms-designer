@@ -46,9 +46,7 @@ const SelectionOverlay = styled(Box)(({ theme }) => ({
   },
   
   '&:hover': {
-    backgroundColor: theme.palette.mode === 'dark' 
-      ? 'rgba(255, 255, 255, 0.02)' 
-      : 'rgba(0, 0, 0, 0.02)',
+    backgroundColor: theme.palette.action.hover,
       
     '&::before': {
       opacity: 1,
@@ -151,11 +149,9 @@ const LayoutElement = ({ index, schema, path, enabled, element: child, cells, re
             flexGrow: 1,
             display: 'flex',
             backgroundColor: (theme) =>
-              // @ts-ignore
-              selectedPath === (child as any).path
-                ? theme.palette.mode === 'dark'
-                  ? theme.palette.grey[800]
-                  : theme.palette.grey[200]
+              // @ts-ignore - Only apply selection background to Control elements, not Layout elements
+              child.type === 'Control' && selectedPath === (child as any).path
+                ? theme.palette.action.selected
                 : 'none',
             padding: (theme) => theme.spacing(1, 2),
 

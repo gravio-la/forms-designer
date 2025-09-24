@@ -1,15 +1,16 @@
-import {
+import type {
   Labelable,
   Scopable,
   UISchemaElement,
   JsonFormsRendererRegistryEntry,
   JsonSchema4,
   JsonSchema7,
+  JsonFormsCellRendererRegistryEntry,
 } from '@jsonforms/core'
-import { JSONSchema4, JSONSchema7 } from 'json-schema'
+import type { JSONSchema4, JSONSchema7 } from 'json-schema'
 import type { ComponentType } from 'react';
 import type { SxProps, Theme } from '@mui/material';
-import { Format } from 'ajv';
+import type { Format } from 'ajv';
 
 export type JsonSchema = JSONSchema7 | JSONSchema4| JsonSchema4 | JsonSchema7;
 
@@ -36,6 +37,7 @@ export type ToolIconRegistry = Record<string, ToolIconComponent>
 export type DraggableMeta = {
   name: string
   ToolIconName?: string
+  componentType?: 'tool' | 'block'
 }
 
 export type DraggableComponent = DraggableMeta & {
@@ -101,7 +103,7 @@ export type ToolCollectionInfo = {
 export type ToolContextState<T extends JsonSchema = JsonSchema> = {
   iconRegistry: ToolIconRegistry
   rendererRegistry: JsonFormsRendererRegistryEntry[]
-  cellRendererRegistry: JsonFormsRendererRegistryEntry[]
+  cellRendererRegistry: JsonFormsCellRendererRegistryEntry[]
   ajvFormatRegistry: AjvFormatRegistry
   toolSettings: ToolSettings<T>
   draggableElements: DraggableElement[]

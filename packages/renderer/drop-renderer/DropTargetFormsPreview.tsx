@@ -1,20 +1,20 @@
 import { DraggableComponent } from '@formswizard/types'
 import { JsonForms } from '@jsonforms/react'
-import { materialCells, materialRenderers } from '@jsonforms/material-renderers'
 import { UISchemaElement, JsonSchema as JsonFormsJsonSchema } from '@jsonforms/core'
-import { basicRenderer } from '@formswizard/designer-basic-renderer'
 import { selectJsonSchemaDefinitions, useAppSelector } from '@formswizard/state'
+import { usePreparedJsonFormsState } from '@formswizard/tool-context'
 
 export const DropTargetFormsPreview: React.FC<{ metadata: DraggableComponent }> = ({ metadata }) => {
   const name = metadata.name
   const definitions = useAppSelector(selectJsonSchemaDefinitions)
+  const { renderers, cells, ajv } = usePreparedJsonFormsState({ 
+    isPreview: true, 
+  })
   return !name ? null : (
     <>
       {metadata.jsonSchemaElement && (
         <JsonForms
           data={{}}
-          renderers={[...materialRenderers, ...basicRenderer]}
-          cells={materialCells}
           uischema={
             {
               type: 'VerticalLayout',
@@ -36,6 +36,7 @@ export const DropTargetFormsPreview: React.FC<{ metadata: DraggableComponent }> 
               },
             } as JsonFormsJsonSchema
           }
+          {...{ renderers, cells, ajv }}
         />
       )}
     </>

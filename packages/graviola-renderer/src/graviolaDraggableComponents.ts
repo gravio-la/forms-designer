@@ -4,7 +4,7 @@ import { updateScopeOfUISchemaElement } from "@formswizard/utils";
 export const graviolaDraggableComponents: DraggableComponent[] = [
   {
     name: 'one-to-many',
-    ToolIconName: 'DeviceHub',
+    ToolIconName: 'OneToMany',
     jsonSchemaElement: {
       '$ref': '#/definitions/Root',
     },
@@ -22,7 +22,7 @@ export const graviolaDraggableComponents: DraggableComponent[] = [
   },
   {
     name: 'many-to-many',
-    ToolIconName: 'Group',
+    ToolIconName: 'ManyToMany',
     jsonSchemaElement: {
       type: 'array',
       items: {

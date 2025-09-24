@@ -1,14 +1,15 @@
 'use client'
 
 import { MainLayout, WizardProvider } from '@formswizard/forms-designer'
-import { GraviolaProvider, graviolaToolSettings, graviolaDraggableComponents } from '@formswizard/graviola-renderers'
+import { ToolProvider } from '@formswizard/tool-context'
+import { GraviolaProvider, graviolaToolsCollection } from '@formswizard/graviola-renderers'
+import { basicToolsCollection } from '@formswizard/basic-tools'
+import { advancedToolsCollection } from '@formswizard/advanced-tools'
 import { useJsonSchema } from '@formswizard/state'
-import { basicDraggableComponents } from '@formswizard/toolbox'
 import { renderers } from './renderers'
 import { QueryClient, QueryClientProvider, useAdbContext } from '@graviola/edb-state-hooks'
 import { useUISchemata, usePrimaryFields } from './hooks'
 import { useCallback } from 'react'
-import { DraggableElement } from '@formswizard/types'
 const GraviolaProviderWithSchema = ({ children }: { children: React.ReactNode }) => {
   const schema = useJsonSchema()
   const uischemata = useUISchemata()
@@ -48,11 +49,9 @@ const WizardAppWithMultipleDefinitions = () => {
   }, [typeNameToTypeIRI])
   return (
     <MainLayout
-      renderers={renderers}
-      additionalToolSettings={graviolaToolSettings}
       createNewDefinition={createNewDefinition}
       multipleDefinitions={true}
-      toolboxProps={{ draggableComponents: [...basicDraggableComponents, ...graviolaDraggableComponents] as DraggableElement[] }} />
+    />
   )
 }
 
@@ -61,11 +60,19 @@ const queryClient = new QueryClient()
 export function GraviolaWizardApp() {
   return (
     <QueryClientProvider client={queryClient}>
-      <WizardProvider>
-        <GraviolaProviderWithSchema>
-          <WizardAppWithMultipleDefinitions />
-        </GraviolaProviderWithSchema>
-      </WizardProvider>
+      <ToolProvider
+        toolCollections={[
+          basicToolsCollection,
+          advancedToolsCollection,
+          graviolaToolsCollection,
+        ]}
+      >
+        <WizardProvider>
+          <GraviolaProviderWithSchema>
+            <WizardAppWithMultipleDefinitions />
+          </GraviolaProviderWithSchema>
+        </WizardProvider>
+      </ToolProvider>
     </QueryClientProvider>
   )
 }

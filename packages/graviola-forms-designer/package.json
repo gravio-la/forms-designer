@@ -40,6 +40,9 @@
   "dependencies": {
     "@formswizard/forms-designer": "workspace:*",
     "@formswizard/graviola-renderers": "workspace:*",
+    "@formswizard/basic-tools": "workspace:*",
+    "@formswizard/advanced-tools": "workspace:*",
+    "@formswizard/tool-context": "workspace:*",
     "@graviola/edb-state-hooks": "^1.5.0",
     "@formswizard/designer-basic-renderer": "workspace:*",
     "@formswizard/state": "workspace:*"

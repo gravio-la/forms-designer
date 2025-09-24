@@ -4,15 +4,12 @@ import { DragBox } from './DragBox'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import { Tab, Box } from '@mui/material'
 import { useCallback } from 'react'
-import { basicDraggableComponents } from './basicDraggableComponents'
 import BuildingBlocks from './BuildingBlocks'
-import { DraggableElement } from '@formswizard/types'
-export type ToolboxProps = {
-  draggableComponents?: DraggableElement[]
-}
+import { useDraggableElementsByComponentType } from '@formswizard/tool-context'
 
-export function Toolbox({ draggableComponents }: ToolboxProps) {
+export function Toolbox() {
   const [activeTab, setActiveTab] = React.useState('1')
+  const draggableComponents = useDraggableElementsByComponentType('tool')
   const handleChange = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
       setActiveTab(newValue)
@@ -36,7 +33,7 @@ export function Toolbox({ draggableComponents }: ToolboxProps) {
             },
           }}
         >
-          {(draggableComponents || basicDraggableComponents).map((component, index) => {
+          {draggableComponents.map((component, index) => {
             return (
               <DragBox
                 name={component.name}

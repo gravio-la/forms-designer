@@ -1,5 +1,19 @@
 import { JsonSchema } from '@formswizard/types'
 import { useToolContext } from './ToolContext'
+import { useMemo } from 'react'
+import { JsonFormsRendererRegistryEntry, JsonFormsCellRendererRegistryEntry, createAjv } from '@jsonforms/core'
+import formatsPlugin from 'ajv-formats'
+
+type RendererRegistry = JsonFormsRendererRegistryEntry[]
+type CellRegistry = JsonFormsCellRendererRegistryEntry[]
+
+export interface PreparedJsonFormsStateOptions {
+  isPreview?: boolean
+  editingRenderers?: RendererRegistry
+  editingCells?: CellRegistry
+  normalRenderers?: RendererRegistry
+  normalCells?: CellRegistry
+}
 
 // Hook to access icon registry
 export const useIconRegistry = () => {
@@ -50,9 +64,9 @@ export const useIsToolProviderPresent = () => {
 }
 
 // Hook to get a specific icon by name
-export const useIcon = (iconName: string) => {
+export const useIcon = (iconName?: string) => {
   const iconRegistry = useIconRegistry()
-  return iconRegistry[iconName]
+  return iconName ? iconRegistry[iconName] : undefined
 }
 
 // Hook to get all icons
@@ -64,19 +78,17 @@ export const useAllIcons = () => {
   }))
 }
 
-// Hook to get draggable elements by category
-export const useDraggableElementsByCategory = (category?: string) => {
+export const useDraggableElementsByComponentType = (componentType?: string) => {
   const draggableElements = useDraggableElements()
-  
-  if (!category) {
-    return draggableElements
-  }
-  
-  return draggableElements.filter(element => 
-    'jsonSchemaElement' in element 
-      ? (element.jsonSchemaElement as any).category === category
-      : (element.uiSchema as any).category === category
-  )
+  const filteredElements = useMemo(() => {
+    if (!componentType) {
+      return draggableElements
+    }
+    return draggableElements.filter(element => 
+      (element.componentType || 'tool') === componentType
+    )
+  }, [draggableElements, componentType])
+  return filteredElements
 }
 
 // Hook to get tool settings by tester
@@ -84,4 +96,44 @@ export const useToolSettingsByTester = <T extends JsonSchema = JsonSchema>(teste
   const toolSettings = useToolSettings<T>()
   
   return toolSettings.filter(setting => setting.tester === tester)
+}
+
+// Hook to prepare JsonForms state with renderers, cells, and AJV
+export const usePreparedJsonFormsState = (options: PreparedJsonFormsStateOptions = {}) => {
+  const {
+    isPreview = false,
+    editingRenderers = [],
+    editingCells = [],
+    normalRenderers = [],
+    normalCells = []
+  } = options
+
+  const ownRenderers = useRendererRegistry()
+  const ownCells = useCellRendererRegistry()
+  const ownAjvFormats = useAjvFormatRegistry()
+
+  const renderers: JsonFormsRendererRegistryEntry[] = useMemo(
+    () => [...ownRenderers, ...(!isPreview ? editingRenderers : []), ...normalRenderers],
+    [ownRenderers, editingRenderers, normalRenderers, isPreview]
+  )
+
+  const cells: JsonFormsCellRendererRegistryEntry[] = useMemo(
+    () => [...ownCells, ...(!isPreview ? editingCells : []), ...normalCells],
+    [ownCells, editingCells, normalCells, isPreview]
+  )
+
+  const ajv = useMemo(
+    () => {
+      const ajvInstance = createAjv({
+        formats: {
+          ...formatsPlugin.formats,
+          ...ownAjvFormats,
+        },
+      })
+      return ajvInstance
+    },
+    [ownAjvFormats]
+  )
+
+  return { renderers, cells, ajv }
 }

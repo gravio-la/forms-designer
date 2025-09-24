@@ -4,19 +4,21 @@ import { Stack } from '@mui/system'
 import { useDNDHooksContext } from '@formswizard/react-hooks'
 import { DraggableMeta } from '@formswizard/types'
 /*eslint import/namespace: ['error', { allowComputed: true }]*/
-import * as MuiIcons from '@mui/icons-material'
+import TocOutlined from '@mui/icons-material/TocOutlined'
 
 type DragBoxProps = {
   name: string
   img?: string
   componentMeta: Partial<DraggableMeta>
   ToolIconName?: string
+  toolIconSrc?: string
 }
 export const DragBox = ({
   name = 'Eingabefeld',
   img = '',
   componentMeta,
   ToolIconName = 'TocOutlined',
+  toolIconSrc,
 }: DragBoxProps) => {
   const { useDrag } = useDNDHooksContext()
   const [, dragRef] = useDrag(
@@ -51,9 +53,7 @@ export const DragBox = ({
                 },
               }}
             >
-              {/* crashes on next build or other restrictive dts-build because of TS7053 */}
-              {MuiIcons[ToolIconName] && createElement((MuiIcons as any)[ToolIconName])}
-
+              {ToolIconName === 'TocOutlined' && <TocOutlined />}
               <Typography gutterBottom variant="subtitle1">
                 {name || ''}
               </Typography>

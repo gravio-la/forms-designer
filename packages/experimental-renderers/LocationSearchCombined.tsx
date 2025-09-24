@@ -8,7 +8,8 @@ import { useCallback, useState } from 'react'
 import { LocationSearchField } from './LocationSearchField'
 import { InputAdornment, IconButton, TextField, Grid } from '@mui/material'
 import { NoSsr } from '@mui/base'
-import * as Icons from '@mui/icons-material'
+import MapRounded from '@mui/icons-material/MapRounded'
+import MapSharp from '@mui/icons-material/MapSharp'
 import { NominatimResponse } from './nominatim'
 import { LocationSearchMap } from './LocationSearchMap'
 import { LocationSearchMapProps } from './types'
@@ -44,7 +45,7 @@ export function LocationSearchCombined(props: LocationSearchMapProps) {
                     {params.InputProps.endAdornment || null}
                     <InputAdornment position="end">
                       <IconButton aria-label="toggle map visibility" onClick={() => setShowMap(!showMap)} edge="end">
-                        {showMap ? <Icons.MapRounded /> : <Icons.MapSharp />}
+                        {showMap ? <MapRounded /> : <MapSharp />}
                       </IconButton>
                     </InputAdornment>
                   </>

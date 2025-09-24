@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Box, IconButton, Popover, TextField } from '@mui/material';
-import { Add as AddIcon, Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
+import AddIcon from '@mui/icons-material/Add';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import { useAppSelector, useAppDispatch, selectJsonSchemaDefinitions, addSchemaDefinition } from '@formswizard/state';
 import { JsonSchema } from '@formswizard/types';
 

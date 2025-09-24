@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Button, Grid, IconButton, TextField, Typography } from '@mui/material'
-import * as Icons from '@mui/icons-material'
+import EditOff from '@mui/icons-material/EditOff'
+import Edit from '@mui/icons-material/Edit'
 import { renameField, useAppDispatch } from '@formswizard/state'
 import { useWizardSelection } from './useWizardSelection'
 
@@ -33,7 +34,7 @@ function EditableFieldKeyDisplay() {
           <>
             <span> {selectionDisplayName}</span>
             {keyIsEditable && (
-              <IconButton onClick={toggleKeyEditor}>{showKeyEditor ? <Icons.EditOff /> : <Icons.Edit />}</IconButton>
+              <IconButton onClick={toggleKeyEditor}>{showKeyEditor ? <EditOff /> : <Edit />}</IconButton>
             )}
           </>
         )}

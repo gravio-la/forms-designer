@@ -1,6 +1,4 @@
-import { useDrop } from 'react-dnd'
 import { Card } from '@mui/material'
-import { ViewQuilt } from '@mui/icons-material'
 import { Box, Stack } from '@mui/system'
 import { useAppDispatch, useAppSelector, addBuildingBlock } from '@formswizard/state'
 import { DragBox } from './DragBox'

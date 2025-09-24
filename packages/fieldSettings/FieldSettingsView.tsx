@@ -3,7 +3,7 @@ import { JsonForms } from '@jsonforms/react'
 import type { JsonSchema as JsonFormsJsonSchema } from '@jsonforms/core'
 import { useToolSettings } from './useFieldSettings'
 import { Box, Grid, Toolbar, IconButton } from '@mui/material'
-import { Close } from '@mui/icons-material'
+import Close from '@mui/icons-material/Close'
 import { selectPath, useAppDispatch } from '@formswizard/state'
 
 import EditableFieldKeyDisplay from './EditableFieldKeyDisplay'

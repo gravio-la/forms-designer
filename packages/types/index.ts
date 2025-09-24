@@ -7,6 +7,9 @@ import {
   JsonSchema7,
 } from '@jsonforms/core'
 import { JSONSchema4, JSONSchema7 } from 'json-schema'
+import type { ComponentType } from 'react';
+import type { SxProps, Theme } from '@mui/material';
+import { Format } from 'ajv';
 
 export type JsonSchema = JSONSchema7 | JSONSchema4| JsonSchema4 | JsonSchema7;
 
@@ -21,6 +24,14 @@ export const isJsonSchema = (
 export type ScopableUISchemaElement = UISchemaElement & Scopable & Labelable
 
 export const isScopableUISchemaElement = (element: any): element is ScopableUISchemaElement => element.scope
+
+export type ToolIconComponent = ComponentType<{
+  alt?: string
+  theme?: Theme
+  sx?: SxProps<Theme>
+}>
+
+export type ToolIconRegistry = Record<string, ToolIconComponent>
 
 export type DraggableMeta = {
   name: string
@@ -78,3 +89,25 @@ export type PluggableToolDefinition<T extends JsonSchema = JsonSchema> = {
   toolSettings: ToolSettings<T>
   toolBoxElements: DraggableElement[]
 }
+
+export type AjvFormatRegistry = Record<string, Format>
+
+export type ToolCollectionInfo = {
+  name: string
+  description: string
+  categories: string[]
+}
+
+export type ToolContextState<T extends JsonSchema = JsonSchema> = {
+  iconRegistry: ToolIconRegistry
+  rendererRegistry: JsonFormsRendererRegistryEntry[]
+  cellRendererRegistry: JsonFormsRendererRegistryEntry[]
+  ajvFormatRegistry: AjvFormatRegistry
+  toolSettings: ToolSettings<T>
+  draggableElements: DraggableElement[]
+  registeredCollections: string[]
+}
+
+export type FormsDesignerToolCollection<T extends JsonSchema = JsonSchema> = {
+  info: ToolCollectionInfo
+} & Partial<ToolContextState<T>>

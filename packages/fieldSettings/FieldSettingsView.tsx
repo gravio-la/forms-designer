@@ -1,22 +1,15 @@
 import { materialCells, materialRenderers } from '@jsonforms/material-renderers'
 import { JsonForms } from '@jsonforms/react'
 import type { JsonSchema as JsonFormsJsonSchema } from '@jsonforms/core'
-import { useToolSettings } from './useFieldSettings'
+import { useFinalizedToolSettings } from './useFieldSettings'
 import { Box, Grid, Toolbar, IconButton } from '@mui/material'
 import Close from '@mui/icons-material/Close'
 import { selectPath, useAppDispatch } from '@formswizard/state'
 
 import EditableFieldKeyDisplay from './EditableFieldKeyDisplay'
-import { ToolSettings } from '@formswizard/types'
 
-type FieldSettingsViewProps = {
-  additionalToolSettings?: ToolSettings
-}
-
-export function FieldSettingsView({ additionalToolSettings }: FieldSettingsViewProps) {
-  const { handleChange, toolSettingsJsonSchema, tooldataBuffer } = useToolSettings({
-    additionalToolSettings,
-  })
+export function FieldSettingsView() {
+  const { handleChange, toolSettingsJsonSchema, tooldataBuffer } = useFinalizedToolSettings()
   const dispatch = useAppDispatch()
 
   const handleClose = () => {

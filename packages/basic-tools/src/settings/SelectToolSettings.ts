@@ -1,4 +1,4 @@
-import { ToolsettingParts } from '../mixins'
+import { ToolsettingParts } from '@formswizard/fieldsettings'
 
 import { ToolSetting, JsonSchema } from '@formswizard/types'
 

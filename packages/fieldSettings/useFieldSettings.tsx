@@ -13,7 +13,7 @@ import {
   selectRootJsonSchema,
 } from '@formswizard/state'
 
-import { ToolSettingsDefinitions } from './ToolSettingsDefinition'
+import { useToolSettings } from '@formswizard/tool-context'
 import { UISchemaElement } from '@jsonforms/core'
 import { ToolSettings, JsonSchema, isJsonSchema } from '@formswizard/types'
 import { filterNullOrUndef } from '@formswizard/utils'
@@ -30,15 +30,12 @@ export type ToolSettingsDefinition = {
   selectionDisplayName: string | null | undefined
 }
 
-type ToolSettingsDefinitionProps = {
-  additionalToolSettings?: ToolSettings
-}
-
-export function useToolSettings({
-  additionalToolSettings = [],
-}: ToolSettingsDefinitionProps = {}): ToolSettingsDefinition {
+export function useFinalizedToolSettings(): ToolSettingsDefinition {
   const dispatch = useAppDispatch()
   const [tooldataBuffer, setToolDataBuffer] = useState({})
+
+  // Use tool settings from context instead of local definitions
+  const toolSettingsFromContext = useToolSettings()
 
   const selectedPath = useAppSelector(selectSelectedPath)
   const rootJsonSchema = useAppSelector(selectRootJsonSchema)
@@ -57,7 +54,7 @@ export function useToolSettings({
   )
   const toolSettings = useMemo(() => {
     if (!UIElementFromSelection) return null
-    const tool = maxBy([...ToolSettingsDefinitions, ...additionalToolSettings], (d) => {
+    const tool = maxBy(toolSettingsFromContext, (d) => {
       const num = d.tester && d.tester(UIElementFromSelection, isJsonSchema(selectedElementJsonSchema) ? selectedElementJsonSchema : {}, context)
       return num || null
     })

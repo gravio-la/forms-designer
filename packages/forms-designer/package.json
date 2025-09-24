@@ -52,13 +52,17 @@
     "@reduxjs/toolkit": "^2.6.1"
   },
   "dependencies": {
+    "@formswizard/advanced-tools": "workspace:*",
+    "@formswizard/basic-tools": "workspace:*",
     "@formswizard/designer-basic-renderer": "workspace:*",
     "@formswizard/designer-renderer": "workspace:*",
     "@formswizard/fieldsettings": "workspace:*",
     "@formswizard/react-hooks": "workspace:*",
     "@formswizard/state": "workspace:*",
     "@formswizard/theme": "workspace:*",
+    "@formswizard/tool-context": "workspace:*",
     "@formswizard/toolbox": "workspace:*",
-    "@formswizard/utils": "workspace:*"
+    "@formswizard/utils": "workspace:*",
+    "ajv-formats": "^3.0.1"
   }
 }

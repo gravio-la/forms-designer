@@ -1,22 +1,24 @@
 'use client'
 
+import { ToolProvider } from '@formswizard/tool-context'
 import { MainLayout } from './MainLayout'
 import { WizardProvider } from './WizardProvider'
-import { basicDraggableComponents } from '@formswizard/toolbox'
-import { DraggableElement } from '@formswizard/types'
-
-const WizardAppBasic = () => {
-  return (
-    <MainLayout
-      multipleDefinitions={false}
-      toolboxProps={{ draggableComponents: [...basicDraggableComponents] as DraggableElement[] }} />
-  )
-}
+import { basicToolsCollection } from '@formswizard/basic-tools'
+import { advancedToolsCollection } from '@formswizard/advanced-tools'
 
 export function WizardApp() {
   return (
-    <WizardProvider>
-      <WizardAppBasic />
-    </WizardProvider>
+    <ToolProvider
+      toolCollections={[
+        basicToolsCollection,
+        advancedToolsCollection,
+      ]}
+    >
+      <WizardProvider>
+        <MainLayout
+          multipleDefinitions={false}
+        />
+      </WizardProvider>
+    </ToolProvider>
   )
 }

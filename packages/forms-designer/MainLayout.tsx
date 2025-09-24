@@ -4,20 +4,18 @@ import type { FunctionComponent, ReactNode } from 'react'
 import { useRef } from 'react'
 import { Box, Button, Container, Drawer, Paper, Tab, Tabs, Toolbar } from '@mui/material'
 import { Wizard, WizardProps } from './Wizard'
-import { Toolbox, ToolboxProps } from '@formswizard/toolbox'
-import { FieldSettingsView, useToolSettings } from '@formswizard/fieldsettings'
+import { Toolbox } from '@formswizard/toolbox'
+import { FieldSettingsView, useFinalizedToolSettings } from '@formswizard/fieldsettings'
 import { MainAppBar } from './layout/MainAppBar'
 import { TrashFAB } from './components'
 import { EditableTab } from './components/EditableTab'
 import { AddDefinitionButton } from './components/AddDefinitionButton'
 import { selectCurrentDefinition, selectJsonSchemaDefinitions, selectPreviewModus, switchDefinition, togglePreviewModus, useAppDispatch, useAppSelector, renameSchemaDefinition } from '@formswizard/state'
 import useAutoDeselectOnOutsideClick from './useAutoDeselectOnOutsideClick'
-import { JsonSchema, ToolSettings } from '@formswizard/types'
+import { JsonSchema } from '@formswizard/types'
 
 interface OwnProps {
   appBar?: ReactNode
-  additionalToolSettings?: ToolSettings
-  toolboxProps?: ToolboxProps
   multipleDefinitions?: boolean
   createNewDefinition?: (name: string) => { name: string, definition: JsonSchema }
 }
@@ -33,11 +31,11 @@ const a11yProps = (index: number) => {
 }
 
 const drawerWidth = 240
-export const MainLayout: FunctionComponent<Props> = ({ appBar, additionalToolSettings, toolboxProps, multipleDefinitions, createNewDefinition, ...wizardProps }) => {
+export const MainLayout: FunctionComponent<Props> = ({ appBar, multipleDefinitions, createNewDefinition, ...wizardProps }) => {
   const wizardPaperRef = useRef<null | HTMLDivElement>(null)
   const dispatch = useAppDispatch()
   const previewModus = useAppSelector(selectPreviewModus)
-  const { selectedPath } = useToolSettings()
+  const { selectedPath } = useFinalizedToolSettings()
   const handleTogglePreview = (event: any) => {
     dispatch(togglePreviewModus())
   }
@@ -77,7 +75,7 @@ export const MainLayout: FunctionComponent<Props> = ({ appBar, additionalToolSet
           }}
         >
           <Toolbar />
-          <Toolbox {...toolboxProps} />
+          <Toolbox />
         </Drawer>
         <Container maxWidth={false} ref={wizardPaperRef}>
           <Toolbar />
@@ -125,7 +123,7 @@ export const MainLayout: FunctionComponent<Props> = ({ appBar, additionalToolSet
         >
           <Toolbar></Toolbar>
 
-          <FieldSettingsView additionalToolSettings={additionalToolSettings}></FieldSettingsView>
+          <FieldSettingsView></FieldSettingsView>
         </Drawer>
       </Box>
       <TrashFAB />

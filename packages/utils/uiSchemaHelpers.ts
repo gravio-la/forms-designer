@@ -1,7 +1,6 @@
 import { isLayout, Layout, UISchemaElement } from '@jsonforms/core'
 import { last, isEmpty } from 'lodash'
-import { isScopableUISchemaElement } from '../types'
-
+import { isScopableUISchemaElement, UISchemaElementWithPath, LayoutWithPath } from '@formswizard/types'
 const insertIntoArray = <T>(arr: T[], index: number, element: T) => {
   return [...arr.slice(0, index), element, ...arr.slice(index)]
 }
@@ -89,15 +88,25 @@ export const removeUISchemaElement = (scope: string, uiSchema: UISchemaElement) 
 
 export const updateScopeOfUISchemaElement = (scope: string, newScope: string, uiSchema: UISchemaElement) => {
   return recursivelyMapSchema(uiSchema, (uischema: UISchemaElement) => {
+    let newUischema = uischema
+    if(uischema.options?.scope && uischema.options.scope.startsWith(scope) ) {
+      newUischema = {
+        ...uischema,
+        options: {
+          ...uischema.options,
+          scope: newScope + uischema.options.scope.slice(scope.length),
+        }
+      } as UISchemaElement
+    }
     if (isScopableUISchemaElement(uischema)) {
       if (uischema.scope?.startsWith(scope)) {
-        return {
-          ...uischema,
+        newUischema = {
+          ...newUischema,
           scope: newScope + uischema.scope.slice(scope.length),
         } as UISchemaElement
       }
     }
-    return uischema
+    return newUischema
   })
 }
 
@@ -160,9 +169,6 @@ export const scopeToPathSegments = (scope: string) => {
   const [, ...rest] = scope.split('/properties/')
   return rest
 }
-
-type UISchemaElementWithPath = UISchemaElement & { path: string; structurePath?: string }
-type LayoutWithPath = Layout & { path: string }
 
 /**
  * recursively add a path, that uniquely identifies a schema element, to a UISchemaElement

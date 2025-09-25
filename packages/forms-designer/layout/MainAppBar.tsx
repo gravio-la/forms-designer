@@ -8,6 +8,7 @@ import {
 } from '@formswizard/state'
 import Brightness7 from '@mui/icons-material/Brightness7'
 import Brightness4 from '@mui/icons-material/Brightness4'
+import { InterfaceModeChooser } from '../components'
 
 export function MainAppBar() {
   const dispatch = useAppDispatch()
@@ -32,14 +33,17 @@ export function MainAppBar() {
             sx={{
               display: 'flex',
               justifyContent: 'flex-end',
+              alignItems: 'center',
+              gap: 2,
               ' > *': {
-                mr: 2,
+                mr: 0,
               },
               ' > button': {
-                mr: 2,
+                mr: 0,
               },
             }}
           >
+            <InterfaceModeChooser />
             <DarkModeSwitch></DarkModeSwitch>
             {/* <TemplateModalButton>Templates</TemplateModalButton> */}
             {/* <LanguageSelector></LanguageSelector> */}
@@ -72,7 +76,6 @@ function DarkModeSwitch() {
         p: 1,
       }}
     >
-      {theme.palette.mode} mode
       <IconButton sx={{ ml: 1 }} onClick={handleClicked} color="inherit">
         {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
       </IconButton>

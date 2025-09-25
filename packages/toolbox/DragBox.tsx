@@ -1,5 +1,5 @@
 import React, { createElement } from 'react'
-import { Card, CardActionArea, CardContent, Typography, Icon } from '@mui/material'
+import { Card, CardActionArea, CardContent, Typography, Icon, Box } from '@mui/material'
 import { Stack } from '@mui/system'
 import { useDNDHooksContext } from '@formswizard/react-hooks'
 import { DraggableMeta } from '@formswizard/types'
@@ -21,7 +21,7 @@ export const DragBox = ({
 }: DragBoxProps) => {
   const { useDrag } = useDNDHooksContext()
   const ToolIcon = useIcon(ToolIconName) || null
-  const [, dragRef] = useDrag(
+  const [{ opacity }, dragRef, preivewRef] = useDrag(
     () => ({
       type: 'DRAGBOX',
       item: { componentMeta },
@@ -38,8 +38,8 @@ export const DragBox = ({
   )
 
   return (
-    <>
-      <Card ref={dragRef}>
+    <Box ref={preivewRef}>
+      <Card ref={dragRef} >
         <CardActionArea>
           <CardContent>
             <Stack
@@ -47,6 +47,7 @@ export const DragBox = ({
               alignItems="center"
               gap={2}
               sx={{
+                opacity: opacity,
                 '& .MuiSvgIcon-root': {
                   // fontSize: '2rem',
                   color: 'secondary.dark',
@@ -61,6 +62,6 @@ export const DragBox = ({
           </CardContent>
         </CardActionArea>
       </Card>
-    </>
+    </Box>
   )
 }

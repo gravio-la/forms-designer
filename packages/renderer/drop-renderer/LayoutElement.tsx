@@ -86,10 +86,10 @@ type LayoutElementProps = {
   element: UISchemaElement
   renderers?: JsonFormsRendererRegistryEntry[]
   cells?: JsonFormsCellRendererRegistryEntry[]
-  parent: UISchemaElement[]
+  current: UISchemaElement
 }
 
-const LayoutElement = ({ index, schema, path, enabled, element: child, cells, renderers }: LayoutElementProps) => {
+const LayoutElement = ({ index, schema, path, enabled, element: child, cells, renderers, current }: LayoutElementProps) => {
   const ctx = useJsonForms()
   const state = { jsonforms: ctx }
   const rootSchema = getSchema(state)
@@ -108,7 +108,7 @@ const LayoutElement = ({ index, schema, path, enabled, element: child, cells, re
     () => (controlName ? controlName : `${child.type}-${index}`),
     [controlName, index, child.type]
   )
-  const { handleAllDrop, handleDropAtStart, draggedMeta } = useDropTarget({ child })
+  const { handleAllDrop, handleDropAtStart } = useDropTarget({ child,  current })
   const { useDrop, useDragLayer } = useDNDHooksContext()
   const anythingDragging = useDragLayer((monitor) => monitor.isDragging())
   const [{ isDragging }, dragRef] = useDragTarget({ child, name: controlName, resolvedSchema })

@@ -114,6 +114,7 @@ const MaterialLayoutRendererComponent = (props: MaterialLayoutRendererProps) => 
               <LayoutPlaceholder
                 direction={direction}
                 child={uischema}
+                current={uischema}
                 path={path || ''}
                 elements={elements}
                 layoutRendererProps={props}
@@ -133,7 +134,7 @@ const MaterialLayoutRendererComponent = (props: MaterialLayoutRendererProps) => 
                   // @ts-ignore
                   enabled={enabled}
                   element={element}
-                  parent={elements}
+                  current={uischema}
                   cells={cells}
                   renderers={renderers}
                 />

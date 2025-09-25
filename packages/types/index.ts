@@ -6,6 +6,7 @@ import type {
   JsonSchema4,
   JsonSchema7,
   JsonFormsCellRendererRegistryEntry,
+  Layout,
 } from '@jsonforms/core'
 import type { JSONSchema4, JSONSchema7 } from 'json-schema'
 import type { ComponentType } from 'react';
@@ -113,3 +114,15 @@ export type ToolContextState<T extends JsonSchema = JsonSchema> = {
 export type FormsDesignerToolCollection<T extends JsonSchema = JsonSchema> = {
   info: ToolCollectionInfo
 } & Partial<ToolContextState<T>>
+
+export type UISchemaElementWithPath = UISchemaElement & { path: string; structurePath?: string }
+export type LayoutWithPath = Layout & { path: string }
+
+
+export const isUISchemaElementWithPath = (element: UISchemaElement): element is UISchemaElementWithPath => {
+  return 'path' in element
+}
+
+export const isLayoutWithPath = (element: Layout): element is LayoutWithPath => {
+  return 'path' in element
+}

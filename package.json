@@ -39,6 +39,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build --filter=!@formswizard/wizard-vite --continue --concurrency 21",
+    "build:packages": "turbo run build --filter=./packages/*",
+    "build:vite": "bun run build:packages && turbo run build --filter=./apps/vite",
     "dev": "turbo run dev --concurrency 21",
     "lint": "turbo run lint",
     "lint-fix": "turbo run lint-fix --concurrency 21",

@@ -38,13 +38,13 @@
     "@ebay/nice-modal-react": "^1.2.13"
   },
   "dependencies": {
+    "@formswizard/advanced-tools": "workspace:*",
+    "@formswizard/basic-tools": "workspace:*",
+    "@formswizard/designer-basic-renderer": "workspace:*",
     "@formswizard/forms-designer": "workspace:*",
     "@formswizard/graviola-renderers": "workspace:*",
-    "@formswizard/basic-tools": "workspace:*",
-    "@formswizard/advanced-tools": "workspace:*",
+    "@formswizard/state": "workspace:*",
     "@formswizard/tool-context": "workspace:*",
-    "@graviola/edb-state-hooks": "^1.5.0",
-    "@formswizard/designer-basic-renderer": "workspace:*",
-    "@formswizard/state": "workspace:*"
+    "@graviola/edb-state-hooks": "^1.5.0"
   }
 }

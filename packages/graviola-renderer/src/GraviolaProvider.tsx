@@ -37,8 +37,8 @@ import {
 } from "@jsonforms/core";
 import { JSONSchema7 } from "json-schema";
 
-type GraviolaProviderProps = {
-  apiBaseUrl: string;
+export type GraviolaProviderProps = {
+  endpoint: SparqlEndpoint
   baseIRI: string;
   entityBaseIRI: string;
   children: React.ReactNode;
@@ -99,19 +99,10 @@ export const GraviolaProvider: React.FC<GraviolaProviderProps> = ({
   primaryFields,
   renderers,
   cellRendererRegistry,
-  apiBaseUrl,
+  endpoint,
   typeNameLabelMap,
   typeNameUiSchemaOptionsMap,
 }: GraviolaProviderProps) => {
-
-  const endpoint: SparqlEndpoint = useMemo(() => {
-    return {
-      endpoint: `${apiBaseUrl}`,
-      label: "SPARQL service",
-      provider: "oxigraph",
-      active: true,
-    };
-  }, [apiBaseUrl]);
 
   const definitionToTypeIRI = (definitionName: string) =>
     `${baseIRI}${definitionName}`;

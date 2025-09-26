@@ -14,13 +14,15 @@ import {
   Box,
   Chip,
   Divider,
-  Alert
+  Alert,
+  IconButton
 } from '@mui/material'
 import {
   Storage as StorageIcon,
   Add as AddIcon,
   CloudQueue as CloudIcon,
-  Computer as ComputerIcon
+  Computer as ComputerIcon,
+  Edit as EditIcon
 } from '@mui/icons-material'
 import { SparqlEndpoint } from '@graviola/edb-core-types'
 import { useEndpoint } from '../context'
@@ -63,6 +65,8 @@ const getProviderColor = (provider?: string) => {
 export function EndpointSelectionDialog({ open, onClose }: EndpointSelectionDialogProps) {
   const { savedEndpoints, setCurrentEndpoint, saveEndpoint } = useEndpoint()
   const [showCustomForm, setShowCustomForm] = useState(false)
+  const [showEditForm, setShowEditForm] = useState(false)
+  const [editingEndpoint, setEditingEndpoint] = useState<SparqlEndpoint | null>(null)
   const [customEndpoint, setCustomEndpoint] = useState<Partial<SparqlEndpoint>>({
     active: true,
     provider: 'oxigraph'
@@ -89,6 +93,25 @@ export function EndpointSelectionDialog({ open, onClose }: EndpointSelectionDial
       active: true,
       provider: 'oxigraph'
     })
+  }
+
+  const handleEditEndpoint = (endpoint: SparqlEndpoint, event: React.MouseEvent) => {
+    event.stopPropagation()
+    setEditingEndpoint(endpoint)
+    setShowEditForm(true)
+  }
+
+  const handleSaveEditedEndpoint = (endpoint: SparqlEndpoint) => {
+    saveEndpoint(endpoint)
+    setCurrentEndpoint(endpoint)
+    setShowEditForm(false)
+    setEditingEndpoint(null)
+    onClose?.()
+  }
+
+  const handleCancelEdit = () => {
+    setShowEditForm(false)
+    setEditingEndpoint(null)
   }
 
   if (showCustomForm) {
@@ -130,6 +153,53 @@ export function EndpointSelectionDialog({ open, onClose }: EndpointSelectionDial
             onClick={() => handleSaveCustomEndpoint(customEndpoint as SparqlEndpoint)}
             variant="contained"
             disabled={!customEndpoint.endpoint}
+          >
+            Save & Use Endpoint
+          </Button>
+        </DialogActions>
+      </Dialog>
+    )
+  }
+
+  if (showEditForm && editingEndpoint) {
+    return (
+      <Dialog
+        open={open}
+        onClose={onClose}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: { minHeight: '60vh' }
+        }}
+      >
+        <DialogTitle>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <EditIcon />
+            <Typography variant="h6" component="span">
+              Edit Endpoint
+            </Typography>
+          </Box>
+        </DialogTitle>
+        
+        <DialogContent>
+          <Alert severity="info" sx={{ mb: 3 }}>
+            Edit the SPARQL endpoint configuration. All fields except URL are optional.
+          </Alert>
+          
+          <EndpointEditForm
+            data={editingEndpoint}
+            onChange={setEditingEndpoint}
+          />
+        </DialogContent>
+        
+        <DialogActions>
+          <Button onClick={handleCancelEdit} color="inherit">
+            Cancel
+          </Button>
+          <Button 
+            onClick={() => handleSaveEditedEndpoint(editingEndpoint)}
+            variant="contained"
+            disabled={!editingEndpoint.endpoint}
           >
             Save & Use Endpoint
           </Button>
@@ -189,6 +259,13 @@ export function EndpointSelectionDialog({ open, onClose }: EndpointSelectionDial
                     </Typography>
                   }
                 />
+                <IconButton
+                  onClick={(e) => handleEditEndpoint(endpoint, e)}
+                  size="small"
+                  sx={{ ml: 1 }}
+                >
+                  <EditIcon fontSize="small" />
+                </IconButton>
               </ListItemButton>
             </ListItem>
           ))}

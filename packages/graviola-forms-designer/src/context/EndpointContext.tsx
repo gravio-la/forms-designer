@@ -32,7 +32,7 @@ const PREDEFINED_ENDPOINTS: SparqlEndpoint[] = [
   {
     label: 'Wikidata',
     endpoint: 'https://query.wikidata.org/sparql',
-    provider: 'rest',
+    provider: 'blazegraph',
     active: true,
   },
 ]

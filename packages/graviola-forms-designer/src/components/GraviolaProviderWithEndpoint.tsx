@@ -1,37 +1,29 @@
 import { useMemo } from 'react'
-import { GraviolaProvider } from '@formswizard/graviola-renderers'
+import { GraviolaProvider, GraviolaProviderProps } from '@formswizard/graviola-renderers'
+import { SparqlEndpoint } from '@graviola/edb-core-types'
 import { useEndpoint } from '../context'
 
-// Re-export the original props type but make apiBaseUrl optional since we'll get it from context
-type GraviolaProviderWithEndpointProps = Omit<Parameters<typeof GraviolaProvider>[0], 'apiBaseUrl'> & {
-  apiBaseUrl?: string // Make optional, will use endpoint from context if not provided
-}
 
-export function GraviolaProviderWithEndpoint({ 
+export function GraviolaProviderWithEndpoint({
   children,
-  apiBaseUrl,
-  ...otherProps 
-}: GraviolaProviderWithEndpointProps) {
+  ...otherProps
+}: Omit<GraviolaProviderProps, 'endpoint'>) {
   const { currentEndpoint } = useEndpoint()
-
-  // Use endpoint from context if no apiBaseUrl is provided
-  const effectiveApiBaseUrl = useMemo(() => {
-    if (apiBaseUrl) {
-      return apiBaseUrl
+  const endpoint = useMemo<SparqlEndpoint>(() => {
+    if (!currentEndpoint) {
+      return {
+        label: 'Local Oxigraph',
+        endpoint: 'http://localhost:7887/query',
+        provider: 'oxigraph',
+        active: true,
+      }
     }
-    
-    if (currentEndpoint?.endpoint) {
-      return currentEndpoint.endpoint
-    }
-    
-    // Fallback to localhost if no endpoint is configured
-    return 'http://localhost:7887/query'
-  }, [apiBaseUrl, currentEndpoint])
-
+    return currentEndpoint
+  }, [currentEndpoint])
   return (
     <GraviolaProvider
       {...otherProps}
-      apiBaseUrl={effectiveApiBaseUrl}
+      endpoint={endpoint}
     >
       {children}
     </GraviolaProvider>

@@ -19,7 +19,6 @@ const GraviolaProviderWithSchema = ({ children }: { children: React.ReactNode })
     <GraviolaProvider
       schema={schema as any}
       renderers={renderers}
-      apiBaseUrl="http://localhost:7887/query"
       baseIRI={"http://forms-designer.winzlieb.eu/example#"}
       entityBaseIRI={"http://data.winzlieb.eu/forms-designer/"}
       typeNameLabelMap={{}}

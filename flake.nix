@@ -2,7 +2,7 @@
   description = "Flake for dev shell each default system";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     flake-utils.url = "github:numtide/flake-utils";
   };
   outputs = { self, nixpkgs, flake-utils }:
@@ -14,9 +14,9 @@
           echo "Testing GitHub Pages workflow with act..."
           ${pkgs.act}/bin/act -W .github/workflows/pages.yml --job build -P ubuntu-24.04=catthehacker/ubuntu:act-latest --env GITHUB_TOKEN=fake_token
         '';
-        defaultPackage = packages.next;
+        packages.default = packages.next;
 
-        devShell = pkgs.mkShell {
+        devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [ 
             nodejs_latest
             nodePackages_latest.pnpm

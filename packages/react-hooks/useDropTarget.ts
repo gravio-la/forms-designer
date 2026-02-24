@@ -14,12 +14,10 @@ export const useDropTarget = ({ child, isPlaceholder = false, current }: UseDrop
   const [draggedMeta, setDraggedMeta] = useState<DraggableComponent | undefined>()
   const handleDrop = useCallback(
     (componentMeta: DraggableComponent, placeBefore = false) => {
-      // @ts-ignore
       if (isUISchemaElementWithPath(child) && isUISchemaElementWithPath(current)) {
         dispatch(
           insertControl({
             draggableMeta: componentMeta,
-            // @ts-ignore
             child,
             current,
             isPlaceholder,

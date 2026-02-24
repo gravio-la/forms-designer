@@ -23,5 +23,5 @@ export const locationTools: PluggableToolDefinition = {
     },
   ],
   toolSettings: [LocationToolSettings],
-  toolBoxElements: locationToolElements,
+  toolBoxElements: locationToolElements
 }

@@ -6,12 +6,9 @@ import {
   useAdbContext,
   useDataStore,
 } from "@graviola/edb-state-hooks";
-import {
-  PrimaryFieldDeclaration,
-  SparqlEndpoint,
-} from "@graviola/edb-core-types";
+import { PrimaryFieldDeclaration } from "@graviola/edb-core-types";
 import NiceModal from "@ebay/nice-modal-react";
-import { SparqlStoreProvider } from "@graviola/sparql-store-provider";
+import { DummyStoreProvider } from "./DummyStoreProvider";
 import {
   EditEntityModal,
   EntityDetailModal,
@@ -38,7 +35,6 @@ import {
 import { JSONSchema7 } from "json-schema";
 
 type GraviolaProviderProps = {
-  apiBaseUrl: string;
   baseIRI: string;
   entityBaseIRI: string;
   children: React.ReactNode;
@@ -99,20 +95,9 @@ export const GraviolaProvider: React.FC<GraviolaProviderProps> = ({
   primaryFields,
   renderers,
   cellRendererRegistry,
-  apiBaseUrl,
   typeNameLabelMap,
   typeNameUiSchemaOptionsMap,
 }: GraviolaProviderProps) => {
-
-  const endpoint: SparqlEndpoint = useMemo(() => {
-    return {
-      endpoint: `${apiBaseUrl}`,
-      label: "SPARQL service",
-      provider: "oxigraph",
-      active: true,
-    };
-  }, [apiBaseUrl]);
-
   const definitionToTypeIRI = (definitionName: string) =>
     `${baseIRI}${definitionName}`;
 
@@ -172,16 +157,9 @@ export const GraviolaProvider: React.FC<GraviolaProviderProps> = ({
         cellRendererRegistry={cellRendererRegistry}
         uischemata={uischemata}
       >
-        <SparqlStoreProvider
-         endpoint={endpoint} 
-         defaultLimit={20}
-          walkerOptions={{
-            maxRecursion: 2,
-          }}
-          enableInversePropertiesFeature={true}
-        >
+        <DummyStoreProvider>
           <NiceModal.Provider>{children}</NiceModal.Provider>
-        </SparqlStoreProvider>
+        </DummyStoreProvider>
       </AdbProvider>
   );
 };

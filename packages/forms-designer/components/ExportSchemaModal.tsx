@@ -21,8 +21,7 @@ import {
   selectUiSchema,
   selectUiSchemas,
 } from '@formswizard/state'
-import { useTranslation } from 'react-i18next'
-import { i18nInstance, FORMSDESIGNER_NS } from '@formswizard/i18n'
+import { useDesignerTranslation } from '@formswizard/i18n'
 import { useCallback } from 'react'
 import { CodeBox } from './CodeBox'
 
@@ -38,7 +37,7 @@ function buildDatePrefix(): string {
 }
 
 export function ExportSchemaModal({ open, onClose }: ExportSchemaModalProps) {
-  const { t } = useTranslation(FORMSDESIGNER_NS, { i18n: i18nInstance })
+  const { t } = useDesignerTranslation()
   const rootJsonSchema = useAppSelector(selectRootJsonSchema)
   const uiSchema = useAppSelector(selectUiSchema)
   const uiSchemas = useAppSelector(selectUiSchemas)

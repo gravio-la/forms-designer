@@ -3,8 +3,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import DownloadIcon from '@mui/icons-material/Download'
 import CheckIcon from '@mui/icons-material/Check'
 import { useState, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { i18nInstance, FORMSDESIGNER_NS } from '@formswizard/i18n'
+import { useDesignerTranslation } from '@formswizard/i18n'
 
 interface CodeBoxProps {
   content: string
@@ -13,7 +12,7 @@ interface CodeBoxProps {
 }
 
 export function CodeBox({ content, filename = 'schema.json', maxHeight = 400 }: CodeBoxProps) {
-  const { t } = useTranslation(FORMSDESIGNER_NS, { i18n: i18nInstance })
+  const { t } = useDesignerTranslation()
   const [copied, setCopied] = useState(false)
 
   const handleCopy = useCallback(async () => {

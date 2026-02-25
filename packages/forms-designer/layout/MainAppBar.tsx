@@ -13,11 +13,8 @@ import Brightness4 from '@mui/icons-material/Brightness4'
 import NoteAdd from '@mui/icons-material/NoteAdd'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
 import { InterfaceModeChooser, ExportSchemaModal } from '../components'
-import { i18nInstance, FORMSDESIGNER_NS } from '@formswizard/i18n'
-import { useTranslation } from 'react-i18next'
+import { i18nInstance, useDesignerTranslation } from '@formswizard/i18n'
 import { useEffect, useState } from 'react'
-
-const useDesignerTranslation = () => useTranslation(FORMSDESIGNER_NS, { i18n: i18nInstance })
 
 export function MainAppBar() {
   return (

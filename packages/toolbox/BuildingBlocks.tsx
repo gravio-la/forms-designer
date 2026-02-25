@@ -3,11 +3,14 @@ import { Box, Stack } from '@mui/system'
 import { useAppDispatch, useAppSelector, addBuildingBlock } from '@formswizard/state'
 import { DragBox } from './DragBox'
 import { useDNDHooksContext } from '@formswizard/react-hooks'
-import { useDraggableElementsByComponentType } from '@formswizard/tool-context'
+import { useDraggableElementsByComponentType, useRegisteredCollections } from '@formswizard/tool-context'
+import { useJsonFormsI18n } from '@formswizard/i18n'
 
 function BuildingBlocks() {
   const buildingBlocks = useAppSelector((state) => state.buildingBlocks.blocks)
   const draggableComponents = useDraggableElementsByComponentType('block')
+  const registeredCollections = useRegisteredCollections()
+  const { translate } = useJsonFormsI18n(registeredCollections)
   const jsonSchema = useAppSelector((state) => state.jsonFormsEdit.jsonSchema)
   const dispatch = useAppDispatch()
   const { useDrop } = useDNDHooksContext()
@@ -31,11 +34,12 @@ function BuildingBlocks() {
   )
   return (
     <>
-      {[...buildingBlocks, ...draggableComponents].map((component, index) => {
+      {[...buildingBlocks, ...draggableComponents].map((component) => {
+        const displayName = translate?.(`tools.${component.name}`, component.name) ?? component.name
         return (
           <DragBox
             ToolIconName={component.ToolIconName}
-            name={component.name}
+            name={displayName}
             key={component.name}
             componentMeta={component}
           ></DragBox>

@@ -25,13 +25,13 @@ const PrimaryFieldPart: ToolSettingsMixin = {
   jsonSchemaElement: {
     isPrimaryFieldFor: {
       type: 'string',
-      enum: ['none', 'label', 'description', 'image'],
+      enum: ['none', 'title', 'description', 'image'],
     },
   },
   mapWizardToAddonData: (previousData, wizardSchema) => {
     return {
       ...previousData,
-      isPrimaryFieldFor: wizardSchema?.['x-primaryField'] || 'none',
+      isPrimaryFieldFor: wizardSchema?.['x-primaryField'] ? wizardSchema['x-primaryField'] === 'title' ? 'label' : wizardSchema['x-primaryField'] : 'none',
     }
   },
   mapAddonDataToWizardUISchema: (toolData, uiSchema) => uiSchema,
@@ -40,7 +40,7 @@ const PrimaryFieldPart: ToolSettingsMixin = {
     if (isPrimaryFieldFor && isPrimaryFieldFor !== 'none') {
       return {
         ...wizardSchema,
-        'x-primaryField': isPrimaryFieldFor,
+        'x-primaryField': isPrimaryFieldFor === 'label' ? 'title' : isPrimaryFieldFor,
       };
     } else {
       // @ts-ignore

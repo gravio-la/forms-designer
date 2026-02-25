@@ -49,6 +49,7 @@
     "@formswizard/state": "workspace:*",
     "@formswizard/utils": "workspace:*",
     "@formswizard/tool-context": "workspace:*",
+    "@formswizard/i18n": "workspace:*",
     "@types/react": "^18.2.20",
     "lodash": "^4.17.21"
   }

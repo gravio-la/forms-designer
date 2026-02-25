@@ -5,12 +5,15 @@ import { useFinalizedToolSettings } from './useFieldSettings'
 import { Box, Grid, Toolbar, IconButton } from '@mui/material'
 import Close from '@mui/icons-material/Close'
 import { selectPath, useAppDispatch } from '@formswizard/state'
-
+import { useToolContext } from '@formswizard/tool-context'
+import { useJsonFormsI18n } from '@formswizard/i18n'
 import EditableFieldKeyDisplay from './EditableFieldKeyDisplay'
 
 export function FieldSettingsView() {
   const { handleChange, toolSettingsJsonSchema, tooldataBuffer } = useFinalizedToolSettings()
   const dispatch = useAppDispatch()
+  const { registeredCollections } = useToolContext()
+  const i18n = useJsonFormsI18n(registeredCollections)
 
   const handleClose = () => {
     dispatch(selectPath(undefined))
@@ -47,6 +50,7 @@ export function FieldSettingsView() {
                 renderers={materialRenderers}
                 cells={materialCells}
                 onChange={handleChange}
+                i18n={i18n}
               />
             )}
           </Box>

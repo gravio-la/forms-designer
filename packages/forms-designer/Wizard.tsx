@@ -16,7 +16,7 @@ export function Wizard(props: WizardProps) {
   const [data, setData] = useState({})
   const previewModus = useAppSelector(selectPreviewModus)
 
-  const { renderers, cells, ajv } = usePreparedJsonFormsState({
+  const { renderers, cells, ajv, i18n } = usePreparedJsonFormsState({
     isPreview: previewModus,
     editingRenderers: dropRenderer,
   })
@@ -37,7 +37,7 @@ export function Wizard(props: WizardProps) {
         schema={schema as JsonFormsJsonSchema}
         uischema={uiSchemaWithPath}
         readonly={!previewModus}
-        {...{ renderers, cells, ajv }}
+        {...{ renderers, cells, ajv, i18n }}
       />
     </Box>
   )

@@ -1,4 +1,4 @@
-import { IconButton, Typography, useTheme, AppBar, Toolbar, Box, Grid, Switch } from '@mui/material'
+import { IconButton, Typography, useTheme, AppBar, Toolbar, Box, Grid, Switch, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import {
   useAppDispatch,
   toggleColorMode,
@@ -9,6 +9,8 @@ import {
 import Brightness7 from '@mui/icons-material/Brightness7'
 import Brightness4 from '@mui/icons-material/Brightness4'
 import { InterfaceModeChooser } from '../components'
+import { i18nInstance } from '@formswizard/i18n'
+import { useEffect, useState } from 'react'
 
 export function MainAppBar() {
   const dispatch = useAppDispatch()
@@ -43,14 +45,41 @@ export function MainAppBar() {
               },
             }}
           >
+            <LanguageSelector />
             <InterfaceModeChooser />
             <DarkModeSwitch></DarkModeSwitch>
             {/* <TemplateModalButton>Templates</TemplateModalButton> */}
-            {/* <LanguageSelector></LanguageSelector> */}
           </Grid>
         </Grid>
       </Toolbar>
     </AppBar>
+  )
+}
+
+function LanguageSelector() {
+  const [language, setLanguage] = useState(i18nInstance.language)
+
+  useEffect(() => {
+    const handler = (lng: string) => setLanguage(lng)
+    i18nInstance.on('languageChanged', handler)
+    return () => { i18nInstance.off('languageChanged', handler) }
+  }, [])
+
+  const handleChange = (_: React.MouseEvent<HTMLElement>, value: string | null) => {
+    if (value) i18nInstance.changeLanguage(value)
+  }
+
+  return (
+    <ToggleButtonGroup
+      value={language}
+      exclusive
+      onChange={handleChange}
+      size="small"
+      sx={{ '& .MuiToggleButton-root': { color: 'inherit', borderColor: 'rgba(255,255,255,0.3)', py: 0.5, px: 1.5 } }}
+    >
+      <ToggleButton value="en">EN</ToggleButton>
+      <ToggleButton value="de">DE</ToggleButton>
+    </ToggleButtonGroup>
   )
 }
 

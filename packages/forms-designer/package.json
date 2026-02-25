@@ -54,6 +54,7 @@
     "@reduxjs/toolkit": "^2.6.1"
   },
   "dependencies": {
+    "@formswizard/i18n": "workspace:*",
     "@formswizard/advanced-tools": "workspace:*",
     "@formswizard/basic-tools": "workspace:*",
     "@formswizard/designer-basic-renderer": "workspace:*",

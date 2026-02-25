@@ -50,6 +50,25 @@ const FORMSDESIGNER_BASE_TRANSLATIONS: Resource = {
       'error.minimum': 'Must be at least {{limit}}',
       'error.maximum': 'Must be at most {{limit}}',
       'error.pattern': 'Does not match the expected format',
+      // --- AppBar ---
+      'appBar.edit': 'Edit',
+      'appBar.preview': 'Preview',
+      'appBar.newForm': 'New form',
+      'appBar.newFormTooltip': 'New form (reset and clear saved state)',
+      'appBar.resetConfirm': 'Start a new form? Current form will be cleared and not restored on reload.',
+      'appBar.exportSchema': 'Export schema',
+      'appBar.exportSchemaTooltip': 'Export schema',
+      // --- CodeBox ---
+      'codeBox.copied': 'Copied!',
+      'codeBox.copyToClipboard': 'Copy to clipboard',
+      'codeBox.downloadAs': 'Download as {{filename}}',
+      // --- Export Modal ---
+      'exportModal.title': 'Export Schema',
+      'exportModal.exportAll': 'Export All',
+      'exportModal.jsonSchemaLabel': 'JSON Schema (with definitions)',
+      'exportModal.uiSchemaLabel': 'UI Schema',
+      'exportModal.additionalUiSchemata': 'Additional UI Schemata ({{count}})',
+      'exportModal.close': 'Close',
     },
   },
   de: {
@@ -69,6 +88,25 @@ const FORMSDESIGNER_BASE_TRANSLATIONS: Resource = {
       'error.minimum': 'Muss mindestens {{limit}} betragen',
       'error.maximum': 'Darf höchstens {{limit}} betragen',
       'error.pattern': 'Entspricht nicht dem erwarteten Format',
+      // --- AppBar ---
+      'appBar.edit': 'Bearbeiten',
+      'appBar.preview': 'Vorschau',
+      'appBar.newForm': 'Neues Formular',
+      'appBar.newFormTooltip': 'Neues Formular (zurücksetzen und gespeicherten Zustand löschen)',
+      'appBar.resetConfirm': 'Neues Formular starten? Das aktuelle Formular wird gelöscht und beim Neuladen nicht wiederhergestellt.',
+      'appBar.exportSchema': 'Schema exportieren',
+      'appBar.exportSchemaTooltip': 'Schema exportieren',
+      // --- CodeBox ---
+      'codeBox.copied': 'Kopiert!',
+      'codeBox.copyToClipboard': 'In die Zwischenablage kopieren',
+      'codeBox.downloadAs': 'Herunterladen als {{filename}}',
+      // --- Export Modal ---
+      'exportModal.title': 'Schema exportieren',
+      'exportModal.exportAll': 'Alles exportieren',
+      'exportModal.jsonSchemaLabel': 'JSON-Schema (mit Definitionen)',
+      'exportModal.uiSchemaLabel': 'UI-Schema',
+      'exportModal.additionalUiSchemata': 'Weitere UI-Schemata ({{count}})',
+      'exportModal.close': 'Schließen',
     },
   },
 }

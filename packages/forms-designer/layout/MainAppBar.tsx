@@ -11,17 +11,22 @@ import {
 import Brightness7 from '@mui/icons-material/Brightness7'
 import Brightness4 from '@mui/icons-material/Brightness4'
 import NoteAdd from '@mui/icons-material/NoteAdd'
-import { InterfaceModeChooser } from '../components'
-import { i18nInstance } from '@formswizard/i18n'
+import FileDownloadIcon from '@mui/icons-material/FileDownload'
+import { InterfaceModeChooser, ExportSchemaModal } from '../components'
+import { i18nInstance, FORMSDESIGNER_NS } from '@formswizard/i18n'
+import { useTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
+
+const useDesignerTranslation = () => useTranslation(FORMSDESIGNER_NS, { i18n: i18nInstance })
 
 export function MainAppBar() {
   return (
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Toolbar>
         <Grid container flex={1} alignItems="center">
-          <Grid item md={6}>
+          <Grid item md={6} sx={{ display: 'flex', alignItems: 'center' }}>
             <ResetFormButton />
+            <ExportSchemaButton />
           </Grid>
           <Grid item md={3} sx={{ flexWrap: 'nowrap', display: 'flex', justifyContent: 'center' }}>
             <PreviewModeToggle />
@@ -54,6 +59,7 @@ export function MainAppBar() {
 }
 
 function PreviewModeToggle() {
+  const { t } = useDesignerTranslation()
   const dispatch = useAppDispatch()
   const previewModus = useAppSelector(selectPreviewModus)
 
@@ -71,8 +77,8 @@ function PreviewModeToggle() {
       size="small"
       sx={{ '& .MuiToggleButton-root': { color: 'inherit', borderColor: 'rgba(255,255,255,0.3)', py: 0.5, px: 1.5 } }}
     >
-      <ToggleButton value="edit">Edit</ToggleButton>
-      <ToggleButton value="preview">Preview</ToggleButton>
+      <ToggleButton value="edit">{t('appBar.edit')}</ToggleButton>
+      <ToggleButton value="preview">{t('appBar.preview')}</ToggleButton>
     </ToggleButtonGroup>
   )
 }
@@ -116,23 +122,42 @@ function LanguageSelector() {
 }
 
 function ResetFormButton() {
+  const { t } = useDesignerTranslation()
   const dispatch = useAppDispatch()
 
   const handleClick = () => {
-    if (window.confirm('Start a new form? Current form will be cleared and not restored on reload.')) {
+    if (window.confirm(t('appBar.resetConfirm'))) {
       clearPersistedJsonFormsEditState()
       dispatch(resetWizard())
     }
   }
 
   return (
-    <Tooltip title="New form (reset and clear saved state)">
+    <Tooltip title={t('appBar.newFormTooltip')}>
       <span>
-        <IconButton onClick={handleClick} color="inherit" aria-label="New form">
+        <IconButton onClick={handleClick} color="inherit" aria-label={t('appBar.newForm')}>
           <NoteAdd />
         </IconButton>
       </span>
     </Tooltip>
+  )
+}
+
+function ExportSchemaButton() {
+  const { t } = useDesignerTranslation()
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <Tooltip title={t('appBar.exportSchemaTooltip')}>
+        <span>
+          <IconButton onClick={() => setOpen(true)} color="inherit" aria-label={t('appBar.exportSchema')}>
+            <FileDownloadIcon />
+          </IconButton>
+        </span>
+      </Tooltip>
+      <ExportSchemaModal open={open} onClose={() => setOpen(false)} />
+    </>
   )
 }
 

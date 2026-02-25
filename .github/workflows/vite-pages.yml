@@ -3,7 +3,7 @@ name: Deploy Vite App to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["stable/autumn-sprint-2025"]
+    branches: ["feature/ux-sprint-2026"]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 

@@ -1,13 +1,16 @@
-import { IconButton, Typography, useTheme, AppBar, Toolbar, Box, Grid, Switch, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { IconButton, Tooltip, Typography, useTheme, AppBar, Toolbar, Box, Grid, Switch, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import {
   useAppDispatch,
   toggleColorMode,
   togglePreviewModus,
   selectPreviewModus,
   useAppSelector,
+  resetWizard,
+  clearPersistedJsonFormsEditState,
 } from '@formswizard/state'
 import Brightness7 from '@mui/icons-material/Brightness7'
 import Brightness4 from '@mui/icons-material/Brightness4'
+import NoteAdd from '@mui/icons-material/NoteAdd'
 import { InterfaceModeChooser } from '../components'
 import { i18nInstance } from '@formswizard/i18n'
 import { useEffect, useState } from 'react'
@@ -22,7 +25,9 @@ export function MainAppBar() {
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Toolbar>
         <Grid container flex={1} alignItems="center">
-          <Grid item md={6}></Grid>
+          <Grid item md={6}>
+            <ResetFormButton />
+          </Grid>
           <Grid item md={3} sx={{ flexWrap: 'nowrap', display: 'flex' }}>
             <Typography variant="h6" noWrap component="div">
               preview
@@ -80,6 +85,27 @@ function LanguageSelector() {
       <ToggleButton value="en">EN</ToggleButton>
       <ToggleButton value="de">DE</ToggleButton>
     </ToggleButtonGroup>
+  )
+}
+
+function ResetFormButton() {
+  const dispatch = useAppDispatch()
+
+  const handleClick = () => {
+    if (window.confirm('Start a new form? Current form will be cleared and not restored on reload.')) {
+      clearPersistedJsonFormsEditState()
+      dispatch(resetWizard())
+    }
+  }
+
+  return (
+    <Tooltip title="New form (reset and clear saved state)">
+      <span>
+        <IconButton onClick={handleClick} color="inherit" aria-label="New form">
+          <NoteAdd />
+        </IconButton>
+      </span>
+    </Tooltip>
   )
 }
 

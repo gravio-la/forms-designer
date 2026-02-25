@@ -519,6 +519,7 @@ export const jsonFormsEditSlice = createSlice({
       targetElements.splice(targetIndex, 0, movedElement)
       state.selectedPath = undefined
     },
+    resetWizard: () => structuredClone(exampleInitialState),
   },
 })
 
@@ -536,6 +537,7 @@ export const {
   moveControl,
   renameSchemaDefinition,
   addSchemaDefinition,
+  resetWizard,
 } = jsonFormsEditSlice.actions
 
 export const jsonFormsEditReducer: Reducer<JsonFormsEditState> = jsonFormsEditSlice.reducer

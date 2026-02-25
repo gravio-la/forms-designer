@@ -1,4 +1,4 @@
-import { IconButton, Tooltip, Typography, useTheme, AppBar, Toolbar, Box, Grid, Switch, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { IconButton, Tooltip, useTheme, AppBar, Toolbar, Box, Grid, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import {
   useAppDispatch,
   toggleColorMode,
@@ -16,11 +16,6 @@ import { i18nInstance } from '@formswizard/i18n'
 import { useEffect, useState } from 'react'
 
 export function MainAppBar() {
-  const dispatch = useAppDispatch()
-  const previewModus = useAppSelector(selectPreviewModus)
-  const handleTogglePreview = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(togglePreviewModus())
-  }
   return (
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Toolbar>
@@ -28,11 +23,8 @@ export function MainAppBar() {
           <Grid item md={6}>
             <ResetFormButton />
           </Grid>
-          <Grid item md={3} sx={{ flexWrap: 'nowrap', display: 'flex' }}>
-            <Typography variant="h6" noWrap component="div">
-              preview
-            </Typography>
-            <Switch checked={previewModus} onChange={handleTogglePreview} />
+          <Grid item md={3} sx={{ flexWrap: 'nowrap', display: 'flex', justifyContent: 'center' }}>
+            <PreviewModeToggle />
           </Grid>
           <Grid
             item
@@ -58,6 +50,30 @@ export function MainAppBar() {
         </Grid>
       </Toolbar>
     </AppBar>
+  )
+}
+
+function PreviewModeToggle() {
+  const dispatch = useAppDispatch()
+  const previewModus = useAppSelector(selectPreviewModus)
+
+  const handleChange = (_: React.MouseEvent<HTMLElement>, value: 'edit' | 'preview' | null) => {
+    if (!value) return
+    const shouldBePreview = value === 'preview'
+    if (shouldBePreview !== previewModus) dispatch(togglePreviewModus())
+  }
+
+  return (
+    <ToggleButtonGroup
+      value={previewModus ? 'preview' : 'edit'}
+      exclusive
+      onChange={handleChange}
+      size="small"
+      sx={{ '& .MuiToggleButton-root': { color: 'inherit', borderColor: 'rgba(255,255,255,0.3)', py: 0.5, px: 1.5 } }}
+    >
+      <ToggleButton value="edit">Edit</ToggleButton>
+      <ToggleButton value="preview">Preview</ToggleButton>
+    </ToggleButtonGroup>
   )
 }
 

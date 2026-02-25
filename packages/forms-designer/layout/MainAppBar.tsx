@@ -1,4 +1,4 @@
-import { IconButton, Tooltip, useTheme, AppBar, Toolbar, Box, Grid, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { IconButton, Tooltip, useTheme, AppBar, Toolbar, Box, Grid, ToggleButton, ToggleButtonGroup, FormControl, Select, MenuItem, SelectChangeEvent } from '@mui/material'
 import {
   useAppDispatch,
   toggleColorMode,
@@ -42,9 +42,9 @@ export function MainAppBar() {
               },
             }}
           >
-            <LanguageSelector />
             <InterfaceModeChooser />
-            <DarkModeSwitch></DarkModeSwitch>
+            <LanguageSelector />
+            <DarkModeSwitch />
             {/* <TemplateModalButton>Templates</TemplateModalButton> */}
           </Grid>
         </Grid>
@@ -86,21 +86,32 @@ function LanguageSelector() {
     return () => { i18nInstance.off('languageChanged', handler) }
   }, [])
 
-  const handleChange = (_: React.MouseEvent<HTMLElement>, value: string | null) => {
-    if (value) i18nInstance.changeLanguage(value)
+  const handleChange = (event: SelectChangeEvent<string>) => {
+    i18nInstance.changeLanguage(event.target.value)
   }
 
   return (
-    <ToggleButtonGroup
-      value={language}
-      exclusive
-      onChange={handleChange}
-      size="small"
-      sx={{ '& .MuiToggleButton-root': { color: 'inherit', borderColor: 'rgba(255,255,255,0.3)', py: 0.5, px: 1.5 } }}
-    >
-      <ToggleButton value="en">EN</ToggleButton>
-      <ToggleButton value="de">DE</ToggleButton>
-    </ToggleButtonGroup>
+    <FormControl size="small">
+      <Select
+        value={language}
+        onChange={handleChange}
+        sx={{
+          color: 'inherit',
+          minWidth: 90,
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'rgba(255, 255, 255, 0.23)',
+          },
+          '& .MuiSelect-select': {
+            display: 'flex',
+            alignItems: 'center',
+            minHeight: 'auto',
+          },
+        }}
+      >
+        <MenuItem value="en">EN</MenuItem>
+        <MenuItem value="de">DE</MenuItem>
+      </Select>
+    </FormControl>
   )
 }
 

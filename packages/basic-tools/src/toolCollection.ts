@@ -3,6 +3,7 @@ import { draggableComponents } from './draggableComponents'
 import { icons } from './icons'
 import { renderers } from './renderers'
 import { toolSettings } from './toolSettings'
+import { translations } from './translations'
 import { materialCells } from '@jsonforms/material-renderers'
 
 export const basicToolsCollection: FormsDesignerToolCollection = {
@@ -16,4 +17,5 @@ export const basicToolsCollection: FormsDesignerToolCollection = {
   rendererRegistry: renderers,
   cellRendererRegistry: materialCells,
   toolSettings,
+  translations,
 }

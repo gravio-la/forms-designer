@@ -3,7 +3,7 @@ import { DraggableElement } from '@formswizard/types'
 
 export const draggableComponents: DraggableElement[] = [
   {
-    name: 'Label',
+    name: 'label',
     ToolIconName: 'Label',
     jsonSchemaElement: {},
     uiSchema: {
@@ -14,7 +14,7 @@ export const draggableComponents: DraggableElement[] = [
   },
 
   {
-    name: 'Alert',
+    name: 'alert',
     ToolIconName: 'Info',
     jsonSchemaElement: {},
     uiSchema: {
@@ -24,14 +24,14 @@ export const draggableComponents: DraggableElement[] = [
     },
   },
   {
-    name: 'Textfeld',
+    name: 'textField',
     ToolIconName: 'TextFields',
     jsonSchemaElement: {
       type: 'string',
     },
   },
   {
-    name: 'Number',
+    name: 'number',
     ToolIconName: 'Numbers',
     jsonSchemaElement: {
       type: 'integer',
@@ -39,7 +39,7 @@ export const draggableComponents: DraggableElement[] = [
   },
 
   {
-    name: 'Datumsfeld',
+    name: 'dateField',
     ToolIconName: 'Date',
     jsonSchemaElement: {
       type: 'string',
@@ -47,7 +47,7 @@ export const draggableComponents: DraggableElement[] = [
     },
   },
   {
-    name: 'Datumszeitfeld',
+    name: 'dateTimeField',
     ToolIconName: 'DateTime',
     jsonSchemaElement: {
       type: 'string',
@@ -55,14 +55,14 @@ export const draggableComponents: DraggableElement[] = [
     },
   },
   {
-    name: 'Checkbox',
+    name: 'checkbox',
     ToolIconName: 'Checkbox',
     jsonSchemaElement: {
       type: 'boolean',
     },
   },
   {
-    name: 'Mehrzeiliges Textfeld',
+    name: 'multilineTextField',
     ToolIconName: 'MultiLine',
     jsonSchemaElement: {
       type: 'string',
@@ -75,7 +75,7 @@ export const draggableComponents: DraggableElement[] = [
     },
   },
   {
-    name: 'Radio Buttons',
+    name: 'radioButtons',
     ToolIconName: 'RadioButton',
     jsonSchemaElement: {
       type: 'string',
@@ -89,14 +89,13 @@ export const draggableComponents: DraggableElement[] = [
     },
   },
   {
-    name: 'Multiselect',
+    name: 'multiselect',
     ToolIconName: 'SelectableList',
     jsonSchemaElement: {
       type: 'array',
       uniqueItems: true,
       items: {
         type: 'string',
-
         enum: ['foo', 'bar', 'foobar'],
       },
     },
@@ -108,7 +107,7 @@ export const draggableComponents: DraggableElement[] = [
     },
   },
   {
-    name: 'List of Objects',
+    name: 'listOfObjects',
     ToolIconName: 'List',
     jsonSchemaElement: {
       type: 'array',
@@ -126,14 +125,13 @@ export const draggableComponents: DraggableElement[] = [
     },
     uiSchema: {
       type: 'Control',
-
       options: {
         showSortButtons: true,
       },
     },
   },
   {
-    name: 'horizontales layout',
+    name: 'horizontalLayout',
     ToolIconName: 'ArrowHorizontal',
     uiSchema: {
       type: 'HorizontalLayout',
@@ -142,26 +140,26 @@ export const draggableComponents: DraggableElement[] = [
     },
   },
   {
-    name: 'vertikales layout',
+    name: 'verticalLayout',
     ToolIconName: 'ArrowVertical',
     uiSchema: {
       type: 'VerticalLayout',
       //@ts-ignore
-      label: 'Vertikales Layout',
+      label: 'Vertical Layout',
       elements: [],
     },
   },
   {
-    name: 'Gruppe',
+    name: 'group',
     ToolIconName: 'Group',
     jsonSchemaElement: {
       type: 'object',
       properties: {},
     },
-    uiSchema: updateScopeOfUISchemaElement('#', '#/properties/gruppe', {
+    uiSchema: updateScopeOfUISchemaElement('#', '#/properties/group', {
       type: 'Group',
       //@ts-ignore
-      label: 'Gruppe',
+      label: 'Group',
       elements: [
       ],
     }),

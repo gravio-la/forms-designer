@@ -5,6 +5,9 @@ import { visualizer } from 'rollup-plugin-visualizer'
 // https://vite.dev/config/
 export default defineConfig({
   base: process.env.VITE_BASE_PATH || '/forms-designer',
+  optimizeDeps: {
+    include: ['i18next', 'react-i18next'],
+  },
   plugins: [
     react(),
     // Generate multiple visualization files

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useMemo, ReactNode } from 'react'
 import { ToolContextValue, ToolProviderProps } from './types'
-import { JsonSchema } from '@formswizard/types'
+import { JsonSchema, CollectionTranslations } from '@formswizard/types'
+import { addTranslations } from '@formswizard/i18n'
 
 // Context
 const ToolContext = createContext<ToolContextValue | null>(null)
@@ -13,36 +14,51 @@ export const ToolProvider = <T extends JsonSchema = JsonSchema>({
   const contextValue = useMemo(() => {
     // Merge all tool collections into a single registry
     const mergedState = toolCollections.reduce(
-      (acc, collection) => ({
-        iconRegistry: {
-          ...acc.iconRegistry,
-          ...(collection.iconRegistry || {}),
-        },
-        rendererRegistry: [
-          ...acc.rendererRegistry,
-          ...(collection.rendererRegistry || []),
-        ],
-        cellRendererRegistry: [
-          ...acc.cellRendererRegistry,
-          ...(collection.cellRendererRegistry || []),
-        ],
-        ajvFormatRegistry: {
-          ...acc.ajvFormatRegistry,
-          ...(collection.ajvFormatRegistry || {}),
-        },
-        toolSettings: [
-          ...acc.toolSettings,
-          ...(collection.toolSettings || []),
-        ],
-        draggableElements: [
-          ...acc.draggableElements,
-          ...(collection.draggableElements || []),
-        ],
-        registeredCollections: [
-          ...acc.registeredCollections,
-          collection.info.name,
-        ],
-      }),
+      (acc, collection) => {
+        // Register this collection's translations with the i18n instance
+        if (collection.translations) {
+          for (const [language, resources] of Object.entries(collection.translations)) {
+            addTranslations(collection.info.name, language, resources)
+          }
+        }
+
+        return {
+          iconRegistry: {
+            ...acc.iconRegistry,
+            ...(collection.iconRegistry || {}),
+          },
+          rendererRegistry: [
+            ...acc.rendererRegistry,
+            ...(collection.rendererRegistry || []),
+          ],
+          cellRendererRegistry: [
+            ...acc.cellRendererRegistry,
+            ...(collection.cellRendererRegistry || []),
+          ],
+          ajvFormatRegistry: {
+            ...acc.ajvFormatRegistry,
+            ...(collection.ajvFormatRegistry || {}),
+          },
+          toolSettings: [
+            ...acc.toolSettings,
+            ...(collection.toolSettings || []),
+          ],
+          draggableElements: [
+            ...acc.draggableElements,
+            ...(collection.draggableElements || []),
+          ],
+          registeredCollections: [
+            ...acc.registeredCollections,
+            collection.info.name,
+          ],
+          translations: [
+            ...acc.translations,
+            ...(collection.translations
+              ? [{ namespace: collection.info.name, resources: collection.translations } as CollectionTranslations]
+              : []),
+          ],
+        }
+      },
       {
         iconRegistry: {} as Record<string, any>,
         rendererRegistry: [] as any[],
@@ -51,6 +67,7 @@ export const ToolProvider = <T extends JsonSchema = JsonSchema>({
         toolSettings: [] as any[],
         draggableElements: [] as any[],
         registeredCollections: [] as string[],
+        translations: [] as CollectionTranslations[],
       }
     )
 
@@ -86,6 +103,7 @@ export const useToolContext = <T extends JsonSchema = JsonSchema>(): ToolContext
       toolSettings: [],
       draggableElements: [],
       registeredCollections: [],
+      translations: [],
       isProviderPresent: false,
     }
   }

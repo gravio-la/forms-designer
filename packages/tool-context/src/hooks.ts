@@ -3,6 +3,7 @@ import { useToolContext } from './ToolContext'
 import { useMemo } from 'react'
 import { JsonFormsRendererRegistryEntry, JsonFormsCellRendererRegistryEntry, createAjv } from '@jsonforms/core'
 import formatsPlugin from 'ajv-formats'
+import { useJsonFormsI18n } from '@formswizard/i18n'
 
 type RendererRegistry = JsonFormsRendererRegistryEntry[]
 type CellRegistry = JsonFormsCellRendererRegistryEntry[]
@@ -111,6 +112,7 @@ export const usePreparedJsonFormsState = (options: PreparedJsonFormsStateOptions
   const ownRenderers = useRendererRegistry()
   const ownCells = useCellRendererRegistry()
   const ownAjvFormats = useAjvFormatRegistry()
+  const registeredCollections = useRegisteredCollections()
 
   const renderers: JsonFormsRendererRegistryEntry[] = useMemo(
     () => [...ownRenderers, ...(!isPreview ? editingRenderers : []), ...normalRenderers],
@@ -135,5 +137,7 @@ export const usePreparedJsonFormsState = (options: PreparedJsonFormsStateOptions
     [ownAjvFormats]
   )
 
-  return { renderers, cells, ajv }
+  const i18n = useJsonFormsI18n(registeredCollections)
+
+  return { renderers, cells, ajv, i18n }
 }

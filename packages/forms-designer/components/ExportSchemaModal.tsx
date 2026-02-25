@@ -53,7 +53,7 @@ export function ExportSchemaModal({ open, onClose }: ExportSchemaModalProps) {
     const exportData = {
       jsonSchema: rootJsonSchema,
       uiSchema,
-      uiSchemata: uiSchemas || {},
+      uiSchemas: uiSchemas || {},
     }
     const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)

@@ -10,6 +10,9 @@ const jsonSchema = {
     max: {
       type: 'integer',
     },
+    floatingPoint: {
+      type: 'boolean',
+    },
   },
 }
 
@@ -29,6 +32,7 @@ const mapToolDataToWizardSchema = (toolData: any, wizardSchema: JsonSchema) => {
     ...wizardSchema,
     minimum: toolData.min,
     maximum: toolData.max,
+    type: toolData.floatingPoint ? 'number' : 'integer' as ('number' | 'integer'),
   }
 }
 
@@ -37,8 +41,8 @@ const NumberInputToolSettings: ToolSetting = {
   mapToolDataToWizardSchema,
   mapToolDataToWizardUischema,
   jsonSchema,
-  tester: (jsonSchema: JsonSchema | null, uiSchema) =>
-    uiSchema && uiSchema?.type === 'Control' && jsonSchema?.type === 'integer' ? 1 : 0,
+  tester: (uiSchema, jsonSchema: JsonSchema | null) =>
+    uiSchema && uiSchema?.type === 'Control' && (jsonSchema?.type === 'integer' || jsonSchema?.type === 'number') ? 1 : 0,
   toolSettingsMixins: [ToolsettingParts.Title],
 }
 export default NumberInputToolSettings

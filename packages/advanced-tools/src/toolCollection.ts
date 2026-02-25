@@ -3,6 +3,7 @@ import { draggableComponents } from './draggableComponents'
 import { icons } from './icons'
 import { renderers } from './renderers'
 import { toolSettings } from './toolSettings'
+import { translations } from './translations'
 
 export const advancedToolsCollection: FormsDesignerToolCollection = {
   info: {
@@ -14,4 +15,5 @@ export const advancedToolsCollection: FormsDesignerToolCollection = {
   iconRegistry: icons,
   rendererRegistry: renderers,
   toolSettings,
+  translations,
 }

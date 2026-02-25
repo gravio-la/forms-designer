@@ -101,6 +101,15 @@ export type ToolCollectionInfo = {
   categories: string[]
 }
 
+export type TranslationDictionary = Record<string, string>
+
+export type LanguageTranslations = Record<string, TranslationDictionary>
+
+export type CollectionTranslations = {
+  namespace: string
+  resources: LanguageTranslations
+}
+
 export type ToolContextState<T extends JsonSchema = JsonSchema> = {
   iconRegistry: ToolIconRegistry
   rendererRegistry: JsonFormsRendererRegistryEntry[]
@@ -109,11 +118,18 @@ export type ToolContextState<T extends JsonSchema = JsonSchema> = {
   toolSettings: ToolSettings<T>
   draggableElements: DraggableElement[]
   registeredCollections: string[]
+  translations: CollectionTranslations[]
 }
 
 export type FormsDesignerToolCollection<T extends JsonSchema = JsonSchema> = {
   info: ToolCollectionInfo
-} & Partial<ToolContextState<T>>
+  /**
+   * Optional translations for this collection, keyed by language then by
+   * JsonForms i18n key (e.g. `{ en: { 'multiline.label': 'Multiline' } }`).
+   * The namespace is derived from `info.name`.
+   */
+  translations?: LanguageTranslations
+} & Partial<Omit<ToolContextState<T>, 'registeredCollections' | 'translations'>>
 
 export type UISchemaElementWithPath = UISchemaElement & { path: string; structurePath?: string }
 export type LayoutWithPath = Layout & { path: string }

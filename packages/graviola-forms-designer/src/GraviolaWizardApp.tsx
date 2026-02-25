@@ -10,6 +10,7 @@ import { renderers } from './renderers'
 import { QueryClient, QueryClientProvider, useAdbContext } from '@graviola/edb-state-hooks'
 import { useUISchemata, usePrimaryFields } from './hooks'
 import { useCallback } from 'react'
+import { I18nProvider } from '@formswizard/i18n'
 const GraviolaProviderWithSchema = ({ children }: { children: React.ReactNode }) => {
   const schema = useJsonSchema()
   const uischemata = useUISchemata()
@@ -58,20 +59,22 @@ const queryClient = new QueryClient()
 
 export function GraviolaWizardApp() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ToolProvider
-        toolCollections={[
-          basicToolsCollection,
-          advancedToolsCollection,
-          graviolaToolsCollection,
-        ]}
-      >
-        <WizardProvider>
-          <GraviolaProviderWithSchema>
-            <WizardAppWithMultipleDefinitions />
-          </GraviolaProviderWithSchema>
-        </WizardProvider>
-      </ToolProvider>
-    </QueryClientProvider>
+    <I18nProvider>
+      <QueryClientProvider client={queryClient}>
+        <ToolProvider
+          toolCollections={[
+            basicToolsCollection,
+            advancedToolsCollection,
+            graviolaToolsCollection,
+          ]}
+        >
+          <WizardProvider>
+            <GraviolaProviderWithSchema>
+              <WizardAppWithMultipleDefinitions />
+            </GraviolaProviderWithSchema>
+          </WizardProvider>
+        </ToolProvider>
+      </QueryClientProvider>
+    </I18nProvider>
   )
 }

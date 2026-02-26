@@ -54,7 +54,7 @@ export function MainAppBar() {
   )
 }
 
-function PreviewModeToggle() {
+export function PreviewModeToggle() {
   const { t } = useDesignerTranslation()
   const dispatch = useAppDispatch()
   const previewModus = useAppSelector(selectPreviewModus)
@@ -79,7 +79,7 @@ function PreviewModeToggle() {
   )
 }
 
-function LanguageSelector() {
+export function LanguageSelector() {
   const [language, setLanguage] = useState(i18nInstance.language)
 
   useEffect(() => {
@@ -117,7 +117,7 @@ function LanguageSelector() {
   )
 }
 
-function ResetFormButton() {
+export function ResetFormButton() {
   const { t } = useDesignerTranslation()
   const dispatch = useAppDispatch()
 
@@ -139,7 +139,7 @@ function ResetFormButton() {
   )
 }
 
-function ExportSchemaButton() {
+export function ExportSchemaButton() {
   const { t } = useDesignerTranslation()
   const [open, setOpen] = useState(false)
 
@@ -157,7 +157,7 @@ function ExportSchemaButton() {
   )
 }
 
-function DarkModeSwitch() {
+export function DarkModeSwitch() {
   const theme = useTheme()
 
   const dispatch = useAppDispatch()

@@ -1,4 +1,4 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, type Reducer } from "@reduxjs/toolkit";
 
 export interface FormDataState {
   formData: { [propertyPath: string]: any };
@@ -52,4 +52,4 @@ const formSlice = createSlice({
 export const { setFormData, updateFormData, initializeFormData } =
   formSlice.actions;
 
-export const formDataReducer = formSlice.reducer;
+export const formDataReducer: Reducer<FormDataState> = formSlice.reducer;

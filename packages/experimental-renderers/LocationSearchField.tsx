@@ -1,4 +1,5 @@
-import { debounce, throttle } from 'lodash'
+import debounce from 'lodash-es/debounce'
+import throttle from 'lodash-es/throttle'
 import * as React from 'react'
 import { useCallback, useEffect, useState } from 'react'
 

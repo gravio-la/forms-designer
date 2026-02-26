@@ -69,7 +69,7 @@ export type ToolSettingsMixin<T extends JsonSchema = JsonSchema> = {
   mapWizardToAddonData: (previousData, wizardSchema: T | null, uiSchema: any) => any
   mapAddonDataToWizardSchema?: (toolData: any, wizardSchema: T, rootSchema: T) => T
   mapAddonDataToWizardUISchema: (toolData: any, uiSchema: any, rootSchema: T) => any
-  jsonSchemaElement: T['properties']
+  jsonSchemaElement: T extends object ? (T & { properties?: unknown })['properties'] : never
 }
 
 export type ToolSettingsJsonSchema<T extends JsonSchema = JsonSchema> = T | ((rootSchema: T) => T)

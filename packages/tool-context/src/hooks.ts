@@ -1,9 +1,11 @@
-import { JsonSchema } from '@formswizard/types'
+import type { JsonSchema, ToolIconComponent } from '@formswizard/types'
 import { useToolContext } from './ToolContext'
 import { useMemo } from 'react'
+import type { JsonFormsI18nState } from '@jsonforms/core'
 import { JsonFormsRendererRegistryEntry, JsonFormsCellRendererRegistryEntry, createAjv } from '@jsonforms/core'
 import formatsPlugin from 'ajv-formats'
 import { useJsonFormsI18n } from '@formswizard/i18n'
+import type Ajv from 'ajv'
 
 type RendererRegistry = JsonFormsRendererRegistryEntry[]
 type CellRegistry = JsonFormsCellRendererRegistryEntry[]
@@ -71,7 +73,7 @@ export const useIcon = (iconName?: string) => {
 }
 
 // Hook to get all icons
-export const useAllIcons = () => {
+export const useAllIcons = (): { name: string; component: ToolIconComponent }[] => {
   const iconRegistry = useIconRegistry()
   return Object.keys(iconRegistry).map(name => ({
     name,
@@ -99,8 +101,15 @@ export const useToolSettingsByTester = <T extends JsonSchema = JsonSchema>(teste
   return toolSettings.filter(setting => setting.tester === tester)
 }
 
+export interface PreparedJsonFormsStateResult {
+  renderers: JsonFormsRendererRegistryEntry[]
+  cells: JsonFormsCellRendererRegistryEntry[]
+  ajv: Ajv
+  i18n: JsonFormsI18nState
+}
+
 // Hook to prepare JsonForms state with renderers, cells, and AJV
-export const usePreparedJsonFormsState = (options: PreparedJsonFormsStateOptions = {}) => {
+export const usePreparedJsonFormsState = (options: PreparedJsonFormsStateOptions = {}): PreparedJsonFormsStateResult => {
   const {
     isPreview = false,
     editingRenderers = [],

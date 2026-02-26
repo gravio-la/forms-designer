@@ -18,7 +18,7 @@ import { MuiCheckbox } from '@jsonforms/material-renderers'
 import { withJsonFormsMultiEnumProps } from '@jsonforms/react'
 
 import { FormControl, FormControlLabel, FormGroup, FormHelperText, FormLabel } from '@mui/material'
-import { isEmpty } from 'lodash'
+import isEmpty from 'lodash-es/isEmpty'
 import { ComponentClass, FunctionComponent } from 'react'
 
 export const MaterialEnumArrayWithLabelRenderer = ({

@@ -32,7 +32,8 @@
     "@formswizard/types": "workspace:*",
     "eslint": "^7.32.0",
     "eslint-config-formsdesigner": "workspace:*",
-    "react": ">=18",
+    "@types/react": "catalog:",
+    "react": "catalog:",
     "react-dnd-preview": "^9.0.0",
     "typescript": "^4.5.2"
   },

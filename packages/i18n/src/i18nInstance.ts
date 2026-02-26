@@ -4,7 +4,9 @@ import { initReactI18next } from 'react-i18next'
 declare const __DEV__: boolean | undefined
 
 const isDev: boolean = (() => {
+  // @ts-ignore
   if (typeof process !== 'undefined' && process.env?.NODE_ENV !== undefined) {
+    // @ts-ignore
     return process.env.NODE_ENV !== 'production'
   }
   // Vite injects import.meta.env at build time; cast to any to avoid TS errors

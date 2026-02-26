@@ -47,7 +47,7 @@
     "@formswizard/designer-tsconfig": "workspace:*",
     "@formswizard/types": "workspace:*",
     "@types/leaflet": "^1.9.4",
-    "@types/lodash": "^4.14.197",
+    "@types/lodash-es": "catalog:",
     "eslint": "^7.32.0",
     "eslint-config-formsdesigner": "workspace:*",
     "react": ">=18",
@@ -71,11 +71,10 @@
     "@formswizard/react-hooks": "workspace:*",
     "@formswizard/state": "workspace:*",
     "@formswizard/utils": "workspace:*",
-    "ajv": "^8.12.0",
+    "ajv": "catalog:",
     "classnames": "^2.3.2",
     "leaflet": "^1.9.4",
-    "lodash": "^4.17.21",
-    "next": "^13.4.19",
+    "lodash-es": "catalog:",
     "react-leaflet": "^4.2.1"
   }
 }

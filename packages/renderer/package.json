@@ -43,7 +43,7 @@
   ],
   "devDependencies": {
     "@formswizard/types": "workspace:*",
-    "@types/lodash": "^4.14.197",
+    "@types/lodash-es": "catalog:",
     "eslint": "^7.32.0",
     "eslint-config-formsdesigner": "workspace:*",
     "@formswizard/designer-tsconfig": "workspace:*",
@@ -69,6 +69,6 @@
     "@formswizard/utils": "workspace:*",
     "@formswizard/tool-context": "workspace:*",
     "classnames": "^2.3.2",
-    "lodash": "^4.17.21"
+    "lodash-es": "catalog:"
   }
 }

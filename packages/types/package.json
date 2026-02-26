@@ -24,9 +24,11 @@
     "dist"
   ],
   "devDependencies": {
-    "@jsonforms/core": "^3",
+    "@jsonforms/core": "catalog:",
+    "@mui/material": "catalog:",
+    "react": "catalog:",
     "json-schema": "^0.4.0",
-    "ajv": "^8.12.0",
+    "ajv": "catalog:",
     "eslint": "^7.32.0",
     "eslint-config-formsdesigner": "workspace:*",
     "@formswizard/designer-tsconfig": "workspace:*",

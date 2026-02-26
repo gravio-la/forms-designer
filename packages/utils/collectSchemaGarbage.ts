@@ -1,6 +1,6 @@
 import { UISchemaElement } from '@jsonforms/core'
 import { isJsonSchema, JsonSchema } from '@formswizard/types'
-import { cloneDeep } from 'lodash'
+import cloneDeep from 'lodash-es/cloneDeep'
 import { getAllScopesInSchema } from './uiSchemaHelpers'
 import { resolveSchema } from './resolver'
 

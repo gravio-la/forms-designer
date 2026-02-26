@@ -1,5 +1,6 @@
 import { isLayout, Layout, UISchemaElement } from '@jsonforms/core'
-import { last, isEmpty } from 'lodash'
+import last from 'lodash-es/last'
+import isEmpty from 'lodash-es/isEmpty'
 import { isScopableUISchemaElement, UISchemaElementWithPath, LayoutWithPath } from '@formswizard/types'
 const insertIntoArray = <T>(arr: T[], index: number, element: T) => {
   return [...arr.slice(0, index), element, ...arr.slice(index)]

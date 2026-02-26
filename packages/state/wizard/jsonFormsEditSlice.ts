@@ -28,7 +28,8 @@ import {
 } from '@formswizard/types'
 import { exampleInitialState, JsonFormsEditState } from './exampleState'
 import jsonpointer from 'jsonpointer'
-import { findLastIndex, last } from 'lodash'
+import findLastIndex from 'lodash-es/findLastIndex'
+import last from 'lodash-es/last'
 // export type DraggableElement = DraggableComponent | DraggableUISchemaElement
 
 export const isDraggableComponent = (element: any): element is DraggableComponent =>

@@ -73,6 +73,7 @@ export function InterfaceModeChooser() {
         <FormControl size="small">
           <Select
             value={interfaceMode}
+            // @ts-ignore
             onChange={handleChange}
             displayEmpty
             sx={{

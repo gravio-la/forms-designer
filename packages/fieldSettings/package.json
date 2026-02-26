@@ -28,8 +28,9 @@
   "devDependencies": {
     "@formswizard/tsup-config": "workspace:*",
     "@formswizard/designer-tsconfig": "workspace:*",
+    "typescript": "^4.5.2",
     "@formswizard/types": "workspace:*",
-    "@types/lodash": "^4.14.197",
+    "@types/lodash-es": "catalog:",
     "eslint": "^7.32.0",
     "eslint-config-formsdesigner": "workspace:*",
     "react": ">=18"
@@ -51,6 +52,6 @@
     "@formswizard/tool-context": "workspace:*",
     "@formswizard/i18n": "workspace:*",
     "@types/react": "catalog:",
-    "lodash": "^4.17.21"
+    "lodash-es": "catalog:"
   }
 }

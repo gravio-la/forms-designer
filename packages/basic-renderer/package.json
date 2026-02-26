@@ -58,7 +58,7 @@
     "react": ">=18",
     "eslint-config-formsdesigner": "workspace:*",
     "@formswizard/designer-tsconfig": "workspace:*",
-    "@types/lodash": "^4.14.197",
+    "@types/lodash-es": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@formswizard/tsup-config": "workspace:*"
@@ -72,6 +72,6 @@
     "react": "^16.9.0 || ^17.0.0 || ^18"
   },
   "dependencies": {
-    "lodash": "^4.17.21"
+    "lodash-es": "catalog:"
   }
 }

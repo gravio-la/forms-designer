@@ -1,6 +1,7 @@
 import { resolveSchema } from '@jsonforms/core'
 import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit'
-import { cloneDeep, last } from 'lodash'
+import cloneDeep from 'lodash-es/cloneDeep'
+import last from 'lodash-es/last'
 import { getAllScopesInSchema, scopeToPathSegments } from '@formswizard/utils'
 import { DraggableElement } from '@formswizard/types'
 

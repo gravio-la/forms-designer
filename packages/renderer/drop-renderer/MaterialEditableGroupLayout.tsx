@@ -1,4 +1,4 @@
-import isEmpty from 'lodash/isEmpty';
+import isEmpty from 'lodash-es/isEmpty';
 import React, { useCallback } from 'react';
 import { Card, CardContent, CardHeader } from '@mui/material';
 import {

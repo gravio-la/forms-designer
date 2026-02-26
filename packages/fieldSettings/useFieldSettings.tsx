@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import { maxBy } from 'lodash'
+import maxBy from 'lodash-es/maxBy'
 import {
   selectSelectedElementJsonSchema,
   selectSelectedPath,

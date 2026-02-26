@@ -34,7 +34,8 @@ const jsonFormsEditPersistenceMiddleware: Middleware<object, RootReducer> = (sto
 
 // Type assertion avoids strict inference: partial preloadedState and custom middleware
 // are valid at runtime but trigger Reducer/Middleware tuple type errors in RTK typings.
-export const store = configureStore({
+// Explicit type ensures portable .d.ts (no reference to nested .bun/redux path).
+export const store: EnhancedStore<RootReducer> = configureStore({
   reducer: {
     formData: formDataReducer,
     jsonFormsEdit: jsonFormsEditReducer,

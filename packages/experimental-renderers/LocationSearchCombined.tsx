@@ -6,8 +6,7 @@ import * as React from 'react'
 import { useCallback, useState } from 'react'
 
 import { LocationSearchField } from './LocationSearchField'
-import { InputAdornment, IconButton, TextField, Grid } from '@mui/material'
-import { NoSsr } from '@mui/base'
+import { InputAdornment, IconButton, TextField, Grid, NoSsr } from '@mui/material'
 import MapRounded from '@mui/icons-material/MapRounded'
 import MapSharp from '@mui/icons-material/MapSharp'
 import { NominatimResponse } from './nominatim'
@@ -29,7 +28,7 @@ export function LocationSearchCombined(props: LocationSearchMapProps) {
   //const LocationSearchMap = useMemo( () => dynamic(() => import('./LocationSearchMap').then((mod) => mod.LocationSearchMap), { ssr: false }) , [])
   return (
     <Grid container direction={'column'}>
-      <Grid item>
+      <Grid>
         <LocationSearchField
           readOnly={readonly}
           onLocationFound={updateLocation}
@@ -56,7 +55,7 @@ export function LocationSearchCombined(props: LocationSearchMapProps) {
         />
       </Grid>
       {showMap && (
-        <Grid item>
+        <Grid>
           <NoSsr>
             <LocationSearchMap {...props} />
           </NoSsr>

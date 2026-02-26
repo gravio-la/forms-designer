@@ -520,6 +520,13 @@ export const jsonFormsEditSlice = createSlice({
       state.selectedPath = undefined
     },
     resetWizard: () => structuredClone(exampleInitialState),
+    setAgentSchema: (state: JsonFormsEditState, action: PayloadAction<{ jsonSchema: JsonSchema; uiSchema: any }>) => {
+      const { jsonSchema, uiSchema } = action.payload
+      if (!jsonSchema || !uiSchema) return
+      state.jsonSchema = jsonSchema
+      state.uiSchema = uiSchema
+      state.selectedPath = undefined
+    },
   },
 })
 
@@ -538,6 +545,7 @@ export const {
   renameSchemaDefinition,
   addSchemaDefinition,
   resetWizard,
+  setAgentSchema,
 } = jsonFormsEditSlice.actions
 
 export const jsonFormsEditReducer: Reducer<JsonFormsEditState> = jsonFormsEditSlice.reducer

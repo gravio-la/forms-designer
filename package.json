@@ -41,7 +41,7 @@
     "build": "turbo run build --filter=!@formswizard/wizard-vite --continue --concurrency 21",
     "build:packages": "turbo run build --filter=./packages/*",
     "build:vite": "bun run build:packages && turbo run build --filter=./apps/vite",
-    "dev": "turbo run dev --concurrency 21",
+    "dev": "turbo run dev --concurrency 25",
     "lint": "turbo run lint",
     "lint-fix": "turbo run lint-fix --concurrency 21",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
@@ -63,10 +63,32 @@
     "apps/*",
     "packages/*"
   ],
+  "catalog": {
+    "@mui/material": "^7.0.0",
+    "@mui/icons-material": "^7.0.0",
+    "@mui/system": "^7.0.0",
+    "@mui/lab": "^7.0.0-beta.0",
+    "@mui/x-date-pickers": "^8.0.0",
+    "@emotion/react": "^11.0.0",
+    "@emotion/styled": "^11.0.0",
+    "@emotion/cache": "^11.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@jsonforms/core": "^3.7.0",
+    "@jsonforms/react": "^3.7.0",
+    "@jsonforms/material-renderers": "^3.7.0"
+  },
   "resolutions": {
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "@types/react": "18.2.0",
-    "@types/react-dom": "18.2.0"
+    "@types/react-dom": "18.2.0",
+    "@mui/material": "7.3.2",
+    "@mui/icons-material": "7.3.2"
+  },
+  "overrides": {
+    "@graviola/agent-chat-components": "0.0.7"
   }
 }

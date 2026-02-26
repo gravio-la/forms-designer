@@ -4,7 +4,32 @@ import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: process.env.VITE_BASE_PATH || '/forms-designer',
+  // VITE_BASE_PATH is set by CI to the repo name (e.g. "assisted-forms-designer").
+  // Wrap with slashes so Vite gets the correct sub-path for GitHub Pages.
+  base: process.env.VITE_BASE_PATH ? `/${process.env.VITE_BASE_PATH}/` : '/',
+  resolve: {
+    // zod-to-json-schema 3.25.x imports from "zod/v3" (a Zod v4 compat subpath that
+    // doesn't exist in Zod v3). Alias it back to the installed "zod" so the build succeeds.
+    alias: {
+      'zod/v3': 'zod',
+    },
+    // Force Vite to resolve these packages to the single copy at the workspace root,
+    // preventing duplicate instances when a dependency (e.g. @graviola/agent-chat-components)
+    // has a nested node_modules copy of MUI that differs from the workspace version.
+    // This is the immediate consumer-side fix; the proper long-term fix is in the
+    // library source (moving MUI from dependencies → peerDependencies).
+    dedupe: [
+      'react',
+      'react-dom',
+      '@mui/material',
+      '@mui/icons-material',
+      '@mui/system',
+      '@mui/utils',
+      '@emotion/react',
+      '@emotion/styled',
+      '@emotion/cache',
+    ],
+  },
   optimizeDeps: {
     include: ['i18next', 'react-i18next'],
   },

@@ -35,12 +35,12 @@
     "react": ">=18"
   },
   "peerDependencies": {
-    "@jsonforms/core": "^3",
-    "@jsonforms/material-renderers": "^3",
-    "@jsonforms/react": "^3",
-    "@mui/icons-material": "^5.14.1",
-    "@mui/lab": "5.0.0-alpha.137",
-    "@mui/material": "^5.14.2",
+    "@jsonforms/core": "catalog:",
+    "@jsonforms/material-renderers": "catalog:",
+    "@jsonforms/react": "catalog:",
+    "@mui/icons-material": "catalog:",
+    "@mui/lab": "catalog:",
+    "@mui/material": "catalog:",
     "react": "^16.9.0 || ^17.0.0 || ^18",
     "react-dnd": "^16.0.1",
     "react-redux": "^9.2.0"
@@ -50,7 +50,7 @@
     "@formswizard/utils": "workspace:*",
     "@formswizard/tool-context": "workspace:*",
     "@formswizard/i18n": "workspace:*",
-    "@types/react": "^18.2.20",
+    "@types/react": "catalog:",
     "lodash": "^4.17.21"
   }
 }

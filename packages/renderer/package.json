@@ -3,20 +3,9 @@
   "version": "0.0.2",
   "description": "JsonForms renderers required by forms-designer.",
   "keywords": [
-    "renderer",
-    "material",
-    "jsonforms",
-    "form",
-    "forms",
-    "wizard",
-    "json",
-    "schema",
-    "jsonschema",
-    "uischema",
-    "frontend",
-    "generator",
-    "input",
-    "renderengine"
+    "renderer", "material", "jsonforms", "form", "forms", "wizard",
+    "json", "schema", "jsonschema", "uischema", "frontend",
+    "generator", "input", "renderengine"
   ],
   "license": "MIT",
   "homepage": "https://github.com/FormsWizard",
@@ -25,16 +14,9 @@
     "url": "https://github.com/FormsWizard/forms-designer.git"
   },
   "contributors": [
-    {
-      "name": "Johannes Lötzsch"
-    },
-    {
-      "name": "Jakob Steege"
-    },
-    {
-      "name": "winzlieb",
-      "email": "winzlieb@c3d2.de"
-    }
+    { "name": "Johannes Lötzsch" },
+    { "name": "Jakob Steege" },
+    { "name": "winzlieb", "email": "winzlieb@c3d2.de" }
   ],
   "type": "module",
   "main": "./dist/index.cjs",
@@ -70,16 +52,16 @@
     "@formswizard/tsup-config": "workspace:*"
   },
   "peerDependencies": {
-    "@jsonforms/core": "^3",
-    "@jsonforms/material-renderers": "^3",
-    "@jsonforms/react": "^3",
-    "@mui/icons-material": "^5.14.1",
-    "@mui/material": "^5.14.2",
+    "@jsonforms/core": "catalog:",
+    "@jsonforms/material-renderers": "catalog:",
+    "@jsonforms/react": "catalog:",
+    "@mui/icons-material": "catalog:",
+    "@mui/material": "catalog:",
     "react": "^16.9.0 || ^17.0.0 || ^18",
     "react-dnd": "^16.0.1",
     "react-redux": "^9.2.0",
-    "@types/react": "^18.2.20",
-    "@types/react-dom": "^18.2.7"
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:"
   },
   "dependencies": {
     "@formswizard/react-hooks": "workspace:*",

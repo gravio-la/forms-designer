@@ -41,7 +41,7 @@ export function FieldSettingsView() {
         <EditableFieldKeyDisplay></EditableFieldKeyDisplay>
       </Toolbar>
       <Grid container direction={'column'} spacing={2} sx={{ p: 2 }}>
-        <Grid item>
+        <Grid>
           <Box>
             {!!toolSettingsJsonSchema && !!tooldataBuffer && (
               <JsonForms

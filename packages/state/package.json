@@ -26,13 +26,13 @@
   ],
   "devDependencies": {
     "@formswizard/types": "workspace:*",
-    "@mui/material": "~5.14.0",
+    "@mui/material": "catalog:",
     "@types/lodash": "^4.14.197",
     "eslint": "^8.45.0",
     "eslint-config-formsdesigner": "workspace:*",
     "@formswizard/designer-tsconfig": "workspace:*",
     "typescript": "^5.1.6",
-    "react": ">=18",
+    "react": "catalog:",
     "@formswizard/tsup-config": "workspace:*"
   },
   "dependencies": {
@@ -43,7 +43,7 @@
     "reselect": "^4.1.8"
   },
   "peerDependencies": {
-    "@jsonforms/core": "^3",
+    "@jsonforms/core": "catalog:",
     "react": "^16.9.0 || ^17.0.0 || ^18",
     "react-redux": "^9.2.0"
   }

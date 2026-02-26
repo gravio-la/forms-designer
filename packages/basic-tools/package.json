@@ -47,14 +47,14 @@
     "publish-clean": "bun run clean-package && npm publish --access public && bun run clean-package restore"
   },
   "peerDependencies": {
-    "@jsonforms/core": "^3",
-    "@jsonforms/material-renderers": "^3",
-    "@jsonforms/react": "^3",
-    "@mui/icons-material": "^5",
-    "@mui/material": "^5",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "react": "^16.9.0 || ^17.0.0 || ^18",
+    "@jsonforms/core": "catalog:",
+    "@jsonforms/material-renderers": "catalog:",
+    "@jsonforms/react": "catalog:",
+    "@mui/icons-material": "catalog:",
+    "@mui/material": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "react": "catalog:",
     "react-dnd": "^16.0.1"
   },
   "dependencies": {

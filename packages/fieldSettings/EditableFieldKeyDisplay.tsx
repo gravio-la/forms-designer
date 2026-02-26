@@ -39,7 +39,7 @@ function EditableFieldKeyDisplay() {
           </>
         )}
         {showKeyEditor && (
-          <Grid item>
+          <Grid>
             <TextField
               placeholder={'Key name'}
               value={newKey}

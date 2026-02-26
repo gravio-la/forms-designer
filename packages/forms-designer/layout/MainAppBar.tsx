@@ -20,17 +20,16 @@ export function MainAppBar() {
   return (
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Toolbar>
-        <Grid container flex={1} alignItems="center">
-          <Grid item md={6} sx={{ display: 'flex', alignItems: 'center' }}>
+        <Grid container sx={{ flex: 1 }} alignItems="center">
+          <Grid size={{ md: 6 }} sx={{ display: 'flex', alignItems: 'center' }}>
             <ResetFormButton />
             <ExportSchemaButton />
           </Grid>
-          <Grid item md={3} sx={{ flexWrap: 'nowrap', display: 'flex', justifyContent: 'center' }}>
+          <Grid size={{ md: 3 }} sx={{ flexWrap: 'nowrap', display: 'flex', justifyContent: 'center' }}>
             <PreviewModeToggle />
           </Grid>
           <Grid
-            item
-            md={3}
+            size={{ md: 3 }}
             sx={{
               display: 'flex',
               justifyContent: 'flex-end',

@@ -142,7 +142,7 @@ const LayoutElement = ({ index, schema, path, enabled, element: child, cells, re
           anythingDragging={isDragging || anythingDragging}
         ></LayoutDropArea>
       )}
-      <Grid key={key} item ref={dropRef} xs>
+      <Grid key={key} ref={dropRef} size="grow">
         <Box
           // elevation={selectedKey === key ? 4 : 0}
           sx={{

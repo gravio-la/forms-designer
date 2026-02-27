@@ -10,7 +10,7 @@ import {
 } from '@jsonforms/core'
 import { JsonFormsDispatch, useJsonForms } from '@jsonforms/react'
 import { Box, Grid, styled } from '@mui/material'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useId, useMemo, useState } from 'react'
 import { useAppDispatch, useAppSelector, selectSelectedPath, selectPath } from '@formswizard/state'
 import classnames from 'classnames'
 import { useDNDHooksContext, useDragTarget, useDropTarget } from '@formswizard/react-hooks'
@@ -108,14 +108,41 @@ const LayoutElement = ({ index, schema, path, enabled, element: child, cells, re
     () => (controlName ? controlName : `${child.type}-${index}`),
     [controlName, index, child.type]
   )
-  const { handleAllDrop, handleDropAtStart } = useDropTarget({ child,  current })
-  const { useDrop, useDragLayer } = useDNDHooksContext()
-  const anythingDragging = useDragLayer((monitor) => monitor.isDragging())
-  const [{ isDragging }, dragRef] = useDragTarget({ child, name: controlName, resolvedSchema })
-  const [{ isOver: isOver1, isOverCurrent: isOverCurrent1 }, dropRef] = useDrop(handleAllDrop, [handleAllDrop])
-  const [{ isOver: isOver2, isOverCurrent: isOverCurrent2 }, dropRef2] = useDrop(handleAllDrop, [handleAllDrop])
-  const [{ isOver: isOver3, isOverCurrent: isOverCurrent3 }, dropRef3] = useDrop(handleDropAtStart, [handleAllDrop])
-  const isOverCurrent = isOverCurrent1 || isOverCurrent2
+  const { onDrop, onDropAtStart } = useDropTarget({ child, current })
+  const { useDroppable, useDndMonitor } = useDNDHooksContext()
+
+  // Track whether any drag is active for showing drop zone indicators
+  const [anythingDragging, setAnythingDragging] = useState(false)
+  useDndMonitor({
+    onDragStart: () => setAnythingDragging(true),
+    onDragEnd: () => setAnythingDragging(false),
+    onDragCancel: () => setAnythingDragging(false),
+  })
+
+  // Drag source for moving this element within the canvas
+  const { setNodeRef: dragRef, listeners: dragListeners, attributes: dragAttributes, isDragging } =
+    useDragTarget({ child, name: controlName, resolvedSchema })
+
+  // Three drop zones per element (dnd-kit unique IDs via React.useId)
+  const dropIdBefore = useId()
+  const dropIdOn = useId()
+  const dropIdAfter = useId()
+
+  const { setNodeRef: dropRefOn, isOver: isOverOn } = useDroppable({
+    id: dropIdOn,
+    data: { onDrop },
+  })
+  const { setNodeRef: dropRefAfter, isOver: isOverAfter } = useDroppable({
+    id: dropIdAfter,
+    data: { onDrop },
+  })
+  const { setNodeRef: dropRefBefore, isOver: isOverBefore } = useDroppable({
+    id: dropIdBefore,
+    data: { onDrop: onDropAtStart },
+  })
+
+  const isOverCurrent = isOverOn || isOverAfter
+
   const handleSelect = useCallback(
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       event.stopPropagation()
@@ -137,14 +164,13 @@ const LayoutElement = ({ index, schema, path, enabled, element: child, cells, re
     <>
       {index === 0 && (
         <LayoutDropArea
-          isOverCurrent={isOverCurrent3}
-          dropRef={dropRef3}
+          isOverCurrent={isOverBefore}
+          dropRef={dropRefBefore}
           anythingDragging={isDragging || anythingDragging}
-        ></LayoutDropArea>
+        />
       )}
-      <Grid key={key} ref={dropRef} size="grow">
+      <Grid key={key} ref={dropRefOn} size="grow">
         <Box
-          // elevation={selectedKey === key ? 4 : 0}
           sx={{
             flexGrow: 1,
             display: 'flex',
@@ -154,7 +180,6 @@ const LayoutElement = ({ index, schema, path, enabled, element: child, cells, re
                 ? theme.palette.action.selected
                 : 'none',
             padding: (theme) => theme.spacing(1, 2),
-
             cursor: 'grab !important',
             ' * ': {
               cursor: 'grab !important',
@@ -166,13 +191,11 @@ const LayoutElement = ({ index, schema, path, enabled, element: child, cells, re
               theme.transitions.create(['background-color', 'color'], {
                 duration: theme.transitions.duration.short,
               }),
-            /*':hover': {
-              backgroundColor: (theme) =>
-                theme.palette.mode === 'light' ? theme.palette.grey.A100 : theme.palette.grey[700],
-            },*/
             position: 'relative',
           }}
           ref={dragRef}
+          {...dragListeners}
+          {...dragAttributes}
         >
           <JsonFormsDispatch
             uischema={child}
@@ -190,28 +213,19 @@ const LayoutElement = ({ index, schema, path, enabled, element: child, cells, re
       </Grid>
       <LayoutDropArea
         isOverCurrent={isOverCurrent}
-        dropRef={dropRef2}
+        dropRef={dropRefAfter}
         anythingDragging={anythingDragging}
-      ></LayoutDropArea>
+      />
     </>
   )
 }
 
 type LayoutDropAreaProps = {
   isOverCurrent: boolean
-  dropRef: any
+  dropRef: (node: HTMLElement | null) => void
   anythingDragging: boolean
 }
 function LayoutDropArea({ isOverCurrent, dropRef, anythingDragging }: LayoutDropAreaProps) {
-  // const [dragging, setDragging, cancel] = useDelayedState<boolean>(false, { delay: 10, delayedValue: true })
-
-  // useEffect(() => {
-  //   setDragging(anythingDragging)
-  //   if (anythingDragging !== dragging && !anythingDragging) {
-  //     cancel(false)
-  //   }
-  // }, [anythingDragging])
-
   return (
     <Box
       sx={{

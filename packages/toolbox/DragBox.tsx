@@ -33,26 +33,27 @@ export const DragBox = ({
 
   return (
     <Box ref={setNodeRef} sx={{ opacity: isDragging ? 0.4 : 1 }}>
-      <Card>
+      {/* Listeners on the Card so that:
+          - Mouse: click + move 5px anywhere on card → drag starts immediately
+          - Touch: long-press (200 ms hold) anywhere on card → drag starts; quick swipe → native scroll
+          - Pen: same as mouse via synthesised events
+          The drag handle below keeps touch-action:none for immediate response from that zone,
+          while the rest of the card body retains default touch-action so fast swipes still scroll. */}
+      <Card {...listeners} {...attributes} sx={{ cursor: 'grab', userSelect: 'none' }}>
         <CardContent>
           <Stack direction="row" alignItems="center" gap={1}>
-            {/* Drag handle: touch-action:none scoped only to this element so that
-                swiping the rest of the card still scrolls the toolbox list naturally.
-                Works for mouse (immediate), touch (200 ms hold via TouchSensor),
-                and pen (synthesised mouse events). */}
+            {/* Visual drag affordance — no separate listeners needed here anymore,
+                but touch-action:none keeps the handle zone scroll-free on touch so the
+                200 ms delay feels snappier when starting from the grip icon. */}
             <Box
-              {...listeners}
-              {...attributes}
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                cursor: 'grab',
                 touchAction: 'none',
                 color: 'text.disabled',
                 flexShrink: 0,
-                '&:hover': { color: 'text.secondary' },
               }}
-              aria-label={`Drag ${name}`}
+              aria-hidden
             >
               <DragIndicatorIcon fontSize="small" />
             </Box>

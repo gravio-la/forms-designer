@@ -1,6 +1,6 @@
 {
   "name": "@formswizard/fieldsettings",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -20,7 +20,7 @@
     "lint": "eslint \"**/*.ts*\"",
     "lint-fix": "eslint --fix \"**/*.ts*\"",
     "generate:component": "turbo gen react-component",
-    "push": "npm publish --access public"
+    "push": "bun publish --access public"
   },
   "files": [
     "dist"

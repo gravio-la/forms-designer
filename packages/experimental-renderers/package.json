@@ -1,6 +1,6 @@
 {
   "name": "@formswizard/experimental-renderers",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "additional JsonForms renderers like address pickers .",
   "license": "MIT",
   "homepage": "https://github.com/FormsWizard",
@@ -38,7 +38,7 @@
     "lint": "eslint \"**/*.ts*\"",
     "lint-fix": "eslint --fix \"**/*.ts*\"",
     "generate:component": "turbo gen react-component",
-    "push": "npm publish --access public"
+    "push": "bun publish --access public"
   },
   "files": [
     "dist"

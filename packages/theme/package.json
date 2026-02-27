@@ -1,6 +1,6 @@
 {
   "name": "@formswizard/theme",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -19,7 +19,7 @@
     "build": "tsup index.tsx --format esm --dts",
     "dev": "tsup index.tsx --format esm --watch --dts",
     "lint-fix": "eslint --fix \"**/*.ts*\"",
-    "push": "npm publish --access public"
+    "push": "bun publish --access public"
   },
   "files": [
     "dist"

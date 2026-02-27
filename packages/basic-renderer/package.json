@@ -47,7 +47,7 @@
     "lint": "eslint \"**/*.ts*\"",
     "lint-fix": "eslint --fix \"**/*.ts*\"",
     "generate:component": "turbo gen react-component",
-    "push": "npm publish --access public"
+    "push": "bun publish --access public"
   },
   "files": [
     "dist"

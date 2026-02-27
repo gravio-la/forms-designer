@@ -9,11 +9,51 @@ import {
   Resolve,
 } from '@jsonforms/core'
 import { JsonFormsDispatch, useJsonForms } from '@jsonforms/react'
-import { Box, Grid } from '@mui/material'
-import React, { useCallback, useMemo } from 'react'
+import { Box, Grid, styled } from '@mui/material'
+import React, { useCallback, useId, useMemo, useState } from 'react'
 import { useAppDispatch, useAppSelector, selectSelectedPath, selectPath } from '@formswizard/state'
 import classnames from 'classnames'
 import { useDNDHooksContext, useDragTarget, useDropTarget } from '@formswizard/react-hooks'
+
+
+// Styled overlay component for selection with hover effects
+const SelectionOverlay = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'transparent',
+  cursor: 'grab !important',
+  zIndex: 1,
+  borderRadius: theme.spacing(0.5),
+  transition: theme.transitions.create(['background-color'], {
+    duration: theme.transitions.duration.short,
+  }),
+  
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: theme.spacing(0.5),
+    opacity: 0,
+    transition: theme.transitions.create(['opacity'], {
+      duration: theme.transitions.duration.short,
+    }),
+  },
+  
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+      
+    '&::before': {
+      opacity: 1,
+      border: `1px dashed ${theme.palette.primary.main}`,
+    },
+  },
+}))
 
 // export type RemoveWrapperProps = { editMode: boolean; handleRemove: MouseEventHandler; children: ReactNode }
 // const RemoveWrapper: FC<RemoveWrapperProps> = ({ editMode, handleRemove, children }) => {
@@ -36,7 +76,6 @@ import { useDNDHooksContext, useDragTarget, useDropTarget } from '@formswizard/r
 //     </>
 //   )
 // }
-type UISchemaElementWithPath = UISchemaElement & { path: string; structurePath?: string }
 type LayoutElementProps = {
   index: number
   direction: 'row' | 'column'
@@ -47,10 +86,10 @@ type LayoutElementProps = {
   element: UISchemaElement
   renderers?: JsonFormsRendererRegistryEntry[]
   cells?: JsonFormsCellRendererRegistryEntry[]
-  parent: UISchemaElement[]
+  current: UISchemaElement
 }
 
-const LayoutElement = ({ index, schema, path, enabled, element: child, cells, renderers }: LayoutElementProps) => {
+const LayoutElement = ({ index, schema, path, enabled, element: child, cells, renderers, current }: LayoutElementProps) => {
   const ctx = useJsonForms()
   const state = { jsonforms: ctx }
   const rootSchema = getSchema(state)
@@ -69,21 +108,48 @@ const LayoutElement = ({ index, schema, path, enabled, element: child, cells, re
     () => (controlName ? controlName : `${child.type}-${index}`),
     [controlName, index, child.type]
   )
-  const { handleAllDrop, handleDropAtStart, draggedMeta } = useDropTarget({ child })
-  const { useDrop, useDragLayer } = useDNDHooksContext()
-  const anythingDragging = useDragLayer((monitor) => monitor.isDragging())
-  const [{ isDragging }, dragRef] = useDragTarget({ child, name: controlName, resolvedSchema })
-  const [{ isOver: isOver1, isOverCurrent: isOverCurrent1 }, dropRef] = useDrop(handleAllDrop, [handleAllDrop])
-  const [{ isOver: isOver2, isOverCurrent: isOverCurrent2 }, dropRef2] = useDrop(handleAllDrop, [handleAllDrop])
-  const [{ isOver: isOver3, isOverCurrent: isOverCurrent3 }, dropRef3] = useDrop(handleDropAtStart, [handleAllDrop])
-  const isOverCurrent = isOverCurrent1 || isOverCurrent2
+  const { onDrop, onDropAtStart } = useDropTarget({ child, current })
+  const { useDroppable, useDndMonitor } = useDNDHooksContext()
+
+  // Track whether any drag is active for showing drop zone indicators
+  const [anythingDragging, setAnythingDragging] = useState(false)
+  useDndMonitor({
+    onDragStart: () => setAnythingDragging(true),
+    onDragEnd: () => setAnythingDragging(false),
+    onDragCancel: () => setAnythingDragging(false),
+  })
+
+  // Drag source for moving this element within the canvas
+  const { setNodeRef: dragRef, listeners: dragListeners, attributes: dragAttributes, isDragging } =
+    useDragTarget({ child, name: controlName, resolvedSchema })
+
+  // Three drop zones per element (dnd-kit unique IDs via React.useId)
+  const dropIdBefore = useId()
+  const dropIdOn = useId()
+  const dropIdAfter = useId()
+
+  const { setNodeRef: dropRefOn, isOver: isOverOn } = useDroppable({
+    id: dropIdOn,
+    data: { onDrop },
+  })
+  const { setNodeRef: dropRefAfter, isOver: isOverAfter } = useDroppable({
+    id: dropIdAfter,
+    data: { onDrop },
+  })
+  const { setNodeRef: dropRefBefore, isOver: isOverBefore } = useDroppable({
+    id: dropIdBefore,
+    data: { onDrop: onDropAtStart },
+  })
+
+  const isOverCurrent = isOverOn || isOverAfter
+
   const handleSelect = useCallback(
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       event.stopPropagation()
       // @ts-ignore
-      dispatch(selectPath(child.path))
+      dispatch(selectPath((child as any).path))
     },
-    [dispatch, key]
+    [dispatch, child]
   )
 
   // const handleRemove = useCallback(
@@ -98,26 +164,22 @@ const LayoutElement = ({ index, schema, path, enabled, element: child, cells, re
     <>
       {index === 0 && (
         <LayoutDropArea
-          isOverCurrent={isOverCurrent3}
-          dropRef={dropRef3}
+          isOverCurrent={isOverBefore}
+          dropRef={dropRefBefore}
           anythingDragging={isDragging || anythingDragging}
-        ></LayoutDropArea>
+        />
       )}
-      <Grid key={key} item ref={dropRef} xs onClick={handleSelect}>
+      <Grid key={key} ref={dropRefOn} size="grow">
         <Box
-          // elevation={selectedKey === key ? 4 : 0}
           sx={{
             flexGrow: 1,
             display: 'flex',
             backgroundColor: (theme) =>
-              // @ts-ignore
-              selectedPath === child.path
-                ? theme.palette.mode === 'dark'
-                  ? theme.palette.grey[800]
-                  : theme.palette.grey[200]
+              // @ts-ignore - Only apply selection background to Control elements, not Layout elements
+              child.type === 'Control' && selectedPath === (child as any).path
+                ? theme.palette.action.selected
                 : 'none',
             padding: (theme) => theme.spacing(1, 2),
-
             cursor: 'grab !important',
             ' * ': {
               cursor: 'grab !important',
@@ -129,12 +191,11 @@ const LayoutElement = ({ index, schema, path, enabled, element: child, cells, re
               theme.transitions.create(['background-color', 'color'], {
                 duration: theme.transitions.duration.short,
               }),
-            /*':hover': {
-              backgroundColor: (theme) =>
-                theme.palette.mode === 'light' ? theme.palette.grey.A100 : theme.palette.grey[700],
-            },*/
+            position: 'relative',
           }}
           ref={dragRef}
+          {...dragListeners}
+          {...dragAttributes}
         >
           <JsonFormsDispatch
             uischema={child}
@@ -144,32 +205,27 @@ const LayoutElement = ({ index, schema, path, enabled, element: child, cells, re
             renderers={renderers}
             cells={cells}
           />
+          {/* Selection overlay with hover effects - only show for non-Layout elements */}
+          {child.type === 'Control' && (
+            <SelectionOverlay onClick={handleSelect} />
+          )}
         </Box>
       </Grid>
       <LayoutDropArea
         isOverCurrent={isOverCurrent}
-        dropRef={dropRef2}
+        dropRef={dropRefAfter}
         anythingDragging={anythingDragging}
-      ></LayoutDropArea>
+      />
     </>
   )
 }
 
 type LayoutDropAreaProps = {
   isOverCurrent: boolean
-  dropRef: any
+  dropRef: (node: HTMLElement | null) => void
   anythingDragging: boolean
 }
 function LayoutDropArea({ isOverCurrent, dropRef, anythingDragging }: LayoutDropAreaProps) {
-  // const [dragging, setDragging, cancel] = useDelayedState<boolean>(false, { delay: 10, delayedValue: true })
-
-  // useEffect(() => {
-  //   setDragging(anythingDragging)
-  //   if (anythingDragging !== dragging && !anythingDragging) {
-  //     cancel(false)
-  //   }
-  // }, [anythingDragging])
-
   return (
     <Box
       sx={{
@@ -181,7 +237,7 @@ function LayoutDropArea({ isOverCurrent, dropRef, anythingDragging }: LayoutDrop
         className={classnames('is-dropzone', { 'is-over-dropzone': isOverCurrent })}
         sx={{
           display: 'flex',
-          border: anythingDragging ? `1px dashed darkgray` : '1px dashed transparent',
+          border: anythingDragging ? `1px dashed darkgray` : 'none',
           borderRadius: '2px',
           boxSizing: 'border-box',
           // height: '1.5em',

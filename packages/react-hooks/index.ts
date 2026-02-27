@@ -1,4 +1,5 @@
 export * from './useDragTarget'
 export * from './useDropTarget'
+export * from './useActiveDrag'
 export * from './DNDHooksContext'
 export * from './useDragScrolling'

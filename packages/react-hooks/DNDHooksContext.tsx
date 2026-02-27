@@ -1,29 +1,25 @@
 import { createContext, useContext } from 'react'
 import {
-  useDrag as useDragHook,
-  useDrop as useDropHook,
-  useDragLayer as useDragLayerHook,
-  useDragDropManager as useDragDropManagerHook,
-} from 'react-dnd'
+  useDraggable as useDraggableHook,
+  useDroppable as useDroppableHook,
+  useDndMonitor as useDndMonitorHook,
+} from '@dnd-kit/core'
 
 type DNDHooksContextType = {
-  useDrag: typeof useDragHook
-  useDrop: typeof useDropHook
-  useDragLayer: typeof useDragLayerHook
-  useDragDropManager: typeof useDragDropManagerHook
+  useDraggable: typeof useDraggableHook
+  useDroppable: typeof useDroppableHook
+  useDndMonitor: typeof useDndMonitorHook
 }
+
 export const DNDHooksContext = createContext<DNDHooksContextType>({
-  useDrag: () => {
-    throw new Error('useDrag must be used within a DNDHooksProvider')
+  useDraggable: () => {
+    throw new Error('useDraggable must be used within a DNDHooksProvider')
   },
-  useDrop: () => {
-    throw new Error('useDrop must be used within a DNDHooksProvider')
+  useDroppable: () => {
+    throw new Error('useDroppable must be used within a DNDHooksProvider')
   },
-  useDragLayer: () => {
-    throw new Error('useDragLayer must be used within a DNDHooksProvider')
-  },
-  useDragDropManager: () => {
-    throw new Error('useDragDropManager must be used within a DNDHooksProvider')
+  useDndMonitor: () => {
+    throw new Error('useDndMonitor must be used within a DNDHooksProvider')
   },
 })
 

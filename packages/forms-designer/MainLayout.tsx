@@ -40,11 +40,17 @@ export const MainLayout: FunctionComponent<Props> = ({ appBar, multipleDefinitio
   const dispatch = useAppDispatch()
   const previewModus = useAppSelector(selectPreviewModus)
   const { selectedPath } = useFinalizedToolSettings()
-  const { useDragLayer } = useDNDHooksContext()
-  const isDragging = useDragLayer((monitor: { isDragging: () => boolean }) => monitor.isDragging())
+  const { useDndMonitor } = useDNDHooksContext()
 
   const [mobileLeftOpen, setMobileLeftOpen] = useState(false)
   const [mobileRightOpen, setMobileRightOpen] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+
+  useDndMonitor({
+    onDragStart: () => setIsDragging(true),
+    onDragEnd: () => setIsDragging(false),
+    onDragCancel: () => setIsDragging(false),
+  })
 
   useEffect(() => {
     if (isDragging && isMobile) {

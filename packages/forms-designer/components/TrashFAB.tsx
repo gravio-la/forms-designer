@@ -1,12 +1,12 @@
 import { Fab, useTheme, Zoom } from '@mui/material'
 
-import { useCallback, useMemo } from 'react'
-import { useDNDHooksContext } from '@formswizard/react-hooks'
+import { useCallback, useMemo, useState } from 'react'
+import { useDNDHooksContext, DragData } from '@formswizard/react-hooks'
 import { removeFieldOrLayout, useAppDispatch } from '@formswizard/state'
 import { DraggableComponent } from '@formswizard/types'
 
 export const TrashFAB: () => JSX.Element = () => {
-  const { useDrop, useDragLayer } = useDNDHooksContext()
+  const { useDroppable, useDndMonitor } = useDNDHooksContext()
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const transitionDuration = useMemo(
@@ -22,23 +22,28 @@ export const TrashFAB: () => JSX.Element = () => {
     },
     [dispatch]
   )
-  const isDragging = useDragLayer((monitor) => monitor.isDragging())
 
-  // @ts-ignore
-  const [{ isOver }, dropRef] = useDrop({
-    accept: ['DRAGBOX', 'MOVEBOX'],
-    //@ts-ignore
-    drop: ({ componentMeta }, monitor) => {
-      const itemType = monitor.getItemType()
-      if (itemType === 'MOVEBOX') {
-        if (!componentMeta) return
-        handleRemove(componentMeta)
+  // Track any active drag to show/hide the FAB
+  const [isDragging, setIsDragging] = useState(false)
+  useDndMonitor({
+    onDragStart: () => setIsDragging(true),
+    onDragEnd: () => setIsDragging(false),
+    onDragCancel: () => setIsDragging(false),
+  })
+
+  // The TrashFAB only acts on MOVEBOX drags (canvas items); DRAGBOX drags are ignored
+  const onDrop = useCallback(
+    (dragData: DragData) => {
+      if (dragData.type === 'MOVEBOX' && dragData.componentMeta) {
+        handleRemove(dragData.componentMeta as DraggableComponent)
       }
     },
+    [handleRemove]
+  )
 
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-    }),
+  const { setNodeRef: dropRef, isOver } = useDroppable({
+    id: 'trash-fab',
+    data: { onDrop },
   })
 
   return (

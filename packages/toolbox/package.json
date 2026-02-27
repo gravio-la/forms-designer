@@ -35,12 +35,13 @@
     "@formswizard/tsup-config": "workspace:*"
   },
   "peerDependencies": {
+    "@dnd-kit/core": "catalog:",
+    "@dnd-kit/utilities": "catalog:",
     "@jsonforms/core": "catalog:",
     "@mui/icons-material": "catalog:",
     "@mui/lab": "catalog:",
     "@mui/material": "catalog:",
     "react": "^16.9.0 || ^17.0.0 || ^18",
-    "react-dnd": "^16.0.1",
     "react-redux": "^9.2.0"
   },
   "dependencies": {

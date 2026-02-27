@@ -1,8 +1,8 @@
 import type { OwnPropsOfRenderer, UISchemaElement } from '@jsonforms/core'
-
-import { Box, Grid } from '@mui/material'
+import { useId } from 'react'
+import { Box } from '@mui/material'
 import { DropTargetFormsPreview } from './DropTargetFormsPreview'
-import { useDNDHooksContext, useDropTarget } from '@formswizard/react-hooks'
+import { useDNDHooksContext, useDropTarget, useActiveDrag } from '@formswizard/react-hooks'
 
 type EmptyLayoutElementProps = {
   child: UISchemaElement
@@ -14,13 +14,18 @@ type EmptyLayoutElementProps = {
 }
 
 type StyledPlaceholderProps = {
-  draggedMeta: any
-  handleAllDrop: any
+  onDrop: (data: any) => void
 }
-const StyledPlaceholderElementBox = ({ draggedMeta, handleAllDrop }: StyledPlaceholderProps) => {
-  const { useDrop } = useDNDHooksContext()
-  // @ts-ignore
-  const [{ isOver, isOverCurrent }, dropRef] = useDrop(handleAllDrop, [handleAllDrop])
+const StyledPlaceholderElementBox = ({ onDrop }: StyledPlaceholderProps) => {
+  const { useDroppable } = useDNDHooksContext()
+  const uid = useId()
+  const activeDrag = useActiveDrag()
+
+  const { setNodeRef: dropRef, isOver } = useDroppable({
+    id: `placeholder-${uid}`,
+    data: { onDrop },
+  })
+
   return (
     <Box
       ref={dropRef}
@@ -33,14 +38,11 @@ const StyledPlaceholderElementBox = ({ draggedMeta, handleAllDrop }: StyledPlace
         minHeight: 100,
         margin: '1em',
         display: 'flex',
-        // '&:hover': {
-        //   border: `1px dashed green`,
-        // },
         backgroundColor: (theme) => (isOver ? theme.palette.action.focus : 'transparent'),
       }}
     >
-      {isOver && isOverCurrent && draggedMeta ? (
-        <DropTargetFormsPreview metadata={draggedMeta} />
+      {isOver && activeDrag?.componentMeta ? (
+        <DropTargetFormsPreview metadata={activeDrag.componentMeta} />
       ) : (
         <span style={{ margin: 'auto' }}> Placeholder</span>
       )}
@@ -49,11 +51,11 @@ const StyledPlaceholderElementBox = ({ draggedMeta, handleAllDrop }: StyledPlace
 }
 
 function LayoutPlaceholder({ child, current }: EmptyLayoutElementProps) {
-  const { handleDropAtStart, draggedMeta } = useDropTarget({ child, isPlaceholder: true, current })
+  const { onDropAtStart } = useDropTarget({ child, isPlaceholder: true, current })
 
   return (
     <Box>
-      <StyledPlaceholderElementBox draggedMeta={draggedMeta} handleAllDrop={handleDropAtStart} />
+      <StyledPlaceholderElementBox onDrop={onDropAtStart} />
     </Box>
   )
 }

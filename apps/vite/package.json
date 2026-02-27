@@ -29,9 +29,8 @@
     "dayjs": "^1.11.9",
     "lodash-es": "catalog:",
     "react": "catalog:",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
-    "react-dnd-touch-backend": "^16.0.1",
+    "@dnd-kit/core": "catalog:",
+    "@dnd-kit/utilities": "catalog:",
     "react-dom": "catalog:",
     "react-redux": "^9.2.0"
   },

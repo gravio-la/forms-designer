@@ -78,22 +78,15 @@ export function InterfaceModeProvider({
     getDefaultInterfaceMode(defaultMode)
   )
 
-  // Store mode changes in localStorage
-  const setInterfaceMode = (mode: InterfaceMode, skipReload = false) => {
-    console.log('Interface mode changing to:', mode, skipReload ? '(no reload)' : '(with reload)')
+  // Store mode changes in localStorage.
+  // No page reload is required — dnd-kit handles mouse, touch, and pen/stylus simultaneously
+  // via its sensor architecture, so switching modes takes effect instantly.
+  const setInterfaceMode = (mode: InterfaceMode, _skipReload = false) => {
     storeInterfaceMode(mode)
     setInterfaceModeState(mode)
-    
-    if (!skipReload) {
-      // Reload the page to apply the new DND backend
-      window.location.reload()
-    }
   }
 
-  // Function to request mode change (will trigger dialog)
   const requestModeChange = (mode: InterfaceMode) => {
-    // This will be handled by the InterfaceModeChooser component
-    // We'll pass this through context but handle the dialog there
     setInterfaceMode(mode)
   }
 

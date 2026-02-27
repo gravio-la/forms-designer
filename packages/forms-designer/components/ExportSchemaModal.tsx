@@ -70,7 +70,6 @@ export function ExportSchemaModal({ open, onClose }: ExportSchemaModalProps) {
       onClose={onClose}
       maxWidth="md"
       fullWidth
-      PaperProps={{ sx: { borderRadius: 2, maxHeight: '90vh' } }}
     >
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h6" component="span">

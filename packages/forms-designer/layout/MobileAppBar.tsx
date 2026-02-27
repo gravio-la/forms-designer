@@ -18,6 +18,7 @@ import BuildCircleOutlinedIcon from '@mui/icons-material/BuildCircleOutlined'
 import SettingsIcon from '@mui/icons-material/Settings'
 import NoteAdd from '@mui/icons-material/NoteAdd'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
+import FileUploadIcon from '@mui/icons-material/FileUpload'
 import Brightness7 from '@mui/icons-material/Brightness7'
 import Brightness4 from '@mui/icons-material/Brightness4'
 import {
@@ -33,7 +34,7 @@ import { useDesignerTranslation } from '@formswizard/i18n'
 import { i18nInstance } from '@formswizard/i18n'
 import { useTheme } from '@mui/material/styles'
 import { PreviewModeToggle } from './MainAppBar'
-import { ExportSchemaModal } from '../components'
+import { ExportSchemaModal, ImportSchemaModal } from '../components'
 
 export interface MobileAppBarProps {
   leftDrawerOpen: boolean
@@ -56,6 +57,7 @@ export function MobileAppBar({
 
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null)
   const [exportModalOpen, setExportModalOpen] = useState(false)
+  const [importModalOpen, setImportModalOpen] = useState(false)
 
   const showLeftDrawerToggle = !previewModus
   const showRightDrawerToggle = Boolean(selectedPath) && !previewModus
@@ -79,6 +81,11 @@ export function MobileAppBar({
   const handleExportClick = () => {
     handleMenuClose()
     setExportModalOpen(true)
+  }
+
+  const handleImportClick = () => {
+    handleMenuClose()
+    setImportModalOpen(true)
   }
 
   const handleDarkModeToggle = () => {
@@ -148,6 +155,12 @@ export function MobileAppBar({
           </ListItemIcon>
           <ListItemText primary={t('appBar.exportSchema')} />
         </MenuItem>
+        <MenuItem onClick={handleImportClick}>
+          <ListItemIcon>
+            <FileUploadIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary={t('appBar.importSchema')} />
+        </MenuItem>
         <Divider />
         <MenuItem disabled sx={{ opacity: 1 }}>
           <ListItemText primary={t('appBar.language')} secondary={i18nInstance.language.toUpperCase()} />
@@ -178,6 +191,7 @@ export function MobileAppBar({
       </Menu>
 
       <ExportSchemaModal open={exportModalOpen} onClose={() => setExportModalOpen(false)} />
+      <ImportSchemaModal open={importModalOpen} onClose={() => setImportModalOpen(false)} />
     </>
   )
 }

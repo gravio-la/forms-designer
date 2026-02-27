@@ -1,4 +1,4 @@
-import { IconButton, Tooltip, useTheme, AppBar, Toolbar, Box, Grid, ToggleButton, ToggleButtonGroup, FormControl, Select, MenuItem, SelectChangeEvent } from '@mui/material'
+import { IconButton, Tooltip, useTheme, AppBar, Toolbar, Box, ToggleButton, ToggleButtonGroup, FormControl, Select, MenuItem, SelectChangeEvent } from '@mui/material'
 import {
   useAppDispatch,
   toggleColorMode,
@@ -12,42 +12,43 @@ import Brightness7 from '@mui/icons-material/Brightness7'
 import Brightness4 from '@mui/icons-material/Brightness4'
 import NoteAdd from '@mui/icons-material/NoteAdd'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
-import { ExportSchemaModal } from '../components'
+import FileUploadIcon from '@mui/icons-material/FileUpload'
+import { ExportSchemaModal, ImportSchemaModal } from '../components'
 import { i18nInstance, useDesignerTranslation } from '@formswizard/i18n'
 import { useEffect, useState } from 'react'
 
 export function MainAppBar() {
   return (
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-      <Toolbar>
-        <Grid container sx={{ flex: 1 }} alignItems="center">
-          <Grid size={{ md: 6 }} sx={{ display: 'flex', alignItems: 'center' }}>
-            <ResetFormButton />
-            <ExportSchemaButton />
-          </Grid>
-          <Grid size={{ md: 3 }} sx={{ flexWrap: 'nowrap', display: 'flex', justifyContent: 'center' }}>
-            <PreviewModeToggle />
-          </Grid>
-          <Grid
-            size={{ md: 3 }}
-            sx={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-              gap: 2,
-              ' > *': {
-                mr: 0,
-              },
-              ' > button': {
-                mr: 0,
-              },
-            }}
-          >
-            <LanguageSelector />
-            <DarkModeSwitch />
-            {/* <TemplateModalButton>Templates</TemplateModalButton> */}
-          </Grid>
-        </Grid>
+      <Toolbar sx={{ position: 'relative', flex: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <ResetFormButton />
+          <ExportSchemaButton />
+          <ImportSchemaButton />
+        </Box>
+        <Box
+          sx={{
+            position: 'absolute',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <PreviewModeToggle />
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            gap: 2,
+            marginLeft: 'auto',
+          }}
+        >
+          <LanguageSelector />
+          <DarkModeSwitch />
+        </Box>
       </Toolbar>
     </AppBar>
   )
@@ -152,6 +153,24 @@ export function ExportSchemaButton() {
         </span>
       </Tooltip>
       <ExportSchemaModal open={open} onClose={() => setOpen(false)} />
+    </>
+  )
+}
+
+export function ImportSchemaButton() {
+  const { t } = useDesignerTranslation()
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <Tooltip title={t('appBar.importSchemaTooltip')}>
+        <span>
+          <IconButton onClick={() => setOpen(true)} color="inherit" aria-label={t('appBar.importSchema')}>
+            <FileUploadIcon />
+          </IconButton>
+        </span>
+      </Tooltip>
+      <ImportSchemaModal open={open} onClose={() => setOpen(false)} />
     </>
   )
 }

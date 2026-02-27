@@ -521,11 +521,34 @@ export const jsonFormsEditSlice = createSlice({
       state.selectedPath = undefined
     },
     resetWizard: () => structuredClone(exampleInitialState),
-    setAgentSchema: (state: JsonFormsEditState, action: PayloadAction<{ jsonSchema: JsonSchema; uiSchema: any }>) => {
-      const { jsonSchema, uiSchema } = action.payload
+    loadImportedSchema: (
+      state: JsonFormsEditState,
+      action: PayloadAction<{ jsonSchema: JsonSchema; uiSchema: any; uiSchemas?: Record<string, any> }>
+    ) => {
+      const { jsonSchema, uiSchema, uiSchemas } = action.payload
       if (!jsonSchema || !uiSchema) return
-      state.jsonSchema = jsonSchema
+
+      const definitionsKey: 'definitions' | '$defs' =
+        jsonSchema.$defs != null ? '$defs' : jsonSchema.definitions != null ? 'definitions' : 'definitions'
+      state.definitionsKey = definitionsKey
+
+      const definitionsBlock = jsonSchema[definitionsKey] as Record<string, JsonSchema> | undefined
+      if (definitionsBlock && typeof definitionsBlock === 'object' && definitionsBlock.Root != null) {
+        state.jsonSchema = definitionsBlock.Root
+        const { Root: _, ...rest } = definitionsBlock
+        state.definitions = rest
+      } else {
+        const { definitions: _d, $defs: _defs, ...rootOnly } = jsonSchema as JsonSchema & { definitions?: unknown; $defs?: unknown }
+        state.jsonSchema = rootOnly as JsonSchema
+        state.definitions = {}
+      }
+
       state.uiSchema = uiSchema
+      state.uiSchemas = uiSchemas && typeof uiSchemas === 'object' ? { ...uiSchemas } : {}
+      if (state.uiSchemas.Root == null) {
+        state.uiSchemas.Root = uiSchema
+      }
+      state.selectedDefinition = 'Root'
       state.selectedPath = undefined
     },
   },
@@ -546,7 +569,8 @@ export const {
   renameSchemaDefinition,
   addSchemaDefinition,
   resetWizard,
-  setAgentSchema,
+  
+  loadImportedSchema,
 } = jsonFormsEditSlice.actions
 
 export const jsonFormsEditReducer: Reducer<JsonFormsEditState> = jsonFormsEditSlice.reducer

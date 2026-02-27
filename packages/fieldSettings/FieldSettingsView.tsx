@@ -10,7 +10,7 @@ import { useJsonFormsI18n } from '@formswizard/i18n'
 import EditableFieldKeyDisplay from './EditableFieldKeyDisplay'
 
 export function FieldSettingsView() {
-  const { handleChange, toolSettingsJsonSchema, tooldataBuffer } = useFinalizedToolSettings()
+  const { handleChange, toolSettingsJsonSchema, tooldataBuffer, uiSchema } = useFinalizedToolSettings()
   const dispatch = useAppDispatch()
   const { registeredCollections } = useToolContext()
   const i18n = useJsonFormsI18n(registeredCollections)
@@ -47,6 +47,7 @@ export function FieldSettingsView() {
               <JsonForms
                 data={tooldataBuffer}
                 schema={toolSettingsJsonSchema as JsonFormsJsonSchema}
+                uischema={uiSchema || undefined}
                 renderers={materialRenderers}
                 cells={materialCells}
                 onChange={handleChange}

@@ -15,8 +15,13 @@ import {
 
 import { useToolSettings } from '@formswizard/tool-context'
 import { UISchemaElement } from '@jsonforms/core'
-import { ToolSettings, JsonSchema, isJsonSchema } from '@formswizard/types'
-import { filterNullOrUndef } from '@formswizard/utils'
+import { JsonSchema, ToolSetting, isJsonSchema } from '@formswizard/types'
+import { filterNullOrUndef, generateDefaultUISchemaWithScopeOverrides } from '@formswizard/utils'
+
+
+  
+
+
 
 export type ToolSettingsDefinition = {
   setToolDataBuffer: (value: ((prevState: any) => any) | any) => void
@@ -25,7 +30,7 @@ export type ToolSettingsDefinition = {
   selectedElementJsonSchema: JsonSchema | null
   handleChange: (event) => void
   tooldataBuffer: any
-  uiSchema: UISchemaElement
+  uiSchema: UISchemaElement | null
   selectedPath?: string | null | undefined
   selectionDisplayName: string | null | undefined
 }
@@ -44,7 +49,9 @@ export function useFinalizedToolSettings(): ToolSettingsDefinition {
   const definitions = useAppSelector(selectJsonSchemaDefinitions)
   const selectionDisplayName = useAppSelector(selectSelectionDisplayName)
   const prevSelectedPath = useRef(null)
-  const stableToolSettingsJsonSchemaRef = useRef<Record<string, JsonSchema> | null>(null)
+  const stableToolSettingsJsonSchemaRef = useRef<
+    Record<string, { schema: JsonSchema; uiSchema: UISchemaElement }> | null
+  >(null)
   const context = useMemo(
     () => ({
       rootSchema: rootJsonSchema,
@@ -54,7 +61,7 @@ export function useFinalizedToolSettings(): ToolSettingsDefinition {
   )
   const toolSettings = useMemo(() => {
     if (!UIElementFromSelection) return null
-    const tool = maxBy(toolSettingsFromContext, (d) => {
+    const tool = maxBy(toolSettingsFromContext, (d: ToolSetting) => {
       const num = d.tester && d.tester(UIElementFromSelection, isJsonSchema(selectedElementJsonSchema) ? selectedElementJsonSchema : {}, context)
       return num || null
     })
@@ -66,41 +73,62 @@ export function useFinalizedToolSettings(): ToolSettingsDefinition {
 
 
 
-  const toolSettingsJsonSchema = useMemo(
-    () =>
-      {
-        if (!toolSettings || !selectedPath) {
-          stableToolSettingsJsonSchemaRef.current = null
-          return null
-        }
+  const [toolSettingsJsonSchema, toolSettingsUISchema] = useMemo<[JsonSchema | null, UISchemaElement | null]>(
+    () => {
+      if (!toolSettings || !selectedPath) {
+        stableToolSettingsJsonSchemaRef.current = null
+        return [null, null]
+      }
         
         // If we already have a stable schema for this selection and rootJsonSchema hasn't changed,
         // return the stable version to prevent render loops and flickering
         // But allow updates when selectedPath changes (handled by useEffect reset)
-        if (stableToolSettingsJsonSchemaRef.current?.[selectedPath]) {
-          return stableToolSettingsJsonSchemaRef.current[selectedPath]
-        }
+      if (stableToolSettingsJsonSchemaRef.current?.[selectedPath]) {
+        const cached = stableToolSettingsJsonSchemaRef.current[selectedPath]
+        return [cached.schema, cached.uiSchema]
+      }
         
         // Handle function-based jsonSchema that depends on rootJsonSchema
-        const resolvedJsonSchema = typeof toolSettings.jsonSchema === 'function' 
-          ? toolSettings.jsonSchema(rootJsonSchema)
+      const selectedSchema = isJsonSchema(selectedElementJsonSchema) ? selectedElementJsonSchema : ({} as JsonSchema)
+      const resolvedJsonSchema =
+        typeof toolSettings.jsonSchema === 'function'
+          ? toolSettings.jsonSchema(rootJsonSchema, selectedSchema)
           : toolSettings.jsonSchema
+
+      const uischemaScopeOverrides =
+        typeof toolSettings.uischemaScopeOverrides === 'function'
+          ? toolSettings.uischemaScopeOverrides(rootJsonSchema, selectedSchema)
+          : toolSettings.uischemaScopeOverrides ?? {}
           
-        const computedSchema = {
-            ...resolvedJsonSchema,
-            properties: {
-              ...toolSettings.toolSettingsMixins.reduce((prev, curr) => ({ ...prev, ...curr.jsonSchemaElement }), {}),
-              ...resolvedJsonSchema.properties,
-            },
-          } as JsonSchema
-          
-        // Store the stable schema reference
-        stableToolSettingsJsonSchemaRef.current = {}
-        stableToolSettingsJsonSchemaRef.current[selectedPath] = computedSchema
-        return computedSchema
-      },
+      const computedSchema = {
+        ...resolvedJsonSchema,
+        properties: {
+          ...toolSettings.toolSettingsMixins.reduce(
+            (prev, curr) => ({ ...prev, ...curr.jsonSchemaElement }),
+            {}
+          ),
+          ...resolvedJsonSchema.properties,
+        },
+      } as JsonSchema
+        
+        
+      const computedUISchema = generateDefaultUISchemaWithScopeOverrides(
+        computedSchema,
+        uischemaScopeOverrides
+      )
+
+      // Store the stable schema reference
+      stableToolSettingsJsonSchemaRef.current = {}
+      stableToolSettingsJsonSchemaRef.current[selectedPath] = {
+        schema: computedSchema,
+        uiSchema: computedUISchema,
+      }
+
+      return [computedSchema, computedUISchema]
+    },
     [toolSettings, rootJsonSchema, selectedPath]
   )
+
   const handleChange = (event) => {
     setToolDataBuffer(event.data)
     mapToolToWizard(event.data)
@@ -162,7 +190,7 @@ export function useFinalizedToolSettings(): ToolSettingsDefinition {
 
   return {
     handleChange,
-    uiSchema: { type: 'Control' },
+    uiSchema: toolSettingsUISchema,
     toolSettingsJsonSchema,
     tooldataBuffer,
     setToolDataBuffer,

@@ -27,7 +27,9 @@ export const translations: LanguageTranslations = {
     'options.label': 'Options',
     'format.label': 'Show as dropdown',
 
-    // --- MultiSelectToolSettings shares `options.label` above ---
+    // --- MultiSelectToolSettings (oneOf-const mode shows value + title per option) ---
+    'value.label': 'Value',
+    'title.label': 'Title',
 
     // --- ListToolSettings ---
     'columns.label': 'Columns',
@@ -67,6 +69,10 @@ export const translations: LanguageTranslations = {
     // --- SelectToolSettings ---
     'options.label': 'Optionen',
     'format.label': 'Als Dropdown anzeigen',
+
+    // --- MultiSelectToolSettings (oneOf-const mode) ---
+    'value.label': 'Wert',
+    'title.label': 'Bezeichnung',
 
     // --- ListToolSettings ---
     'columns.label': 'Spalten',

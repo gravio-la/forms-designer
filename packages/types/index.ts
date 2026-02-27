@@ -71,8 +71,9 @@ export type ToolSettingsMixin<T extends JsonSchema = JsonSchema> = {
   mapAddonDataToWizardUISchema: (toolData: any, uiSchema: any, rootSchema: T) => any
   jsonSchemaElement: T extends object ? (T & { properties?: unknown })['properties'] : never
 }
-
-export type ToolSettingsJsonSchema<T extends JsonSchema = JsonSchema> = T | ((rootSchema: T) => T)
+export type ScopeOverrides = Record<string, UISchemaElement>;
+export type ToolSettingsJsonSchema<T extends JsonSchema = JsonSchema> = T | ((rootSchema: T, selectedSchema: T) => T)
+export type ToolSettingsUISchemaScopeOverrides<T extends JsonSchema = JsonSchema> = ScopeOverrides | ((rootSchema: T, selectedSchema: T) => ScopeOverrides)
 
 export type ToolSetting<T extends JsonSchema = JsonSchema> = {
   mapWizardSchemaToToolData: (wizardSchema: T | null, uiSchema: any) => any
@@ -80,6 +81,7 @@ export type ToolSetting<T extends JsonSchema = JsonSchema> = {
   mapToolDataToWizardUischema: (toolData: any, wizardUiSchema: any, rootSchema: T) => any
   tester: RankedTester<T>
   jsonSchema: ToolSettingsJsonSchema<T>
+  uischemaScopeOverrides?: ToolSettingsUISchemaScopeOverrides<T>
   toolSettingsMixins: ToolSettingsMixin<T>[]
 }
 

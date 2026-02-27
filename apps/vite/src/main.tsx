@@ -10,7 +10,7 @@ const container = document.getElementById('app') as HTMLElement
 const App = () => (
   <I18nProvider>
     <ToolProvider toolCollections={[basicToolsCollection, advancedToolsCollection]}>
-      <WizardProvider defaultInterfaceMode="touch-drag">
+      <WizardProvider>
         <MainLayout multipleDefinitions={false} />
       </WizardProvider>
     </ToolProvider>

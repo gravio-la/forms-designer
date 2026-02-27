@@ -14,7 +14,7 @@ export function WizardApp() {
         advancedToolsCollection,
       ]}
     >
-      <WizardProvider defaultInterfaceMode="touch-drag">
+      <WizardProvider>
         <MainLayout
           multipleDefinitions={false}
         />

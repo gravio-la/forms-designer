@@ -18,8 +18,6 @@ import BuildCircleOutlinedIcon from '@mui/icons-material/BuildCircleOutlined'
 import SettingsIcon from '@mui/icons-material/Settings'
 import NoteAdd from '@mui/icons-material/NoteAdd'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
-import TouchAppIcon from '@mui/icons-material/TouchApp'
-import MouseIcon from '@mui/icons-material/Mouse'
 import Brightness7 from '@mui/icons-material/Brightness7'
 import Brightness4 from '@mui/icons-material/Brightness4'
 import {
@@ -35,8 +33,7 @@ import { useDesignerTranslation } from '@formswizard/i18n'
 import { i18nInstance } from '@formswizard/i18n'
 import { useTheme } from '@mui/material/styles'
 import { PreviewModeToggle } from './MainAppBar'
-import { ExportSchemaModal, InterfaceModeReloadDialog } from '../components'
-import { useInterfaceMode, type InterfaceMode } from '../context'
+import { ExportSchemaModal } from '../components'
 
 export interface MobileAppBarProps {
   leftDrawerOpen: boolean
@@ -56,12 +53,9 @@ export function MobileAppBar({
   const dispatch = useAppDispatch()
   const previewModus = useAppSelector(selectPreviewModus)
   const { selectedPath } = useFinalizedToolSettings()
-  const { interfaceMode, setInterfaceMode } = useInterfaceMode()
 
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null)
   const [exportModalOpen, setExportModalOpen] = useState(false)
-  const [interfaceDialogOpen, setInterfaceDialogOpen] = useState(false)
-  const [pendingMode, setPendingMode] = useState<InterfaceMode | null>(null)
 
   const showLeftDrawerToggle = !previewModus
   const showRightDrawerToggle = Boolean(selectedPath) && !previewModus
@@ -85,25 +79,6 @@ export function MobileAppBar({
   const handleExportClick = () => {
     handleMenuClose()
     setExportModalOpen(true)
-  }
-
-  const handleInterfaceModeClick = (mode: InterfaceMode) => {
-    if (mode === interfaceMode || mode === 'click-based') return
-    setPendingMode(mode)
-    setInterfaceDialogOpen(true)
-  }
-
-  const handleInterfaceDialogClose = () => {
-    setInterfaceDialogOpen(false)
-    setPendingMode(null)
-  }
-
-  const handleInterfaceDialogConfirm = () => {
-    if (pendingMode) {
-      setInterfaceMode(pendingMode)
-    }
-    setInterfaceDialogOpen(false)
-    setPendingMode(null)
   }
 
   const handleDarkModeToggle = () => {
@@ -175,22 +150,6 @@ export function MobileAppBar({
         </MenuItem>
         <Divider />
         <MenuItem disabled sx={{ opacity: 1 }}>
-          <ListItemText primary={t('appBar.interfaceMode')} secondary={interfaceMode === 'touch-drag' ? 'Touch' : 'Mouse'} />
-        </MenuItem>
-        <MenuItem onClick={() => handleInterfaceModeClick('touch-drag')}>
-          <ListItemIcon>
-            <TouchAppIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary="Touch" />
-        </MenuItem>
-        <MenuItem onClick={() => handleInterfaceModeClick('mouse-drag')}>
-          <ListItemIcon>
-            <MouseIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary="Mouse" />
-        </MenuItem>
-        <Divider />
-        <MenuItem disabled sx={{ opacity: 1 }}>
           <ListItemText primary={t('appBar.language')} secondary={i18nInstance.language.toUpperCase()} />
         </MenuItem>
         <MenuItem onClick={() => { i18nInstance.changeLanguage('en'); handleMenuClose(); }}>
@@ -219,14 +178,6 @@ export function MobileAppBar({
       </Menu>
 
       <ExportSchemaModal open={exportModalOpen} onClose={() => setExportModalOpen(false)} />
-
-      <InterfaceModeReloadDialog
-        open={interfaceDialogOpen}
-        onClose={handleInterfaceDialogClose}
-        onConfirm={handleInterfaceDialogConfirm}
-        newMode={pendingMode || interfaceMode}
-        currentMode={interfaceMode}
-      />
     </>
   )
 }

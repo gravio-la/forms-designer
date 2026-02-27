@@ -20,7 +20,6 @@ import { DNDHooksContext } from '@formswizard/react-hooks'
 import { CacheProvider } from '@emotion/react'
 import createEmotionCache from './createEmotionCache'
 import { ThemeWrapper } from './ThemeWrapper'
-import { InterfaceModeProvider } from './context'
 import { CustomDragPreview } from './components'
 import { useState } from 'react'
 import { DragData } from '@formswizard/react-hooks'
@@ -29,7 +28,6 @@ const clientSideEmotionCache = createEmotionCache()
 
 type WizardProviderProps = {
   children: React.ReactNode
-  defaultInterfaceMode?: 'touch-drag' | 'mouse-drag' | 'click-based'
 }
 
 function DndKitProvider({ children }: { children: React.ReactNode }) {
@@ -81,17 +79,15 @@ function DndKitProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function WizardProvider({ children, defaultInterfaceMode = 'mouse-drag' }: WizardProviderProps) {
+export function WizardProvider({ children }: WizardProviderProps) {
   return (
     <CacheProvider value={clientSideEmotionCache}>
       <Provider store={store}>
-        <InterfaceModeProvider defaultMode={defaultInterfaceMode}>
-          <ThemeWrapper>
-            <DndKitProvider>
-              {children}
-            </DndKitProvider>
-          </ThemeWrapper>
-        </InterfaceModeProvider>
+        <ThemeWrapper>
+          <DndKitProvider>
+            {children}
+          </DndKitProvider>
+        </ThemeWrapper>
       </Provider>
     </CacheProvider>
   )

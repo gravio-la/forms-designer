@@ -12,7 +12,7 @@ import Brightness7 from '@mui/icons-material/Brightness7'
 import Brightness4 from '@mui/icons-material/Brightness4'
 import NoteAdd from '@mui/icons-material/NoteAdd'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
-import { InterfaceModeChooser, ExportSchemaModal } from '../components'
+import { ExportSchemaModal } from '../components'
 import { i18nInstance, useDesignerTranslation } from '@formswizard/i18n'
 import { useEffect, useState } from 'react'
 
@@ -43,7 +43,6 @@ export function MainAppBar() {
               },
             }}
           >
-            <InterfaceModeChooser />
             <LanguageSelector />
             <DarkModeSwitch />
             {/* <TemplateModalButton>Templates</TemplateModalButton> */}

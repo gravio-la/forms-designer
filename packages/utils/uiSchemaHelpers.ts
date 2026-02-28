@@ -65,7 +65,8 @@ export const insertUISchemaAfterScope = (
 export const getAllScopesInSchema = (uiSchema: UISchemaElement) => {
   let scopes: string[] = []
   recursivelyMapSchema(uiSchema, (ui: UISchemaElement) => {
-    isScopableUISchemaElement(ui) && ui.scope && scopes.push(ui.scope)
+    if(isScopableUISchemaElement(ui) && typeof ui.scope === 'string' && ui.scope.startsWith('#') )
+      scopes.push(ui.scope)
     return ui
   })
   return scopes
@@ -87,10 +88,18 @@ export const removeUISchemaElement = (scope: string, uiSchema: UISchemaElement) 
   })
 }
 
+/**
+ * Returns true if the given scope equals `targetScope` or is a nested path under it.
+ * Uses path-segment boundaries to avoid false positives (e.g. #/properties/street
+ * must not match #/properties/streetNumber).
+ */
+const scopeMatchesOrIsNestedUnder = (scope: string, targetScope: string): boolean =>
+  scope === targetScope || scope.startsWith(targetScope + '/properties/')
+
 export const updateScopeOfUISchemaElement = (scope: string, newScope: string, uiSchema: UISchemaElement) => {
   return recursivelyMapSchema(uiSchema, (uischema: UISchemaElement) => {
     let newUischema = uischema
-    if(uischema.options?.scope && uischema.options.scope.startsWith(scope) ) {
+    if (uischema.options?.scope && scopeMatchesOrIsNestedUnder(uischema.options.scope, scope)) {
       newUischema = {
         ...uischema,
         options: {
@@ -100,7 +109,7 @@ export const updateScopeOfUISchemaElement = (scope: string, newScope: string, ui
       } as UISchemaElement
     }
     if (isScopableUISchemaElement(uischema)) {
-      if (uischema.scope?.startsWith(scope)) {
+      if (uischema.scope && scopeMatchesOrIsNestedUnder(uischema.scope, scope)) {
         newUischema = {
           ...newUischema,
           scope: newScope + uischema.scope.slice(scope.length),

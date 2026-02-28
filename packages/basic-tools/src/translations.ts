@@ -41,6 +41,13 @@ export const translations: LanguageTranslations = {
     // --- CheckToolSettings ---
     'defaultIsChecked.label': 'Checked by default',
 
+    // --- CategorizationToolSettings ---
+    'variant.label': 'Variant',
+    'variant.stepper': 'Stepper',
+    'variant.tabs': 'Tabs',
+    'showNavButtons.label': 'Show navigation buttons',
+    'categories.label': 'Tabs',
+
     // --- Toolbox element display names ---
     'tools.label': 'Label',
     'tools.alert': 'Alert',
@@ -56,6 +63,7 @@ export const translations: LanguageTranslations = {
     'tools.horizontalLayout': 'Horizontal Layout',
     'tools.verticalLayout': 'Vertical Layout',
     'tools.group': 'Group',
+    'tools.categorization': 'Categorization',
   },
   de: {
     // --- TextfieldToolSettings ---
@@ -84,6 +92,13 @@ export const translations: LanguageTranslations = {
     // --- CheckToolSettings ---
     'defaultIsChecked.label': 'Standardmäßig aktiviert',
 
+    // --- CategorizationToolSettings ---
+    'variant.label': 'Variante',
+    'variant.stepper': 'Stepper',
+    'variant.tabs': 'Tabs',
+    'showNavButtons.label': 'Navigationsschaltflächen anzeigen',
+    'categories.label': 'Tabs',
+
     // --- Toolbox element display names ---
     'tools.label': 'Beschriftung',
     'tools.alert': 'Hinweis',
@@ -99,5 +114,6 @@ export const translations: LanguageTranslations = {
     'tools.horizontalLayout': 'Horizontales Layout',
     'tools.verticalLayout': 'Vertikales Layout',
     'tools.group': 'Gruppe',
+    'tools.categorization': 'Kategorisierung',
   },
 }

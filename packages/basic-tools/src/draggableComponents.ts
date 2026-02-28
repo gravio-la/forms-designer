@@ -164,4 +164,16 @@ export const draggableComponents: DraggableElement[] = [
       ],
     }),
   },
+  {
+    name: 'categorization',
+    ToolIconName: 'Categorization',
+    uiSchema: {
+      type: 'Categorization',
+      //@ts-ignore
+      elements: [
+        { type: 'Category', label: 'Tab 1', elements: [] },
+        { type: 'Category', label: 'Tab 2', elements: [] },
+      ],
+    },
+  },
 ]

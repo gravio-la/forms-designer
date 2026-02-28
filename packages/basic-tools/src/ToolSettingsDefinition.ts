@@ -2,6 +2,7 @@ import SelectToolSettings from './settings/SelectToolSettings'
 import MultiSelectToolSettings from './settings/MultiSelectToolSettings'
 import ListToolSettings from './settings/ListToolSettings'
 import GroupToolSettings from './settings/GroupToolSettings'
+import CategorizationToolSettings from './settings/CategorizationToolSettings'
 import LabelToolSetting from './settings/LabelToolSettings'
 import AlertToolSetting from './settings/AlertToolSettings'
 import TextfieldToolSettings from './settings/TextfieldToolSettings'
@@ -14,6 +15,7 @@ export const ToolSettingsDefinitions: ToolSettings = [
   MultiSelectToolSettings,
   ListToolSettings,
   GroupToolSettings,
+  CategorizationToolSettings,
   LabelToolSetting,
   AlertToolSetting,
   TextfieldToolSettings,

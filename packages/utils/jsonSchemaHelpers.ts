@@ -111,6 +111,10 @@ export const deeplyRenameNestedProperty: (schema: JsonSchema, path: string[], ne
     return schema
   }
   if (path.length === 1) {
+    const currentName = path[0]
+    if (newField !== currentName && schema.properties[newField] !== undefined) {
+      throw new Error(`A property "${newField}" already exists at this level`)
+    }
     const value = schema.properties[path[0]]
     return {
       ...schema,
@@ -128,6 +132,9 @@ export const deeplyRenameNestedProperty: (schema: JsonSchema, path: string[], ne
   const [first, ...rest] = path
   const nestedSchema = schema.properties[first]
   if (!isJsonSchema(nestedSchema)) throw new Error(`Could not find nested schema for ${first}`)
+  if (rest.length === 1 && newField !== rest[0] && nestedSchema.properties?.[newField] !== undefined) {
+    throw new Error(`A property "${newField}" already exists at this level`)
+  }
   return {
     ...schema,
     properties: {

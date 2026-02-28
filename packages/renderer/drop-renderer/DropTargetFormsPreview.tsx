@@ -9,7 +9,7 @@ export const DropTargetFormsPreview: React.FC<{
 }> = ({ metadata }) => {
   const name = metadata.name
   const definitions = useAppSelector(selectJsonSchemaDefinitions)
-  const { renderers, cells, ajv, i18n } = usePreparedJsonFormsState({ 
+  const { renderers, cells, ajv } = usePreparedJsonFormsState({ 
     isPreview: true, 
   })
   return !name ? null : (
@@ -38,7 +38,7 @@ export const DropTargetFormsPreview: React.FC<{
               },
             } as JsonFormsJsonSchema
           }
-          {...{ renderers, cells, ajv, i18n }}
+          {...{ renderers, cells, ajv }}
         />
       )}
     </>

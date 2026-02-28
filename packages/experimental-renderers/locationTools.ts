@@ -5,6 +5,7 @@ import { LocationToolSettings } from './LocationToolSettings'
 export const locationToolElements: DraggableElement[] = [
   {
     name: 'Location',
+    category: 'advanced',
     ToolIconName: 'Location',
     jsonSchemaElement: {
       type: 'string',

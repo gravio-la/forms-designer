@@ -132,6 +132,7 @@ export const draggableComponents: DraggableElement[] = [
   },
   {
     name: 'horizontalLayout',
+    category: 'layout',
     ToolIconName: 'ArrowHorizontal',
     uiSchema: {
       type: 'HorizontalLayout',
@@ -141,6 +142,7 @@ export const draggableComponents: DraggableElement[] = [
   },
   {
     name: 'verticalLayout',
+    category: 'layout',
     ToolIconName: 'ArrowVertical',
     uiSchema: {
       type: 'VerticalLayout',
@@ -151,6 +153,7 @@ export const draggableComponents: DraggableElement[] = [
   },
   {
     name: 'group',
+    category: 'layout',
     ToolIconName: 'Group',
     jsonSchemaElement: {
       type: 'object',
@@ -166,6 +169,7 @@ export const draggableComponents: DraggableElement[] = [
   },
   {
     name: 'categorization',
+    category: 'layout',
     ToolIconName: 'Categorization',
     uiSchema: {
       type: 'Categorization',

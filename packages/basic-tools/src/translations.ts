@@ -48,6 +48,11 @@ export const translations: LanguageTranslations = {
     'showNavButtons.label': 'Show navigation buttons',
     'categories.label': 'Tabs',
 
+    // --- Toolbox category labels ---
+    'toolbox.category.basic': 'Basic',
+    'toolbox.category.layout': 'Layout',
+    'toolbox.category.advanced': 'Advanced',
+
     // --- Toolbox element display names ---
     'tools.label': 'Label',
     'tools.alert': 'Alert',
@@ -98,6 +103,11 @@ export const translations: LanguageTranslations = {
     'variant.tabs': 'Tabs',
     'showNavButtons.label': 'Navigationsschaltflächen anzeigen',
     'categories.label': 'Tabs',
+
+    // --- Toolbox category labels ---
+    'toolbox.category.basic': 'Grundlagen',
+    'toolbox.category.layout': 'Layout',
+    'toolbox.category.advanced': 'Erweitert',
 
     // --- Toolbox element display names ---
     'tools.label': 'Beschriftung',

@@ -50,7 +50,9 @@ export type DraggableUISchemaElement = DraggableMeta & {
   uiSchema: UISchemaElement
 }
 
-export type DraggableElement = DraggableComponent | DraggableUISchemaElement
+export type DraggableElement = {
+  category?: string
+} & (DraggableComponent | DraggableUISchemaElement)
 
 export type JsonFormsEditState = {
   jsonSchema: JsonSchema

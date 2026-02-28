@@ -63,7 +63,6 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "react": "catalog:",
-    "react-dnd": "^16.0.1",
     "react-redux": "^9.2.0"
   },
   "dependencies": {

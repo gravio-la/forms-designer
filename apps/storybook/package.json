@@ -21,7 +21,6 @@
     "@mui/material": "catalog:",
     "@mui/x-date-pickers": "catalog:",
     "@reduxjs/toolkit": "^2.6.1",
-    "react-dnd": "^16.0.1",
     "react-redux": "^9.2.0"
   },
   "devDependencies": {

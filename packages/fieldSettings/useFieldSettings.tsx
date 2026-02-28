@@ -37,7 +37,7 @@ export type ToolSettingsDefinition = {
 
 export function useFinalizedToolSettings(): ToolSettingsDefinition {
   const dispatch = useAppDispatch()
-  const [tooldataBuffer, setToolDataBuffer] = useState({})
+  const [tooldataBuffer, setToolDataBuffer] = useState<any>(null)
 
   // Use tool settings from context instead of local definitions
   const toolSettingsFromContext = useToolSettings()
@@ -131,6 +131,7 @@ export function useFinalizedToolSettings(): ToolSettingsDefinition {
 
   const handleChange = (event) => {
     setToolDataBuffer(event.data)
+    if (event.data == null || Object.keys(event.data).length === 0) return
     mapToolToWizard(event.data)
   }
 

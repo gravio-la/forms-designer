@@ -1,74 +1,45 @@
 import { resolveSchema } from '@jsonforms/core'
-import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit'
-import cloneDeep from 'lodash-es/cloneDeep'
-import last from 'lodash-es/last'
-import { getAllScopesInSchema, scopeToPathSegments } from '@formswizard/utils'
-import { DraggableElement } from '@formswizard/types'
+import { createSlice, type PayloadAction, type Reducer } from '@reduxjs/toolkit'
+import type { DraggableComponent } from '@formswizard/types'
+import { createBuildingBlock, type AddBuildingBlockPayload } from './buildingBlockHelper'
 
-export interface CounterState {
-  blocks: DraggableElement[]
+export type BuildingBlocksState = {
+  blocks: DraggableComponent[]
 }
 
-const initialState: CounterState = {
+const initialState: BuildingBlocksState = {
   blocks: [],
-}
-
-export type buildingBlocksSlice = {
-  blocks: DraggableElement[]
 }
 
 export const buildingBlocksSlice = createSlice({
   name: 'buildingBlocks',
   initialState,
-  // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
-    addBuildingBlock: (state: buildingBlocksSlice, action: PayloadAction<any, any>) => {
-      const { item, jsonSchema, ToolIconName } = action.payload
-      const scopes = getAllScopesInSchema(item.componentMeta.uiSchema)
-      scopes.sort((a, b) => scopeToPathSegments(a).length - scopeToPathSegments(b).length)
-      let blockSchema = { type: 'object', properties: {} }
-
-      let groupName = last(scopeToPathSegments(item.componentMeta.uiSchema.scope)) as string
-
-      let groupNameTester = groupName
-      for (
-        let i = 1;
-        //@ts-ignore
-        state.blocks.find((b) => b.name === groupNameTester) !== undefined;
-        i++
-      ) {
-        groupNameTester = `${groupName}_${i}`
-      }
-      groupName = groupNameTester
-
-      for (const scope of scopes) {
-        const schema = resolveSchema(jsonSchema, scope, jsonSchema)
-        scopeToPathSegments(scope).reduce((acc, curr, index, array) => {
-          if (index === 0) return acc
-          if (index === array.length - 1) {
-            acc[curr] = cloneDeep(schema)
-            return acc
-          } else if (!acc[curr]) {
-            acc[curr] = { type: 'object', properties: {} }
-          }
-          return acc[curr].properties
-        }, blockSchema.properties)
-      }
-
-      const blockItem = {
-        name: groupName,
-        uiSchema: item.componentMeta.uiSchema,
-        jsonSchemaElement: blockSchema,
-        ToolIconName,
-      }
-      state.blocks.push(blockItem)
+    addBuildingBlock: (
+      state: BuildingBlocksState,
+      action: PayloadAction<AddBuildingBlockPayload>
+    ) => {
+      const existingNames = state.blocks.map((b) => b.name)
+      const block = createBuildingBlock(
+        action.payload,
+        existingNames,
+        resolveSchema
+      )
+      state.blocks.push(block)
     },
-    removeBuildingBlock: (state: buildingBlocksSlice, action: PayloadAction<number>) => {
-      state.blocks.slice(action.payload, 1)
+    removeBuildingBlock: (
+      state: BuildingBlocksState,
+      action: PayloadAction<number>
+    ) => {
+      state.blocks.splice(action.payload, 1)
     },
   },
 })
 
-export const { addBuildingBlock, removeBuildingBlock } = buildingBlocksSlice.actions
+export { type AddBuildingBlockPayload } from './buildingBlockHelper'
 
-export const buildingBlocksReducer: Reducer<buildingBlocksSlice> = buildingBlocksSlice.reducer
+export const { addBuildingBlock, removeBuildingBlock } =
+  buildingBlocksSlice.actions
+
+export const buildingBlocksReducer: Reducer<BuildingBlocksState> =
+  buildingBlocksSlice.reducer

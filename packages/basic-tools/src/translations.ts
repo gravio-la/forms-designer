@@ -7,7 +7,7 @@ import type { LanguageTranslations } from '@formswizard/types'
  *   - `<propertyName>.label`  → rendered as the field label in the settings panel
  *   - `<propertyName>.<enumValue>` → enum option labels
  *
- * Mixin translations (label, isPrimaryFieldFor) live in the `formsdesigner`
+ * Mixin translations (label, description) live in the `formsdesigner`
  * namespace (seeded in @formswizard/i18n) and do NOT need to be repeated here.
  *
  * Toolbox display names (tools.*) — consumed by draggableComponents.ts via

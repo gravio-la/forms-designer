@@ -62,6 +62,6 @@ const ListToolSettings: ToolSetting = {
     jsonSchema && jsonSchema.type === 'array' && (jsonSchema?.items as JsonSchema | undefined)?.type === 'object'
       ? 1
       : 0,
-  toolSettingsMixins: [ToolsettingParts.Title],
+  toolSettingsMixins: [ToolsettingParts.Title, ToolsettingParts.Description],
 }
 export default ListToolSettings

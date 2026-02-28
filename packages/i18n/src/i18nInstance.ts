@@ -31,7 +31,7 @@ let initialized = false
  * form preview.
  *
  * Two categories:
- *  - Shared mixin labels (label, isPrimaryFieldFor) contributed by ToolSettingParts
+ *  - Shared mixin labels (label, description) contributed by ToolSettingParts
  *  - Generic JsonForms error messages (error.*) that are valid form-wide
  */
 const FORMSDESIGNER_BASE_TRANSLATIONS: Resource = {
@@ -39,12 +39,8 @@ const FORMSDESIGNER_BASE_TRANSLATIONS: Resource = {
     [FORMSDESIGNER_NS]: {
       // --- Mixin: TitlePart ---
       'label.label': 'Label',
-      // --- Mixin: PrimaryFieldPart ---
-      'isPrimaryFieldFor.label': 'Primary field for',
-      'isPrimaryFieldFor.none': 'None',
-      'isPrimaryFieldFor.title': 'Title',
-      'isPrimaryFieldFor.description': 'Description',
-      'isPrimaryFieldFor.image': 'Image',
+      // --- Mixin: DescriptionPart ---
+      'description.label': 'Description',
       // --- Shared error messages (apply to every JsonForms instance) ---
       'error.required': 'This field is required',
       'error.minLength': 'Must be at least {{limit}} characters',
@@ -99,12 +95,8 @@ const FORMSDESIGNER_BASE_TRANSLATIONS: Resource = {
     [FORMSDESIGNER_NS]: {
       // --- Mixin: TitlePart ---
       'label.label': 'Beschriftung',
-      // --- Mixin: PrimaryFieldPart ---
-      'isPrimaryFieldFor.label': 'Primärfeld für',
-      'isPrimaryFieldFor.title': 'Titel',
-      'isPrimaryFieldFor.none': 'Keines',
-      'isPrimaryFieldFor.description': 'Beschreibung',
-      'isPrimaryFieldFor.image': 'Bild',
+      // --- Mixin: DescriptionPart ---
+      'description.label': 'Beschreibung',
       // --- Shared error messages ---
       'error.required': 'Dieses Feld ist erforderlich',
       'error.minLength': 'Muss mindestens {{limit}} Zeichen lang sein',

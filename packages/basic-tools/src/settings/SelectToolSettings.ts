@@ -59,6 +59,6 @@ const SelectToolSettings: ToolSetting = {
   jsonSchema,
   tester: (uiSchema, jsonSchema) =>
     jsonSchema && (jsonSchema.type === 'select' || typeof (jsonSchema as any).enum === 'object') ? 1 : 0,
-  toolSettingsMixins: [ToolsettingParts.Title],
+  toolSettingsMixins: [ToolsettingParts.Title, ToolsettingParts.Description],
 }
 export default SelectToolSettings

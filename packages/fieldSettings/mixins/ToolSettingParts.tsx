@@ -21,32 +21,24 @@ const TitlePart: ToolSettingsMixin = {
   },
 }
 
-const PrimaryFieldPart: ToolSettingsMixin = {
+const DescriptionPart: ToolSettingsMixin = {
   jsonSchemaElement: {
-    isPrimaryFieldFor: {
+    description: {
       type: 'string',
-      enum: ['none', 'title', 'description', 'image'],
     },
   },
-  mapWizardToAddonData: (previousData, wizardSchema) => {
-    return {
-      ...previousData,
-      isPrimaryFieldFor: wizardSchema?.['x-primaryField'] ? wizardSchema['x-primaryField'] === 'title' ? 'label' : wizardSchema['x-primaryField'] : 'none',
-    }
-  },
+  mapWizardToAddonData: (previousData, wizardSchema) => ({
+    ...previousData,
+    description: wizardSchema?.description ?? '',
+  }),
   mapAddonDataToWizardUISchema: (toolData, uiSchema) => uiSchema,
-  mapAddonDataToWizardSchema: (toolData, wizardSchema, rootSchema) => {
-    const { isPrimaryFieldFor } = toolData || {};
-    if (isPrimaryFieldFor && isPrimaryFieldFor !== 'none') {
-      return {
-        ...wizardSchema,
-        'x-primaryField': isPrimaryFieldFor === 'label' ? 'title' : isPrimaryFieldFor,
-      };
-    } else {
-      // @ts-ignore
-      const { ['x-primaryField']: _removed, ...rest } = wizardSchema || {};
-      return rest;
+  mapAddonDataToWizardSchema: (toolData, wizardSchema) => {
+    const { description } = toolData || {}
+    if (description !== undefined && description !== '') {
+      return { ...wizardSchema, description }
     }
+    const { description: _removed, ...rest } = wizardSchema || {}
+    return rest
   },
 }
 
@@ -77,6 +69,6 @@ const PrimaryFieldPart: ToolSettingsMixin = {
 
 export const ToolsettingParts = {
   Title: TitlePart,
-  PrimaryField: PrimaryFieldPart,
+  Description: DescriptionPart,
 }
 

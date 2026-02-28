@@ -1,3 +1,4 @@
+import { ToolsettingParts } from '@formswizard/fieldsettings'
 import { ToolSetting, JsonSchema } from '@formswizard/types'
 import { resolveSchema } from '@formswizard/utils';
 
@@ -153,5 +154,5 @@ export const LocationToolSettings: ToolSetting = {
   jsonSchema,
   tester: (uiSchema, jsonSchema) => (jsonSchema?.type === 'string' && jsonSchema?.format === 'wktLiteral' ? 10 : 0),
 
-  toolSettingsMixins: [],
+  toolSettingsMixins: [ToolsettingParts.Description],
 }

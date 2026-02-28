@@ -125,7 +125,7 @@ const MultiSelectToolSettings: ToolSetting = {
   mapToolDataToWizardUischema,
   jsonSchema,
   tester: materialEnumArrayRendererTester,
-  toolSettingsMixins: [ToolsettingParts.Title],
+  toolSettingsMixins: [ToolsettingParts.Title, ToolsettingParts.Description],
 }
 
 export default MultiSelectToolSettings

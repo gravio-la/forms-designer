@@ -43,6 +43,6 @@ const NumberInputToolSettings: ToolSetting = {
   jsonSchema,
   tester: (uiSchema, jsonSchema: JsonSchema | null) =>
     uiSchema && uiSchema?.type === 'Control' && (jsonSchema?.type === 'integer' || jsonSchema?.type === 'number') ? 1 : 0,
-  toolSettingsMixins: [ToolsettingParts.Title],
+  toolSettingsMixins: [ToolsettingParts.Title, ToolsettingParts.Description],
 }
 export default NumberInputToolSettings

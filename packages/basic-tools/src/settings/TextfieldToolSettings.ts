@@ -54,6 +54,6 @@ const TextfieldToolSettings: ToolSetting = {
   mapToolDataToWizardUischema,
   jsonSchema,
   tester: (uiSchema, jsonSchema) => (uiSchema && uiSchema?.type === 'Control' && jsonSchema?.type === 'string' ? 1 : 0),
-  toolSettingsMixins: [ToolsettingParts.Title, ToolsettingParts.PrimaryField],
+  toolSettingsMixins: [ToolsettingParts.Title, ToolsettingParts.Description],
 }
 export default TextfieldToolSettings

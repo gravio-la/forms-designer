@@ -33,6 +33,6 @@ const CheckToolSettings: ToolSetting = {
   mapToolDataToWizardUischema,
   jsonSchema,
   tester: (uiSchema, jsonSchema) => (uiSchema && jsonSchema?.type === 'boolean' ? 1 : 0),
-  toolSettingsMixins: [ToolsettingParts.Title],
+  toolSettingsMixins: [ToolsettingParts.Title, ToolsettingParts.Description],
 }
 export default CheckToolSettings

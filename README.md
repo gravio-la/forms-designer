@@ -1,7 +1,6 @@
 # Forms Designer
 
-[![Test build pipeline](https://github.com/FormsWizard/forms-designer/actions/workflows/staging.yml/badge.svg)](https://github.com/FormsWizard/forms-designer/actions/workflows/staging.yml)
-[![Deploy Next.js site to Pages](https://github.com/FormsWizard/forms-designer/actions/workflows/pages.yml/badge.svg)](https://github.com/FormsWizard/forms-designer/actions/workflows/pages.yml)
+[![Deploy Vite App to Pages](https://github.com/gravio-la/forms-designer/actions/workflows/vite-pages.yml/badge.svg)](https://github.com/gravio-la/forms-designer/actions/workflows/vite-pages.yml)
 
 ## Overview
 

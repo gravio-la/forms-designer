@@ -86,6 +86,7 @@ const FORMSDESIGNER_BASE_TRANSLATIONS: Resource = {
       // --- Field Settings ---
       'fieldSettings.renameTooltip': 'Rename field',
       'fieldSettings.deleteTooltip': 'Delete field',
+      'fieldSettings.deleteRootDisabledTooltip': 'The root layout cannot be deleted',
       'fieldSettings.renameTitle': 'Rename field',
       'fieldSettings.renameConfirm': 'Rename',
       'fieldSettings.renameCancel': 'Cancel',
@@ -142,6 +143,7 @@ const FORMSDESIGNER_BASE_TRANSLATIONS: Resource = {
       // --- Field Settings ---
       'fieldSettings.renameTooltip': 'Feld umbenennen',
       'fieldSettings.deleteTooltip': 'Feld löschen',
+      'fieldSettings.deleteRootDisabledTooltip': 'Das Wurzel-Layout kann nicht gelöscht werden',
       'fieldSettings.renameTitle': 'Feld umbenennen',
       'fieldSettings.renameConfirm': 'Umbenennen',
       'fieldSettings.renameCancel': 'Abbrechen',

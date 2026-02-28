@@ -24,6 +24,7 @@ function EditableFieldKeyDisplay() {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const keyIsEditable = Boolean(selectedKeyName)
+  const isRootLayout = selectedPath === ''
 
   useEffect(() => {
     if (typeof selectedKeyName === 'string') setNewKey(selectedKeyName)
@@ -79,10 +80,12 @@ function EditableFieldKeyDisplay() {
           </IconButton>
         </Tooltip>
       )}
-      <Tooltip title={t('fieldSettings.deleteTooltip')}>
-        <IconButton size="small" onClick={handleDelete}>
-          <DeleteOutline fontSize="small" />
-        </IconButton>
+      <Tooltip title={isRootLayout ? t('fieldSettings.deleteRootDisabledTooltip') : t('fieldSettings.deleteTooltip')}>
+        <span>
+          <IconButton size="small" onClick={handleDelete} disabled={isRootLayout}>
+            <DeleteOutline fontSize="small" />
+          </IconButton>
+        </span>
       </Tooltip>
 
       <Popover

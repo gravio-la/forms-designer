@@ -75,7 +75,7 @@ export function useFinalizedToolSettings(): ToolSettingsDefinition {
 
   const [toolSettingsJsonSchema, toolSettingsUISchema] = useMemo<[JsonSchema | null, UISchemaElement | null]>(
     () => {
-      if (!toolSettings || !selectedPath) {
+      if (!toolSettings || selectedPath == null) {
         stableToolSettingsJsonSchemaRef.current = null
         return [null, null]
       }
@@ -148,7 +148,7 @@ export function useFinalizedToolSettings(): ToolSettingsDefinition {
 
   const mapToolToWizard = useCallback(
     (data) => {
-      if (!toolSettings || !UIElementFromSelection || !selectedPath) return
+      if (!toolSettings || !UIElementFromSelection || selectedPath == null) return
       const updatedJsonSchema = toolSettings.mapToolDataToWizardSchema(data, selectedElementJsonSchema ?? {}, rootJsonSchema)
       const updatedUIschema = toolSettings.mapToolDataToWizardUischema(data, UIElementFromSelection, rootJsonSchema)
 

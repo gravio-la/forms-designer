@@ -68,7 +68,7 @@ export const MainLayout: FunctionComponent<Props> = ({ appBar, multipleDefinitio
   }, [previewModus, isMobile])
 
   useEffect(() => {
-    if (!selectedPath && isMobile) {
+    if (selectedPath == null && isMobile) {
       setMobileRightOpen(false)
     }
   }, [selectedPath, isMobile])
@@ -94,7 +94,7 @@ export const MainLayout: FunctionComponent<Props> = ({ appBar, multipleDefinitio
   }
 
   const leftDrawerOpen = isMobile ? mobileLeftOpen : !previewModus
-  const rightDrawerOpen = isMobile ? mobileRightOpen : Boolean(selectedPath) && !previewModus
+  const rightDrawerOpen = isMobile ? mobileRightOpen : selectedPath != null && !previewModus
 
   return (
     <>

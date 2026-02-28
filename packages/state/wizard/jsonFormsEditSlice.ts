@@ -250,6 +250,11 @@ export const jsonFormsEditSlice = createSlice({
     ) => {
       // path is the path to the uiSchema element e.g. elements.0.elements.0
       const { path, updatedSchema, updatedUIschema } = action.payload
+      // Root element has path "" -- update it directly; it has no scope so no JSON Schema update needed
+      if (path === '') {
+        Object.assign(state.uiSchema, updatedUIschema)
+        return
+      }
       const uiSchema = jsonpointer.get(state.uiSchema, pathSegmentsToJSONPointer(pathToPathSegments(path)))
       jsonpointer.set(state.uiSchema, pathSegmentsToJSONPointer(pathToPathSegments(path)), updatedUIschema)
       // only update json schema if ui schema has a scope
@@ -579,7 +584,9 @@ export const jsonFormsEditReducer: Reducer<JsonFormsEditState> = jsonFormsEditSl
 
 export const selectUIElementFromSelection: (state: RootState) => UISchemaElement | ScopableUISchemaElement | null =
   createSelector(selectSelectedPath, selectUiSchema, (selectedPath, uiSchema) => {
-    if (!selectedPath) return null
+    if (selectedPath == null) return null
+    // Root element has path "" -- return the root uiSchema directly
+    if (selectedPath === '') return uiSchema
     // if type is layout name is actually an index
     if (selectedPath.includes('-')) {
       const [UiElementType, UiElementName] = selectedPath.split('-')
@@ -623,6 +630,14 @@ export const selectSelectionDisplayName: (state: RootState) => string | null = c
     }
     // Pure UI elements (Label, Alert) have no scope; show type for display
     if (selectedUiSchema?.type && ['Label', 'Alert'].includes(selectedUiSchema.type)) {
+      return selectedUiSchema.type
+    }
+    // Layout types at root (Group, Categorization, VerticalLayout, HorizontalLayout)
+    if (selectedUiSchema?.type) {
+      const variant = (selectedUiSchema as any)?.options?.variant
+      if (selectedUiSchema.type === 'Categorization') {
+        return variant === 'tabs' ? 'Tabs' : 'Stepper'
+      }
       return selectedUiSchema.type
     }
     return null

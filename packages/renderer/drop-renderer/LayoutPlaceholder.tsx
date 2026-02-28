@@ -42,6 +42,7 @@ const StyledPlaceholderElementBox = ({ onDrop }: StyledPlaceholderProps) => {
       }}
     >
       {isOver && activeDrag?.componentMeta ? (
+        // @ts-ignore
         <DropTargetFormsPreview metadata={activeDrag.componentMeta} />
       ) : (
         <span style={{ margin: 'auto' }}> Placeholder</span>

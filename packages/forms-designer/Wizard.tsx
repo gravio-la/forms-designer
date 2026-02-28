@@ -7,7 +7,7 @@ import { JsonSchema as JsonFormsJsonSchema } from '@jsonforms/core'
 import { useDragScrolling } from '@formswizard/react-hooks'
 import { Box, BoxProps } from '@mui/material'
 import { usePreparedJsonFormsState } from '@formswizard/tool-context'
-import { dropRenderer } from '@formswizard/designer-renderer'
+import { dropRenderer, previewRenderer } from '@formswizard/designer-renderer'
 
 
 export type WizardProps = BoxProps
@@ -19,6 +19,7 @@ export function Wizard(props: WizardProps) {
   const { renderers, cells, ajv } = usePreparedJsonFormsState({
     isPreview: previewModus,
     editingRenderers: dropRenderer,
+    normalRenderers: previewRenderer,
   })
 
   const handleFormChange = useCallback(({ data }: { data: any }) => setData(data), [setData])

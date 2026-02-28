@@ -7,6 +7,10 @@ import {
   loadPersistedJsonFormsEditState,
   savePersistedJsonFormsEditState,
 } from './wizard/jsonFormsEditPersistence'
+import {
+  loadPersistedBuildingBlocksState,
+  savePersistedBuildingBlocksState,
+} from './buildingBlocks/buildingBlocksPersistence'
 
 // Define the root reducer type
 type RootReducer = {
@@ -17,9 +21,13 @@ type RootReducer = {
 }
 
 function getPreloadedState() {
-  const persisted = loadPersistedJsonFormsEditState()
-  if (!persisted) return undefined
-  return { jsonFormsEdit: persisted }
+  const persistedEdit = loadPersistedJsonFormsEditState()
+  const persistedBlocks = loadPersistedBuildingBlocksState()
+  if (!persistedEdit && !persistedBlocks) return undefined
+  return {
+    ...(persistedEdit && { jsonFormsEdit: persistedEdit }),
+    ...(persistedBlocks && { buildingBlocks: persistedBlocks }),
+  }
 }
 
 const jsonFormsEditPersistenceMiddleware: Middleware<object, RootReducer> = (store) => (next) => (action) => {
@@ -28,6 +36,16 @@ const jsonFormsEditPersistenceMiddleware: Middleware<object, RootReducer> = (sto
   const nextState = store.getState().jsonFormsEdit
   if (nextState !== prev) {
     savePersistedJsonFormsEditState(nextState)
+  }
+  return result
+}
+
+const buildingBlocksPersistenceMiddleware: Middleware<object, RootReducer> = (store) => (next) => (action) => {
+  const prev = store.getState().buildingBlocks
+  const result = next(action)
+  const nextState = store.getState().buildingBlocks
+  if (nextState !== prev) {
+    savePersistedBuildingBlocksState(nextState)
   }
   return result
 }
@@ -44,7 +62,7 @@ export const store: EnhancedStore<RootReducer> = configureStore({
   },
   preloadedState: getPreloadedState(),
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(jsonFormsEditPersistenceMiddleware),
+    getDefaultMiddleware().concat(jsonFormsEditPersistenceMiddleware, buildingBlocksPersistenceMiddleware),
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any) as EnhancedStore<RootReducer>
 

@@ -87,6 +87,12 @@ const FORMSDESIGNER_BASE_TRANSLATIONS: Resource = {
       'importModal.parseError': 'Invalid JSON',
       'importModal.missingKeysError': 'Must contain jsonSchema and uiSchema',
       'importModal.close': 'Close',
+      // --- Field Settings ---
+      'fieldSettings.renameTooltip': 'Rename field',
+      'fieldSettings.deleteTooltip': 'Delete field',
+      'fieldSettings.renameTitle': 'Rename field',
+      'fieldSettings.renameConfirm': 'Rename',
+      'fieldSettings.renameCancel': 'Cancel',
     },
   },
   de: {
@@ -141,6 +147,12 @@ const FORMSDESIGNER_BASE_TRANSLATIONS: Resource = {
       'importModal.parseError': 'Ungültiges JSON',
       'importModal.missingKeysError': 'Muss jsonSchema und uiSchema enthalten',
       'importModal.close': 'Schließen',
+      // --- Field Settings ---
+      'fieldSettings.renameTooltip': 'Feld umbenennen',
+      'fieldSettings.deleteTooltip': 'Feld löschen',
+      'fieldSettings.renameTitle': 'Feld umbenennen',
+      'fieldSettings.renameConfirm': 'Umbenennen',
+      'fieldSettings.renameCancel': 'Abbrechen',
     },
   },
 }

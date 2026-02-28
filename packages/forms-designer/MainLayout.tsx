@@ -2,7 +2,7 @@
 
 import type { FunctionComponent, ReactNode } from 'react'
 import { useRef, useState, useEffect } from 'react'
-import { Box, Button, Container, Drawer, Paper, Tab, Tabs, Toolbar, useTheme, useMediaQuery } from '@mui/material'
+import { Box, Button, ButtonBase, Container, Drawer, Paper, Tab, Tabs, Toolbar, useTheme, useMediaQuery } from '@mui/material'
 import { Wizard, WizardProps } from './Wizard'
 import { Toolbox } from '@formswizard/toolbox'
 import { FieldSettingsView, useFinalizedToolSettings } from '@formswizard/fieldsettings'
@@ -11,7 +11,8 @@ import { MobileAppBar } from './layout/MobileAppBar'
 import { TrashFAB } from './components'
 import { EditableTab } from './components/EditableTab'
 import { AddDefinitionButton } from './components/AddDefinitionButton'
-import { selectCurrentDefinition, selectJsonSchemaDefinitions, selectPreviewModus, switchDefinition, togglePreviewModus, useAppDispatch, useAppSelector, renameSchemaDefinition } from '@formswizard/state'
+import { selectCurrentDefinition, selectJsonSchemaDefinitions, selectPath, selectPreviewModus, switchDefinition, togglePreviewModus, useAppDispatch, useAppSelector, renameSchemaDefinition } from '@formswizard/state'
+import Close from '@mui/icons-material/Close'
 import { useDNDHooksContext } from '@formswizard/react-hooks'
 import useAutoDeselectOnOutsideClick from './useAutoDeselectOnOutsideClick'
 import { JsonSchema } from '@formswizard/types'
@@ -86,6 +87,10 @@ export const MainLayout: FunctionComponent<Props> = ({ appBar, multipleDefinitio
     if (oldName !== newName) {
       dispatch(renameSchemaDefinition({ oldName, newName }));
     }
+  }
+
+  const handleCloseFieldSettings = () => {
+    dispatch(selectPath(undefined))
   }
 
   const leftDrawerOpen = isMobile ? mobileLeftOpen : !previewModus
@@ -187,10 +192,32 @@ export const MainLayout: FunctionComponent<Props> = ({ appBar, multipleDefinitio
                 [`& .MuiDrawer-paper`]: {
                   width: drawerWidth + 100,
                   boxSizing: 'border-box',
+                  overflow: 'visible',
                 },
               }}
             >
-              <Toolbar />
+              <ButtonBase
+                onClick={handleCloseFieldSettings}
+                aria-label="close"
+                sx={{
+                  position: 'absolute',
+                  left: 0,
+                  transform: 'translateX(-100%) translateY(48px)',
+                  width: 24,
+                  height: 64,
+                  bgcolor: 'background.paper',
+                  borderRadius: '8px 0 0 8px',
+                  boxShadow: '-2px 0 4px rgba(0,0,0,0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  '&:hover': {
+                    bgcolor: 'action.hover',
+                  },
+                }}
+              >
+                <Close sx={{ fontSize: 16 }} />
+              </ButtonBase>
               <FieldSettingsView />
             </Drawer>
           </Box>
@@ -253,9 +280,33 @@ export const MainLayout: FunctionComponent<Props> = ({ appBar, multipleDefinitio
                 [`& .MuiDrawer-paper`]: {
                   width: drawerWidth + 100,
                   boxSizing: 'border-box',
+                  overflow: 'visible',
                 },
               }}
             >
+              <ButtonBase
+                onClick={handleCloseFieldSettings}
+                aria-label="close"
+                sx={{
+                  position: 'absolute',
+                  left: 0,
+                  top: theme => theme.mixins.toolbar?.minHeight ?? 64,
+                  transform: 'translateX(-100%) translateY(55px)',
+                  width: 24,
+                  height: 64,
+                  bgcolor: 'background.paper',
+                  borderRadius: '8px 0 0 8px',
+                  boxShadow: '-2px 0 4px rgba(0,0,0,0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  '&:hover': {
+                    bgcolor: 'action.hover',
+                  },
+                }}
+              >
+                <Close sx={{ fontSize: 16 }} />
+              </ButtonBase>
               <Toolbar />
               <FieldSettingsView />
             </Drawer>

@@ -185,11 +185,6 @@ export function initI18n(additionalResources?: Resource): Promise<unknown> {
         escapeValue: false,
       },
       saveMissing: isDev,
-      missingKeyHandler: isDev
-        ? (lngs, ns, key) => {
-            console.warn(`[i18n] Missing translation key "${key}" in namespace "${ns}" for language(s): ${lngs.join(', ')}`)
-          }
-        : undefined,
     })
 }
 

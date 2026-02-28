@@ -36,7 +36,7 @@ export const translations: LanguageTranslations = {
     'showSortButtons.label': 'Show sort buttons',
 
     // --- AlertToolSettings ---
-    'text.label': 'Alert text',
+    'text.label': 'Alert Text',
 
     // --- CheckToolSettings ---
     'defaultIsChecked.label': 'Checked by default',

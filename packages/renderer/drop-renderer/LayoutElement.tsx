@@ -143,6 +143,8 @@ const LayoutElement = ({ index, schema, path, enabled, element: child, cells, re
 
   const isOverCurrent = isOverOn || isOverAfter
 
+  const isSelectable = (child as any).path && ['Control', 'Label', 'Alert'].includes(child.type)
+
   const handleSelect = useCallback(
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       event.stopPropagation()
@@ -175,8 +177,8 @@ const LayoutElement = ({ index, schema, path, enabled, element: child, cells, re
             flexGrow: 1,
             display: 'flex',
             backgroundColor: (theme) =>
-              // @ts-ignore - Only apply selection background to Control elements, not Layout elements
-              child.type === 'Control' && selectedPath === (child as any).path
+              // @ts-ignore - Apply selection to Control, Label, Alert (Label/Alert are pure UI elements)
+              isSelectable && selectedPath === (child as any).path
                 ? theme.palette.action.selected
                 : 'none',
             padding: (theme) => theme.spacing(1, 2),
@@ -205,8 +207,8 @@ const LayoutElement = ({ index, schema, path, enabled, element: child, cells, re
             renderers={renderers}
             cells={cells}
           />
-          {/* Selection overlay with hover effects - only show for non-Layout elements */}
-          {child.type === 'Control' && (
+          {/* Selection overlay - show for Control, Label, Alert (Label/Alert are pure UI elements) */}
+          {isSelectable && (
             <SelectionOverlay onClick={handleSelect} />
           )}
         </Box>

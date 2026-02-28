@@ -28,10 +28,6 @@ import {
 } from '@formswizard/types'
 import { exampleInitialState, JsonFormsEditState } from './exampleState'
 import jsonpointer from 'jsonpointer'
-import findLastIndex from 'lodash-es/findLastIndex'
-import last from 'lodash-es/last'
-// export type DraggableElement = DraggableComponent | DraggableUISchemaElement
-
 export const isDraggableComponent = (element: any): element is DraggableComponent =>
   element.name && element.jsonSchemaElement
 export const isScopableUISchemaElement = (element: any): element is ScopableUISchemaElement => element.scope
@@ -617,8 +613,14 @@ export const selectSelectionDisplayName: (state: RootState) => string | null = c
     if (selectedUiSchema && isScopableUISchemaElement(selectedUiSchema)) {
       return prettyPrintScope(selectedUiSchema.scope)
     }
-    // @ts-ignore
-    return selectedJsonSchema?.title || selectedUiSchema?.label || null
+    if (selectedJsonSchema?.title || (selectedUiSchema as any)?.label) {
+      return selectedJsonSchema?.title || (selectedUiSchema as any)?.label || null
+    }
+    // Pure UI elements (Label, Alert) have no scope; show type for display
+    if (selectedUiSchema?.type && ['Label', 'Alert'].includes(selectedUiSchema.type)) {
+      return selectedUiSchema.type
+    }
+    return null
   }
 )
 export const selectSelectedKeyName: (state: RootState) => string | null = createSelector(

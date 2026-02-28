@@ -25,15 +25,15 @@
     "dist"
   ],
   "devDependencies": {
+    "@formswizard/designer-tsconfig": "workspace:*",
+    "@formswizard/tsup-config": "workspace:*",
     "@formswizard/types": "workspace:*",
     "@mui/material": "catalog:",
     "@types/lodash-es": "catalog:",
     "eslint": "^8.45.0",
     "eslint-config-formsdesigner": "workspace:*",
-    "@formswizard/designer-tsconfig": "workspace:*",
-    "typescript": "^5.1.6",
     "react": "catalog:",
-    "@formswizard/tsup-config": "workspace:*"
+    "typescript": "^5.1.6"
   },
   "dependencies": {
     "@formswizard/utils": "workspace:*",

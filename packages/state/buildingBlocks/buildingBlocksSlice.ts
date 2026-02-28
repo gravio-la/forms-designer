@@ -23,7 +23,7 @@ export const buildingBlocksSlice = createSlice({
       const block = createBuildingBlock(
         action.payload,
         existingNames,
-        resolveSchema
+        resolveSchema as any
       )
       state.blocks.push(block)
     },

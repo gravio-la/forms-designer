@@ -1,13 +1,15 @@
 import { createSelector, createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit'
-import { generateDefaultUISchema, Scopable, UISchemaElement, Paths, isLayout } from '@jsonforms/core'
+import { generateDefaultUISchema, Scopable, UISchemaElement, Paths, isLayout, Layout } from '@jsonforms/core'
 import { RootState } from '../store'
 import {
   deeplySetNestedProperty,
+  deeplyUpdateNestedSchema,
   pathSegmentsToJSONPointer,
   pathSegmentsToPath,
   pathSegmentsToScope,
   pathToPathSegments,
   recursivelyMapSchema,
+  removeUISchemaElement,
   scopeToPathSegments,
   updateScopeOfUISchemaElement,
   updateUISchemaElement,
@@ -535,7 +537,7 @@ export const jsonFormsEditSlice = createSlice({
       if (!jsonSchema || !uiSchema) return
 
       const definitionsKey: 'definitions' | '$defs' =
-        jsonSchema.$defs != null ? '$defs' : jsonSchema.definitions != null ? 'definitions' : 'definitions'
+        (jsonSchema as any).$defs != null ? '$defs' : jsonSchema.definitions != null ? 'definitions' : 'definitions'
       state.definitionsKey = definitionsKey
 
       const definitionsBlock = jsonSchema[definitionsKey] as Record<string, JsonSchema> | undefined
@@ -554,11 +556,400 @@ export const jsonFormsEditSlice = createSlice({
       if (state.uiSchemas.Root == null) {
         state.uiSchemas.Root = uiSchema
       }
-      state.selectedDefinition = 'Root'
+        state.selectedDefinition = 'Root'
       state.selectedPath = undefined
+    },
+
+    /**
+     * AI-friendly reducer: add a single field to the form.
+     * parentScope: JSON Schema scope of a nested object parent (e.g. "#/properties/address").
+     *             Omit or pass "" to add at root.
+     * parentLabel: label of a Category or Group UI element to add the control into.
+     *             Takes priority for UI placement when parentScope has no matching Group.
+     */
+    aiAddField: (
+      state: JsonFormsEditState,
+      action: PayloadAction<{
+        parentScope?: string
+        parentLabel?: string
+        name: string
+        schema: Record<string, unknown>
+        required?: boolean
+        uiOptions?: Record<string, unknown>
+      }>
+    ) => {
+      const { parentScope, parentLabel, name, schema, required, uiOptions } = action.payload
+
+      // Compute jsonSchema parent path segments from scope
+      const jsonParentSegments = parentScope ? scopeToPathSegments(parentScope) : []
+
+      // Add property to jsonSchema (ensurePath creates intermediate objects)
+      state.jsonSchema = deeplySetNestedProperty(
+        state.jsonSchema,
+        jsonParentSegments,
+        name,
+        schema as JsonSchema,
+        true,
+      )
+
+      // Handle required array
+      if (required) {
+        if (jsonParentSegments.length === 0) {
+          const reqArr = (state.jsonSchema as any).required
+          if (Array.isArray(reqArr)) {
+            if (!reqArr.includes(name)) reqArr.push(name)
+          } else {
+            ;(state.jsonSchema as any).required = [name]
+          }
+        } else {
+          let nested: any = state.jsonSchema
+          for (const seg of jsonParentSegments) {
+            nested = nested?.properties?.[seg]
+          }
+          if (nested) {
+            if (Array.isArray(nested.required)) {
+              if (!nested.required.includes(name)) nested.required.push(name)
+            } else {
+              nested.required = [name]
+            }
+          }
+        }
+      }
+
+      // Build full JSON Forms scope for the new Control
+      const fullScope = parentScope
+        ? `${parentScope}/properties/${name}`
+        : `#/properties/${name}`
+
+      const control: UISchemaElement = {
+        type: 'Control',
+        scope: fullScope,
+        ...(uiOptions ? { options: uiOptions } : {}),
+      } as any
+
+      // Insert Control into uiSchema: search by parentScope (Group) or parentLabel (Category)
+      const appended = aiAppendToLayout(state.uiSchema as any, control, parentScope, parentLabel)
+      if (!appended && state.uiSchema && isLayout(state.uiSchema as any)) {
+        ;(state.uiSchema as any as Layout).elements.push(control)
+      }
+    },
+
+    /**
+     * AI-friendly reducer: add a layout container (Categorization, Category, Group, etc.).
+     * parentScope: find a Group by options.scope to nest inside.
+     * parentLabel: find a layout by label to nest inside (useful for Categories).
+     * scope: when the new layout is a Group backed by a jsonSchema sub-object, set this
+     *        as options.scope AND ensure the jsonSchema path exists.
+     */
+    aiAddLayout: (
+      state: JsonFormsEditState,
+      action: PayloadAction<{
+        parentScope?: string
+        parentLabel?: string
+        layoutType: 'Group' | 'Category' | 'Categorization' | 'VerticalLayout' | 'HorizontalLayout'
+        label?: string
+        scope?: string
+        options?: Record<string, unknown>
+        /** JSON Forms rule placed at the TOP LEVEL of the element (not inside options).
+         *  e.g. { "effect": "HIDE", "condition": { "scope": "#/properties/motorisiert", "schema": { "const": false } } } */
+        rule?: Record<string, unknown>
+      }>
+    ) => {
+      const { parentScope, parentLabel, layoutType, label, scope, options, rule } = action.payload
+
+      const layoutOptions: Record<string, unknown> = {
+        ...(scope ? { scope } : {}),
+        ...(options ?? {}),
+      }
+
+      const newLayout: UISchemaElement = {
+        type: layoutType,
+        elements: [],
+        ...(label !== undefined ? { label } : {}),
+        ...(rule !== undefined ? { rule } : {}),
+        ...(Object.keys(layoutOptions).length > 0 ? { options: layoutOptions } : {}),
+      } as any
+
+      const appended = aiAppendToLayout(state.uiSchema as any, newLayout, parentScope, parentLabel)
+      if (!appended) {
+        if (state.uiSchema && isLayout(state.uiSchema as any)) {
+          ;(state.uiSchema as any as Layout).elements.push(newLayout)
+        } else {
+          state.uiSchema = { type: 'VerticalLayout', elements: [newLayout] } as any
+        }
+      }
+
+      // If Group is backed by a jsonSchema object, ensure the path exists
+      if (scope && layoutType === 'Group') {
+        const segments = scopeToPathSegments(scope)
+        if (segments.length > 0) {
+          const lastName = segments[segments.length - 1] as string
+          const parentSegments = segments.slice(0, -1)
+          try {
+            state.jsonSchema = deeplySetNestedProperty(
+              state.jsonSchema,
+              parentSegments,
+              lastName,
+              { type: 'object', properties: {} } as JsonSchema,
+              true,
+            )
+          } catch {
+            // path already exists — no-op
+          }
+        }
+      }
+    },
+
+    /**
+     * AI-friendly reducer: remove a field or layout by its JSON Forms scope.
+     * Removes the Control/layout from uiSchema and the corresponding property from jsonSchema.
+     */
+    aiRemoveElement: (
+      state: JsonFormsEditState,
+      action: PayloadAction<{ scope: string }>
+    ) => {
+      const { scope } = action.payload
+
+      // Remove from uiSchema
+      const next = removeUISchemaElement(scope, state.uiSchema as UISchemaElement)
+      if (next) state.uiSchema = next as any
+
+      // Remove from jsonSchema (only meaningful for Controls, not bare layouts)
+      const segments = scopeToPathSegments(scope)
+      if (segments.length > 0) {
+        try {
+          state.jsonSchema = deeplyRemoveNestedProperty(
+            state.jsonSchema,
+            pathSegmentsToPath(segments),
+          )
+        } catch {
+          // property might not exist — no-op
+        }
+      }
+    },
+
+    /**
+     * AI-friendly reducer: update the JSON Schema and/or UI options of an existing field.
+     * scope: the full JSON Forms scope of the field (e.g. "#/properties/vorname").
+     */
+    aiUpdateField: (
+      state: JsonFormsEditState,
+      action: PayloadAction<{
+        scope: string
+        schema?: Record<string, unknown>
+        required?: boolean
+        uiOptions?: Record<string, unknown>
+      }>
+    ) => {
+      const { scope, schema, required, uiOptions } = action.payload
+      const segments = scopeToPathSegments(scope)
+
+      // Update jsonSchema property
+      if (schema && segments.length > 0) {
+        try {
+          state.jsonSchema = deeplyUpdateNestedSchema(
+            state.jsonSchema,
+            segments,
+            schema as JsonSchema,
+          )
+        } catch {
+          // field does not exist — no-op
+        }
+      }
+
+      // Update required array on parent
+      if (required !== undefined && segments.length > 0) {
+        const fieldName = segments[segments.length - 1] as string
+        const parentSegments = segments.slice(0, -1)
+        let parent: any = state.jsonSchema
+        for (const seg of parentSegments) {
+          parent = parent?.properties?.[seg]
+        }
+        if (parent) {
+          if (required) {
+            if (!Array.isArray(parent.required)) parent.required = []
+            if (!parent.required.includes(fieldName)) parent.required.push(fieldName)
+          } else if (Array.isArray(parent.required)) {
+            parent.required = parent.required.filter((r: string) => r !== fieldName)
+          }
+        }
+      }
+
+      // Update uiSchema Control options
+      if (uiOptions !== undefined) {
+        const updated = recursivelyMapSchema(state.uiSchema as UISchemaElement, (el) => {
+          if ((el as any).scope === scope) {
+            return { ...el, options: { ...((el as any).options ?? {}), ...uiOptions } } as UISchemaElement
+          }
+          return el
+        })
+        if (updated) state.uiSchema = updated as any
+      }
+    },
+
+    /**
+     * AI-friendly reducer: rename a field identified by its current scope.
+     * Delegates to the existing renameField logic after translating scope → path.
+     */
+    aiRenameField: (
+      state: JsonFormsEditState,
+      action: PayloadAction<{ scope: string; newName: string }>
+    ) => {
+      const { scope, newName } = action.payload
+      const segments = scopeToPathSegments(scope)
+      if (segments.length === 0) return
+
+      // Find the uiSchema Control path for this scope using jsonpointer lookup
+      let uiSchemaPath: string | undefined
+      recursivelyMapSchema(state.uiSchema as UISchemaElement, (el) => {
+        if ((el as any).scope === scope && (el as any).path !== undefined) {
+          uiSchemaPath = (el as any).path
+        }
+        return el
+      })
+
+      if (!uiSchemaPath) return
+
+      // Re-use existing renameField logic
+      state.jsonSchema = deeplyRenameNestedProperty(state.jsonSchema, segments, newName)
+      if (state.uiSchema?.elements) {
+        const newScope = pathSegmentsToScope([...segments.slice(0, -1), newName])
+        state.uiSchema = updateScopeOfUISchemaElement(scope, newScope, state.uiSchema as UISchemaElement) as any
+      }
+    },
+
+    /**
+     * AI-friendly reducer: move an existing Control to a different layout container.
+     * Only operates on the uiSchema — the jsonSchema is untouched because the field
+     * keeps its scope and property definition.
+     *
+     * scope:              Full JSON Forms scope of the Control to move, e.g. "#/properties/verfuegbarVon".
+     * targetParentLabel:  Label of the target layout to move into (e.g. "Von-Bis").
+     * targetParentScope:  options.scope of the target Group (alternative to label).
+     *
+     * If the target layout is not found, the element is appended to the root.
+     */
+    aiMoveElement: (
+      state: JsonFormsEditState,
+      action: PayloadAction<{
+        scope: string
+        targetParentLabel?: string
+        targetParentScope?: string
+      }>
+    ) => {
+      const { scope, targetParentLabel, targetParentScope } = action.payload
+
+      // 1. Clone the element BEFORE reassigning state.uiSchema (draft proxy safety)
+      const element = aiFindControlByScope(state.uiSchema, scope)
+      if (!element) return
+
+      // 2. Remove from current location (returns a new plain object)
+      const withoutElement = removeUISchemaElement(scope, state.uiSchema as UISchemaElement)
+      if (withoutElement) state.uiSchema = withoutElement as any
+
+      // 3. Insert into target layout; fall back to root append when not found
+      const appended = aiAppendToLayout(state.uiSchema as any, element, targetParentScope, targetParentLabel)
+      if (!appended && state.uiSchema && isLayout(state.uiSchema as any)) {
+        ;(state.uiSchema as any as Layout).elements.push(element)
+      }
+    },
+
+    /**
+     * AI-friendly reducer: update top-level properties of a layout element.
+     *
+     * Finds the layout by label (primary, works for Category/Group) or by
+     * options.scope (secondary, for Groups backed by a JSON Schema object).
+     *
+     * Supports:
+     *   rule       — sets/replaces the JSON Forms rule directly on the element (NOT inside options)
+     *   options    — merges into element.options
+     *   newLabel   — renames the element
+     *
+     * This is the correct way to apply SHOW/HIDE rules to layout containers.
+     */
+    aiUpdateLayout: (
+      state: JsonFormsEditState,
+      action: PayloadAction<{
+        label?: string
+        scope?: string
+        rule?: Record<string, unknown>
+        options?: Record<string, unknown>
+        newLabel?: string
+      }>
+    ) => {
+      const { label, scope, rule, options, newLabel } = action.payload
+
+      const updated = recursivelyMapSchema(state.uiSchema as UISchemaElement, (el) => {
+        const matchByLabel = label !== undefined && (el as any).label === label
+        const matchByScope = scope !== undefined && (el as any).options?.scope === scope
+
+        if (matchByLabel || matchByScope) {
+          return {
+            ...el,
+            ...(rule !== undefined ? { rule } : {}),
+            ...(newLabel !== undefined ? { label: newLabel } : {}),
+            ...(options !== undefined
+              ? { options: { ...((el as any).options ?? {}), ...options } }
+              : {}),
+          } as UISchemaElement
+        }
+        return el
+      })
+
+      if (updated) state.uiSchema = updated as any
     },
   },
 })
+
+/**
+ * Recursively find a Control element by its scope.
+ * Returns a plain-object clone (not an Immer draft proxy) so it's safe
+ * to re-insert after the parent uiSchema has been reassigned.
+ */
+function aiFindControlByScope(uiElement: any, scope: string): UISchemaElement | null {
+  if (!uiElement || typeof uiElement !== 'object') return null
+  if ((uiElement as any).scope === scope) {
+    // JSON-round-trip to detach from Immer draft proxy before reassignment
+    return JSON.parse(JSON.stringify(uiElement)) as UISchemaElement
+  }
+  for (const child of ((uiElement as any).elements ?? [])) {
+    const found = aiFindControlByScope(child, scope)
+    if (found) return found
+  }
+  return null
+}
+
+/**
+ * Recursively search uiSchema for a layout container matching parentScope (via options.scope)
+ * or parentLabel (via label). Appends newElement to the matching container's elements.
+ * Returns true if the element was successfully appended.
+ */
+function aiAppendToLayout(
+  uiElement: any,
+  newElement: UISchemaElement,
+  parentScope?: string,
+  parentLabel?: string,
+): boolean {
+  if (!uiElement || typeof uiElement !== 'object') return false
+  if (!isLayout(uiElement)) return false
+
+  const el = uiElement as any
+  const matchByScope = parentScope && el.options?.scope === parentScope
+  const matchByLabel = parentLabel && el.label === parentLabel
+
+  if (matchByScope || matchByLabel) {
+    if (!uiElement.elements) uiElement.elements = []
+    uiElement.elements.push(newElement)
+    return true
+  }
+
+  for (const child of (uiElement.elements ?? [])) {
+    if (aiAppendToLayout(child, newElement, parentScope, parentLabel)) {
+      return true
+    }
+  }
+  return false
+}
 
 export const {
   insertControl,
@@ -575,8 +966,14 @@ export const {
   renameSchemaDefinition,
   addSchemaDefinition,
   resetWizard,
-  
   loadImportedSchema,
+  aiAddField,
+  aiAddLayout,
+  aiRemoveElement,
+  aiUpdateField,
+  aiRenameField,
+  aiMoveElement,
+  aiUpdateLayout,
 } = jsonFormsEditSlice.actions
 
 export const jsonFormsEditReducer: Reducer<JsonFormsEditState> = jsonFormsEditSlice.reducer

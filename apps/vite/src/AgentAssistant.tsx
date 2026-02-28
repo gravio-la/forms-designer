@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import {
   useAppDispatch,
   useAppSelector,
@@ -5,10 +6,16 @@ import {
   selectUiSchema,
   selectUIElementFromSelection,
   isScopableUISchemaElement,
-  loadImportedSchema,
+  aiAddField,
+  aiAddLayout,
+  aiRemoveElement,
+  aiUpdateField,
+  aiRenameField,
+  aiMoveElement,
+  aiUpdateLayout,
 } from '@formswizard/state'
 import { AiAssistantProvider, useAiAssistantChat } from '@graviola/agent-chat-flow'
-import type { SchemaState } from '@graviola/agent-chat-flow'
+import type { ToolResult } from '@graviola/agent-chat-flow'
 import Fab from '@mui/material/Fab'
 import CircularProgress from '@mui/material/CircularProgress'
 import ChatBubbleOutlineOutlined from '@mui/icons-material/ChatBubbleOutlineOutlined'
@@ -37,7 +44,9 @@ function AssistantFABTrigger() {
 
 /**
  * Renders inside WizardProvider so it has access to the Redux store.
- * Wires the agent schema updates back to the store via loadImportedSchema.
+ * Wires the agent's client-side tool calls directly to Redux dispatch.
+ * The schema is passed with every message so the server always builds
+ * the system prompt from the current live state.
  */
 export function AgentAssistant() {
   const dispatch = useAppDispatch()
@@ -55,15 +64,47 @@ export function AgentAssistant() {
       }
     : undefined
 
-  const handleSchemaUpdate = (state: SchemaState) => {
-    dispatch(loadImportedSchema({ jsonSchema: state.jsonSchema as any, uiSchema: state.uiSchema as any }))
-  }
+  const handleExecuteTool = useCallback(
+    (toolName: string, args: Record<string, unknown>): ToolResult => {
+      try {
+        switch (toolName) {
+          case 'add_field':
+            dispatch(aiAddField(args as any))
+            break
+          case 'add_layout':
+            dispatch(aiAddLayout(args as any))
+            break
+          case 'remove_element':
+            dispatch(aiRemoveElement(args as any))
+            break
+          case 'update_field':
+            dispatch(aiUpdateField(args as any))
+            break
+          case 'rename_field':
+            dispatch(aiRenameField(args as any))
+            break
+          case 'move_element':
+            dispatch(aiMoveElement(args as any))
+            break
+          case 'update_layout':
+            dispatch(aiUpdateLayout(args as any))
+            break
+          default:
+            return { success: false, error: `Unknown tool: ${toolName}` }
+        }
+        return { success: true, message: `Applied ${toolName} successfully.` }
+      } catch (err) {
+        return { success: false, error: String(err) }
+      }
+    },
+    [dispatch],
+  )
 
   return (
     <AiAssistantProvider
       serverUrl={SERVER_URL}
       schema={{ jsonSchema, uiSchema }}
-      onSchemaUpdate={handleSchemaUpdate}
+      onExecuteTool={handleExecuteTool}
       {...(agentSelectedElement !== undefined ? { selectedElement: agentSelectedElement } : {})}
     >
       <AssistantFABTrigger />

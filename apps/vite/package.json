@@ -12,6 +12,8 @@
   "dependencies": {
     "@emotion/cache": "catalog:",
     "@emotion/react": "catalog:",
+    "@graviola/agent-chat-flow": "latest",
+    "@graviola/agent-chat-markdown": "latest",
     "@formswizard/advanced-tools": "workspace:*",
     "@formswizard/basic-tools": "workspace:*",
     "@formswizard/forms-designer": "workspace:*",

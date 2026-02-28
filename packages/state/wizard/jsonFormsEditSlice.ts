@@ -494,7 +494,8 @@ export const jsonFormsEditSlice = createSlice({
         console.error('Invalid path of move source element')
         return
       }
-      if (child.path === sourcePath) {
+      if (sourcePath === targetPath || targetPath.startsWith(sourcePath + '.')) {
+        console.warn('Cannot move a layout inside itself or its descendants')
         return
       }
       const targetIndex = index + (placeBefore ? 0 : 1)

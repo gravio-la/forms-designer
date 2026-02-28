@@ -42,10 +42,11 @@ export const useDropTarget = ({ child, isPlaceholder = false, current }: UseDrop
           draggableMeta: componentMeta,
           child,
           placeBefore,
+          isPlaceholder,
         })
       )
     },
-    [dispatch, child]
+    [dispatch, child, isPlaceholder]
   )
 
   // Drop handler: place after the target element

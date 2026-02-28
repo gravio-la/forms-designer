@@ -473,12 +473,16 @@ export const jsonFormsEditSlice = createSlice({
         uiSchemaPath?: string
         draggableMeta: DraggableComponent | DraggableUISchemaElement
         placeBefore?: Boolean
+        isPlaceholder?: Boolean
       }>
     ) => {
-      const { child, draggableMeta, placeBefore } = action.payload
+      const { child, draggableMeta, placeBefore = false, isPlaceholder = false } = action.payload
       if (child.path === undefined) throw 'elements path of moving component is undefined'
-      // this is tghe move target
-      const { index, parentPath } = getIndexAndParentPathOfUISchemaElement(child.path)
+      // When dropping on empty layout placeholder, target path is inside the layout (same as insertControl)
+      const targetPath =
+        child.path === '' ? 'elements.0' : isPlaceholder ? child.path + '.elements.0' : child.path
+      // this is the move target
+      const { index, parentPath } = getIndexAndParentPathOfUISchemaElement(targetPath)
       if (index === undefined || !parentPath) {
         console.error('Invalid path of target element')
         return
